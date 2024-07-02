@@ -60,7 +60,7 @@ public class Program
         {
             ServiceProvider = serviceProvider
         });
-        commands.RegisterGuildCommands<PingCommands>(devGuild);
+        commands.RegisterGuildCommands<GeneralCommands>(devGuild);
         commands.RegisterGuildCommands<StatisticsCommands>(devGuild);
         commands.RegisterGuildCommands<PrivacyCommands>(devGuild);
         commands.RegisterGuildCommands<ReactionsCommands>(devGuild);

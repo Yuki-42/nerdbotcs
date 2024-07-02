@@ -33,7 +33,7 @@ public class ReactionsReaction(string connectionString, HandlersGroup handlersGr
             using NpgsqlConnection connection = GetConnection();
             using NpgsqlCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE reactions.reactions SET emoji = @value WHERE id = @id;";
-            command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)UserId });
+            command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)UserId });  // TODO: Add error handling for when value is null
 
             command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Text) { Value = value });
             ExecuteNonQuery(command);
@@ -60,7 +60,7 @@ public class ReactionsReaction(string connectionString, HandlersGroup handlersGr
             command.CommandText = "UPDATE reactions.reactions SET emoji_id = @value WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", DbType.Guid) { Value = Id });
 
-            command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Numeric) { Value = value });
+            command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Numeric) { Value = value });  // TODO: Add error handling for when value is null
             ExecuteNonQuery(command);
         }
     }
@@ -104,9 +104,6 @@ public class ReactionsReaction(string connectionString, HandlersGroup handlersGr
                     emojiOut = null;
                     return false;
             }
-
-            return false;
-
         }
         catch
         {

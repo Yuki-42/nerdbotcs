@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
+using Bot.Database.Handlers.Config;
 using Bot.Database.Handlers.Public;
 using Bot.Database.Handlers.Reactions;
 using Bot.Database.Types;
+using Bot.Database.Types.Config;
 using Bot.Database.Types.Public;
 using Bot.Database.Types.Reactions;
 using DisCatSharp;
@@ -95,6 +97,33 @@ public class EventHandler(Database.Database database)
     {
         client.Logger.Log(LogLevel.Information, "Bot is ready to process events.");
         Console.WriteLine("Bot is ready to process events.");
+        
+        // Get the config service
+        ConfigHandler configHandler = Database.Handlers.Config;
+        
+        // Get the bot status and status type
+        ConfigData? lStatus = await configHandler.Get("status");
+        ConfigData? lStatusType = await configHandler.Get("status_type");
+        
+        // Check if either values are null
+        if (lStatus == null || lStatusType == null)
+        {
+            Console.WriteLine("Status or status type is null.");
+            return;
+        }
+        
+        // Check that the status type is an int
+        if (!int.TryParse(lStatusType.Value, out int statusTypeInt))
+        {
+            Console.WriteLine("Could not parse status type to int.");
+            return;
+        }
+        
+        // Get the status type
+        DiscordActivity activity = StatusType.GetActivityType(statusTypeInt, lStatus.Value!);
+        
+        // Set the bot status
+        await client.UpdateStatusAsync(activity);
     }
 
     [Event(DiscordEvent.MessageCreated)]

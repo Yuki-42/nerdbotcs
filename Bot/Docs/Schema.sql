@@ -29,7 +29,7 @@ CREATE TABLE config.data
     id         UUID               DEFAULT uuid_generate_v4(),
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     key        TEXT      NOT NULL UNIQUE,
-    value      TEXT      NOT NULL,
+    value      TEXT,
     PRIMARY KEY (id)
 );
 

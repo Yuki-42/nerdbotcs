@@ -15,7 +15,7 @@ public class ConfigData(string connectionString, HandlersGroup handlersGroup, ID
     /// <summary>
     ///     Configuration string value.
     /// </summary>
-    public string Value
+    public string? Value
     {
         get
         {
@@ -24,16 +24,17 @@ public class ConfigData(string connectionString, HandlersGroup handlersGroup, ID
             command.CommandText = "SELECT value FROM config.data WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Uuid) { Value = Id });
 
-            return (command.ExecuteScalar() as string)!;
+            dynamic? result = command.ExecuteScalar();
+            return result is DBNull ? null : result;
         }
         set
         {
             using NpgsqlConnection connection = GetConnection();
             using NpgsqlCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE config.data SET value = @value WHERE id = @id;";
-            command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Uuid) { Value = Id }); // This style is probably going to cause errors, best to swap over to using AddWithValue if it does.
+            command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Uuid) { Value = Id });
 
-            command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Text) { Value = value });
+            command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Text) { Value = value });   // TODO: Add error handling for when value is null
             ExecuteNonQuery(command);
         }
     }
