@@ -1,0 +1,72 @@
+﻿using System.Data;
+using System.Data.Common;
+using Npgsql;
+using NpgsqlTypes;
+
+namespace Bot.Database.Types.Public;
+
+public class PublicChannelUser(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseType(connectionString, handlersGroup, reader)
+{
+    public ulong UserId { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("user_id"));
+    public ulong ChannelId { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("channel_id"));
+
+    public bool MessageTracking
+    {
+        get
+        {
+            using NpgsqlConnection connection = GetConnection();
+            using NpgsqlCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT message_tracking FROM public.channels_users WHERE user_id = @user_id AND channel_id = @channel_id;";
+            command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)UserId });
+            command.Parameters.Add(new NpgsqlParameter("channel_id", NpgsqlDbType.Numeric) { Value = (long)ChannelId });
+
+            return (bool)command.ExecuteScalar()!;
+        }
+        set
+        {
+            using NpgsqlConnection connection = GetConnection();
+            using NpgsqlCommand command = connection.CreateCommand();
+            command.CommandText = "UPDATE public.channels_users SET message_tracking = @value WHERE user_id = @user_id AND channel_id = @channel_id;";
+            command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)UserId });
+            command.Parameters.Add(new NpgsqlParameter("channel_id", NpgsqlDbType.Numeric) { Value = (long)ChannelId });
+
+            command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Boolean) { Value = value });
+            ExecuteNonQuery(command);
+        }
+    }
+
+    public long MessagesSent
+    {
+        get
+        {
+            using NpgsqlConnection connection = GetConnection();
+            using NpgsqlCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT messages_sent FROM public.channels_users WHERE user_id = @user_id AND channel_id = @channel_id;";
+            command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)UserId });
+            command.Parameters.Add(new NpgsqlParameter("channel_id", NpgsqlDbType.Numeric) { Value = (long)ChannelId });
+
+            return (long)command.ExecuteScalar()!;
+        }
+        set
+        {
+            using NpgsqlConnection connection = GetConnection();
+            using NpgsqlCommand command = connection.CreateCommand();
+            command.CommandText = "UPDATE public.channels_users SET messages_sent = @value WHERE user_id = @user_id AND channel_id = @channel_id;";
+            command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)UserId });
+            command.Parameters.Add(new NpgsqlParameter("channel_id", NpgsqlDbType.Numeric) { Value = (long)ChannelId });
+
+            command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Numeric) { Value = (long)value });
+            ExecuteNonQuery(command);
+        }
+    }
+
+    public async Task<PublicUser?> GetUser()
+    {
+        return await HandlersGroup.Public.Users.Get(UserId) ?? throw new MissingMemberException();
+    }
+
+    public async Task<PublicChannel?> GetChannel()
+    {
+        return await HandlersGroup.Public.Channels.Get(ChannelId, null) ?? throw new MissingMemberException();
+    }
+}
