@@ -63,6 +63,7 @@ public class Program
         commands.RegisterGlobalCommands<StatisticsCommands>();
         commands.RegisterGlobalCommands<PrivacyCommands>();
         commands.RegisterGlobalCommands<ReactionsCommands>();
+        commands.RegisterGuildCommands<Testing>(1023182344087146546);
 
         // Run bot
         await discord.ConnectAsync();
