@@ -5,12 +5,12 @@ using Npgsql;
 
 namespace Bot.Database.Types;
 
-public class TypeBase(string connectionString, HandlersGroup handlersGroup, IDataRecord reader)
+public class TypeBase(string connectionString, HandlersGroup handlersGroup)
 {
     /// <summary>
     ///     Handlers group.
     /// </summary>
-    protected HandlersGroup HandlersGroup = handlersGroup;
+    protected readonly HandlersGroup HandlersGroup = handlersGroup;
 
     /// <summary>
     ///     Connection string.

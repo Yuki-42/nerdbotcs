@@ -90,8 +90,6 @@ public class ReactionsRow(string connectionString, HandlersGroup handlersGroup, 
                 return false;
             }
 
-            bool fail;
-
             switch (type)
             {
                 case EmojiTypes.Unicode:

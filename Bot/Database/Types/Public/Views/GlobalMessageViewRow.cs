@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Bot.Database.Types.Public.Views;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-public class GlobalMessageViewRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseViewRow(connectionString, handlersGroup, reader)
+public class GlobalMessageViewRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseViewRow(connectionString, handlersGroup)
 {
     /// <summary>
     ///     User id.

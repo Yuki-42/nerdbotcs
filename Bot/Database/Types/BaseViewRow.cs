@@ -1,5 +1,3 @@
-﻿using System.Data;
+﻿namespace Bot.Database.Types;
 
-namespace Bot.Database.Types;
-
-public class BaseViewRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : TypeBase(connectionString, handlersGroup, reader);
+public class BaseViewRow(string connectionString, HandlersGroup handlersGroup) : TypeBase(connectionString, handlersGroup);

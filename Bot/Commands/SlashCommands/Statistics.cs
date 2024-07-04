@@ -65,17 +65,15 @@ public class StatisticsCommands : ApplicationCommandsModule
                     // Permissions check
                     int permission = await Shared.CheckPermissions(ctx);
                     if (permission != 1)
-                    {
                         await ctx.EditResponseAsync(
                             new DiscordWebhookBuilder
                             {
                                 Content = "You do not have permission to run this command."
                             });
-                    }
-                    
+
                     // Get the rows
                     IReadOnlyList<GlobalMessageViewRow> rows = await viewsHandler.GetGlobalMessages(limit);
-                    
+
                     // Create the leaderboard
                     string content = $"@silent Messages Leaderboard.\nShowing the top {limit} users globally.";
                     for (int i = 0; i < rows.Count; i++)
@@ -84,40 +82,37 @@ public class StatisticsCommands : ApplicationCommandsModule
                         DiscordUser user = await ctx.Client.GetUserAsync(rows[i].UserId); // TODO: This will throw an error when the user is not found.
                         content += $"\n{i + 1}. {user.Mention} - {rows[i].MessagesSent}";
                     }
-                    
+
                     // Edit the response
                     await ctx.EditResponseAsync(
                         new DiscordWebhookBuilder
                         {
                             Content = content
                         });
-                    
-                    break;
                 }
-
                     break;
                 case LeaderboardContext.Guild:
                 {
                     // Get the rows
                     IReadOnlyList<GuildMessageViewRow> rows = await viewsHandler.GetGuildMessages(ctx.Guild, limit);
-                    
+
                     // Create the leaderboard
                     string content = $"@silent Messages Leaderboard.\nShowing the top {limit} users in {ctx.Guild.Name}";
-                    
+
                     for (int i = 0; i < rows.Count; i++)
                     {
                         // Get discord user
                         DiscordUser user = await ctx.Client.GetUserAsync(rows[i].UserId); // TODO: This will throw an error when the user is not found.
                         content += $"\n{i + 1}. {user.Mention} - {rows[i].MessagesSent}";
                     }
-                    
+
                     // Edit the response
                     await ctx.EditResponseAsync(
                         new DiscordWebhookBuilder
                         {
                             Content = content
                         });
-                    
+
                     break;
                 }
 
@@ -184,10 +179,10 @@ public class StatisticsCommands : ApplicationCommandsModule
                     {
                         Content = "An error occurred while running this command."
                     });
-                
+
                 ErrorHandler.Handle(e.Exception, e.Context);
             }
-            
+
             /// <summary>
             ///     Audits all categories.
             /// </summary>

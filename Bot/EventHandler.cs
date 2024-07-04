@@ -78,7 +78,7 @@ internal static class EventLogic
             }
             
             // Add the reaction
-            await eventArgs.Message.CreateReactionAsync(emoji);
+            await eventArgs.Message.CreateReactionAsync(emoji!);
         }
     }
 }
