@@ -44,7 +44,7 @@ public class ErrorHandler
         {
             await channel.SendMessageAsync(
                 new DiscordMessageBuilder()
-                    .WithContent($"An error occurred: {exception.Message}")
+                    .WithContent(errorMessage)
             );
         }
         catch (Exception e)

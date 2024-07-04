@@ -373,6 +373,11 @@ public class Statistics
                     ErrorHandler.Handle(exception, ctx);
                     continue;
                 }
+                catch (Exception exception)
+                {
+                    ErrorHandler.Handle(exception, ctx);
+                    continue;
+                }
 
                 // Check if there are no messages
                 if (messages.Count <= 0) break;
