@@ -55,15 +55,14 @@ public class Program
         discord.RegisterEventHandlers(Assembly.GetExecutingAssembly());
 
         // Register commands
-        const ulong devGuild = 1023182344087146546;
         ApplicationCommandsExtension commands = discord.UseApplicationCommands(new ApplicationCommandsConfiguration
         {
             ServiceProvider = serviceProvider
         });
-        commands.RegisterGuildCommands<GeneralCommands>(devGuild);
-        commands.RegisterGuildCommands<StatisticsCommands>(devGuild);
-        commands.RegisterGuildCommands<PrivacyCommands>(devGuild);
-        commands.RegisterGuildCommands<ReactionsCommands>(devGuild);
+        commands.RegisterGlobalCommands<GeneralCommands>();
+        commands.RegisterGlobalCommands<StatisticsCommands>();
+        commands.RegisterGlobalCommands<PrivacyCommands>();
+        commands.RegisterGlobalCommands<ReactionsCommands>();
 
         // Run bot
         await discord.ConnectAsync();
