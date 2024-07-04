@@ -3,7 +3,6 @@ using Bot.Database.Handlers.Config;
 using Bot.Database.Handlers.Filter;
 using Bot.Database.Handlers.Public;
 using Bot.Database.Handlers.Reactions;
-using Npgsql;
 
 namespace Bot.Database;
 
@@ -14,7 +13,7 @@ public class Database
     /// </summary>
     public readonly HandlersGroup Handlers;
 
-    
+
     public Database
     (
         string host,

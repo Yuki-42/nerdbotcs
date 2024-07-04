@@ -50,7 +50,8 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
         // Get a new connection
         await using NpgsqlConnection connection = await Connection();
         await using NpgsqlCommand command = connection.CreateCommand();
-        command.CommandText = "INSERT INTO reactions.reactions (emoji, emoji_id, user_id, guild_id, channel_id, type) VALUES (@emoji, @emoji_id, @user_id, @guild_id, @channel_id, @type) RETURNING id;";
+        command.CommandText =
+            "INSERT INTO reactions.reactions (emoji, emoji_id, user_id, guild_id, channel_id, type) VALUES (@emoji, @emoji_id, @user_id, @guild_id, @channel_id, @type) RETURNING id;";
         command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)appliesTo });
         command.Parameters.Add(new NpgsqlParameter("guild_id", NpgsqlDbType.Numeric) { Value = guildId == null ? DBNull.Value : (long)guildId });
         command.Parameters.Add(new NpgsqlParameter("channel_id", NpgsqlDbType.Numeric) { Value = channelId == null ? DBNull.Value : (long)channelId });
@@ -82,6 +83,7 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
             command.Parameters.Add(new NpgsqlParameter("emoji", NpgsqlDbType.Text) { Value = emoji });
             command.Parameters.Add(new NpgsqlParameter("emoji_id", NpgsqlDbType.Numeric) { Value = DBNull.Value });
         }
+
         Console.WriteLine(emojiType);
         command.Parameters.Add(new NpgsqlParameter("type", NpgsqlDbType.Text) { Value = emojiType });
         Console.WriteLine(emojiType);

@@ -10,14 +10,28 @@ namespace Bot.Database.Types;
 /// </summary>
 public class BaseType(string connectionString, HandlersGroup handlersGroup, IDataRecord reader)
 {
+    /// <summary>
+    ///     Handlers group.
+    /// </summary>
+    protected HandlersGroup HandlersGroup = handlersGroup;
+
     public string ConnectionString { get; } = connectionString;
-    
+
+    /// <summary>
+    ///     Row id.
+    /// </summary>
+    public Guid Id { get; } = TryGetGuid(reader, "id") ?? Guid.Empty;
+
+    /// <summary>
+    ///     Row added to db.
+    /// </summary>
+    public DateTime CreatedAt { get; } = reader.GetDateTime(reader.GetOrdinal("created_at"));
+
     protected NpgsqlConnection GetConnection()
     {
         NpgsqlConnection connection;
         int timeWaited = 0;
         while (true)
-        {
             try
             {
                 connection = new NpgsqlConnection(ConnectionString);
@@ -29,24 +43,20 @@ public class BaseType(string connectionString, HandlersGroup handlersGroup, IDat
                 Console.WriteLine($"Connection limit hit. Waiting 500ms before trying again. Total time waited {timeWaited}");
                 Thread.Sleep(500);
                 timeWaited += 500;
-                continue;
             }
-        }
-        
+
         connection.Open();
         return connection;
     }
-    
+
     /// <summary>
     ///     Database connection.
     /// </summary>
     protected async Task<NpgsqlConnection> GetConnectionAsync()
     {
-        
         NpgsqlConnection connection;
         int timeWaited = 0;
         while (true)
-        {
             try
             {
                 connection = new NpgsqlConnection(ConnectionString);
@@ -58,28 +68,11 @@ public class BaseType(string connectionString, HandlersGroup handlersGroup, IDat
                 Console.WriteLine($"Connection limit hit. Waiting 500ms before trying again. Total time waited {timeWaited}");
                 await Task.Delay(500);
                 timeWaited += 500;
-                continue;
             }
-        }
-        
+
         connection.Open();
         return connection;
     }
-
-    /// <summary>
-    ///     Handlers group.
-    /// </summary>
-    protected HandlersGroup HandlersGroup = handlersGroup;
-
-    /// <summary>
-    ///     Row id.
-    /// </summary>
-    public Guid Id { get; } = TryGetGuid(reader, "id") ?? Guid.Empty;
-
-    /// <summary>
-    ///     Row added to db.
-    /// </summary>
-    public DateTime CreatedAt { get; } = reader.GetDateTime(reader.GetOrdinal("created_at"));
 
     /// <summary>
     ///     Execute a non query command.
@@ -115,7 +108,7 @@ public class BaseType(string connectionString, HandlersGroup handlersGroup, IDat
             return null;
         }
     }
-    
+
     protected static ulong? GetNullableUlong(IDataRecord reader, string column)
     {
         int ordinal = reader.GetOrdinal(column);

@@ -31,23 +31,23 @@ public class GeneralCommands : ApplicationCommandsModule
         ActivityType type
     )
     {
-        DiscordActivity activity = new DiscordActivity
+        DiscordActivity activity = new()
         {
             ActivityType = type,
             Name = status
         };
-        
+
         // Get the config service
         ConfigHandler configHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Config;
 
         // Update the status in the database
         ConfigData data = await configHandler.NGet("status");
         data.Value = status;
-        
+
         // Update the status type in the database
         ConfigData typeData = await configHandler.NGet("status_type");
-        typeData.Value = ((int) type).ToString();
-        
+        typeData.Value = ((int)type).ToString();
+
         await ctx.Client.UpdateStatusAsync(activity);
         await ctx.CreateResponseAsync(
             InteractionResponseType.ChannelMessageWithSource,

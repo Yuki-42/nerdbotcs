@@ -114,7 +114,7 @@ public class Privacy
 
         PublicGuild lGuild = await handler.Guilds.Get(guild);
         lGuild.MessageTracking = value ?? !lGuild.MessageTracking;
-        
+
         await ctx.EditResponseAsync(
             new DiscordWebhookBuilder
             {
@@ -135,7 +135,7 @@ public class Privacy
                 Content = "Toggling user data collection for the channel..."
             });
 
-        channel ??= ctx.Channel;  // Ensure that the channel is not null
+        channel ??= ctx.Channel; // Ensure that the channel is not null
 
         if (!await CheckChannelAccessible(ctx, channel))
         {
@@ -170,7 +170,7 @@ public class Privacy
 
         PublicChannel lChannel = await handler.Channels.Get(channel);
         lChannel.MessageTracking = value ?? !lChannel.MessageTracking;
-        
+
         await ctx.EditResponseAsync(
             new DiscordWebhookBuilder
             {

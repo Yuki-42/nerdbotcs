@@ -11,6 +11,114 @@ namespace Bot.Commands.Logic;
 public class Statistics
 {
     /// <summary>
+    ///     Stores the completion messages for global audit.
+    /// </summary>
+    private static readonly string[] AuditCompletion =
+    [
+        "Running %s audit, this may take a while.\n- :red_square: Users\n- :red_square: Servers\n- :red_square: Channels\n- :red_square: Messages",
+        "Running %s audit, this may take a while.\n- :green_square: Users\n- :red_square: Servers\n- :red_square: Channels\n- :red_square: Messages",
+        "Running %s audit, this may take a while.\n- :green_square: Users\n- :green_square: Servers\n- :red_square: Channels\n- :red_square: Messages",
+        "Running %s audit, this may take a while.\n- :green_square: Users\n- :green_square: Servers\n- :green_square: Channels\n- :red_square: Messages",
+        "%s audit completed.\n- :green_square: Users\n- :green_square: Guilds\n- :green_square: Channels\n- :green_square: Messages"
+    ];
+
+    /// <summary>
+    ///     Audit all categories as a global admin.
+    /// </summary>
+    /// <param name="ctx">Context.</param>
+    public static async Task AuditAllGlobalAdmin(BaseContext ctx)
+    {
+        await ctx.CreateResponseAsync(
+            InteractionResponseType.ChannelMessageWithSource,
+            new DiscordInteractionResponseBuilder
+            {
+                Content = AuditCompletion[0].Replace("%s", "global")
+            });
+
+        await AuditAllUsers(ctx);
+
+        await ctx.EditResponseAsync(
+            new DiscordWebhookBuilder
+            {
+                Content = AuditCompletion[1].Replace("%s", "global")
+            });
+
+        await AuditAllGuilds(ctx);
+
+        await ctx.EditResponseAsync(
+            new DiscordWebhookBuilder
+            {
+                Content = AuditCompletion[2].Replace("%s", "global")
+            });
+
+        await AuditAllChannels(ctx);
+
+        await ctx.EditResponseAsync(
+            new DiscordWebhookBuilder
+            {
+                Content = AuditCompletion[3].Replace("%s", "global")
+            });
+
+        await AuditAllMessages(ctx);
+
+        await ctx.EditResponseAsync(
+            new DiscordWebhookBuilder
+            {
+                Content = AuditCompletion[4].Replace("%s", "Global")
+            });
+    }
+
+
+    /// <summary>
+    ///     Audit all categories as a server admin.
+    /// </summary>
+    /// <param name="ctx">Context.</param>
+    /// <exception cref="InvalidOperationException">Thrown when a null guild is audited.</exception>
+    public static async Task AuditAllServerAdmin(BaseContext ctx)
+    {
+        await ctx.CreateResponseAsync(
+            InteractionResponseType.ChannelMessageWithSource,
+            new DiscordInteractionResponseBuilder
+            {
+                Content = AuditCompletion[0].Replace("%s", "server")
+            });
+
+        if (ctx.Guild is null) throw new InvalidOperationException("Cannot audit a null guild.");
+
+        await AuditGuildUsers(ctx, ctx.Guild);
+
+        await ctx.EditResponseAsync(
+            new DiscordWebhookBuilder
+            {
+                Content = AuditCompletion[1].Replace("%s", "server")
+            });
+
+        await AuditGuild(ctx, ctx.Guild);
+
+        await ctx.EditResponseAsync(
+            new DiscordWebhookBuilder
+            {
+                Content = AuditCompletion[2].Replace("%s", "server")
+            });
+
+        await AuditGuildChannels(ctx, ctx.Guild);
+
+        await ctx.EditResponseAsync(
+            new DiscordWebhookBuilder
+            {
+                Content = AuditCompletion[3].Replace("%s", "server")
+            });
+
+        await AuditGuildMessages(ctx, ctx.Guild);
+
+        await ctx.EditResponseAsync(
+            new DiscordWebhookBuilder
+            {
+                Content = AuditCompletion[4].Replace("%s", "server")
+            });
+    }
+
+    /// <summary>
     ///     Audit all guilds.
     /// </summary>
     /// <param name="ctx">Context</param>

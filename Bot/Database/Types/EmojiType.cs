@@ -1,6 +1,5 @@
 ﻿namespace Bot.Database.Types;
 
-
 public static class EmojiTypes
 {
     public const string Unicode = "Unicode";
@@ -8,4 +7,3 @@ public static class EmojiTypes
     public const string Guild = "Guild";
     public const string Unknown = "Unknown";
 }
-

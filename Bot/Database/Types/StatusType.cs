@@ -10,7 +10,7 @@ public static class StatusType
     private const int Watching = 3;
     private const int Custom = 4;
     private const int Competing = 5;
-    
+
     public static DiscordActivity GetActivityType(int type, string status)
     {
         return type switch

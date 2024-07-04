@@ -1,7 +1,4 @@
-﻿using System.Data.Common;
-using Npgsql;
-
-namespace Bot.Database.Handlers.Public;
+﻿namespace Bot.Database.Handlers.Public;
 
 public class PublicHandler(string connectionString) : BaseHandler(connectionString)
 {

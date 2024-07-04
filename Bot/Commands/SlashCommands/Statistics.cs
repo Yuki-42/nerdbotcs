@@ -15,7 +15,7 @@ namespace Bot.Commands.SlashCommands;
 public class StatisticsCommands : ApplicationCommandsModule
 {
     [SlashCommandGroup("statistics", "Statistics commands.")]
-    public class StatisticsComandGroup : ApplicationCommandsModule
+    public class StatisticsCommandGroup : ApplicationCommandsModule
     {
         /// <summary>
         ///     Audit related commands.
@@ -23,101 +23,6 @@ public class StatisticsCommands : ApplicationCommandsModule
         [SlashCommandGroup("audit", "Audit commands.")]
         public class AuditGroup : ApplicationCommandsModule
         {
-            private static readonly string[] AuditCompletion =
-            [
-                "Running %s audit, this may take a while.\n- :red_square: Users\n- :red_square: Servers\n- :red_square: Channels\n- :red_square: Messages",
-                "Running %s audit, this may take a while.\n- :green_square: Users\n- :red_square: Servers\n- :red_square: Channels\n- :red_square: Messages",
-                "Running %s audit, this may take a while.\n- :green_square: Users\n- :green_square: Servers\n- :red_square: Channels\n- :red_square: Messages",
-                "Running %s audit, this may take a while.\n- :green_square: Users\n- :green_square: Servers\n- :green_square: Channels\n- :red_square: Messages",
-                "%s audit completed.\n- :green_square: Users\n- :green_square: Guilds\n- :green_square: Channels\n- :green_square: Messages"
-            ];
-
-            private static async Task AuditAllGlobalAdmin(BaseContext ctx)
-            {
-                await ctx.CreateResponseAsync(
-                    InteractionResponseType.ChannelMessageWithSource,
-                    new DiscordInteractionResponseBuilder
-                    {
-                        Content = AuditCompletion[0].Replace("%s", "global")
-                    });
-
-                await Statistics.AuditAllUsers(ctx);
-
-                await ctx.EditResponseAsync(
-                    new DiscordWebhookBuilder
-                    {
-                        Content = AuditCompletion[1].Replace("%s", "global")
-                    });
-
-                await Statistics.AuditAllGuilds(ctx);
-
-                await ctx.EditResponseAsync(
-                    new DiscordWebhookBuilder
-                    {
-                        Content = AuditCompletion[2].Replace("%s", "global")
-                    });
-
-                await Statistics.AuditAllChannels(ctx);
-
-                await ctx.EditResponseAsync(
-                    new DiscordWebhookBuilder
-                    {
-                        Content = AuditCompletion[3].Replace("%s", "global")
-                    });
-
-                await Statistics.AuditAllMessages(ctx);
-
-                await ctx.EditResponseAsync(
-                    new DiscordWebhookBuilder
-                    {
-                        Content = AuditCompletion[4].Replace("%s", "Global")
-                    });
-            }
-
-            private static async Task AuditAllServerAdmin(BaseContext ctx)
-            {
-                await ctx.CreateResponseAsync(
-                    InteractionResponseType.ChannelMessageWithSource,
-                    new DiscordInteractionResponseBuilder
-                    {
-                        Content = AuditCompletion[0].Replace("%s", "server")
-                    });
-
-                if (ctx.Guild is null) throw new InvalidOperationException();
-
-                await Statistics.AuditGuildUsers(ctx, ctx.Guild);
-
-                await ctx.EditResponseAsync(
-                    new DiscordWebhookBuilder
-                    {
-                        Content = AuditCompletion[1].Replace("%s", "server")
-                    });
-
-                await Statistics.AuditGuild(ctx, ctx.Guild);
-
-                await ctx.EditResponseAsync(
-                    new DiscordWebhookBuilder
-                    {
-                        Content = AuditCompletion[2].Replace("%s", "server")
-                    });
-
-                await Statistics.AuditGuildChannels(ctx, ctx.Guild);
-
-                await ctx.EditResponseAsync(
-                    new DiscordWebhookBuilder
-                    {
-                        Content = AuditCompletion[3].Replace("%s", "server")
-                    });
-
-                await Statistics.AuditGuildMessages(ctx, ctx.Guild);
-
-                await ctx.EditResponseAsync(
-                    new DiscordWebhookBuilder
-                    {
-                        Content = AuditCompletion[4].Replace("%s", "server")
-                    });
-            }
-
             /// <summary>
             ///     Audits all categories.
             /// </summary>
@@ -143,10 +48,10 @@ public class StatisticsCommands : ApplicationCommandsModule
                             });
                         return;
                     case 1:
-                        await AuditAllGlobalAdmin(ctx);
+                        await Statistics.AuditAllGlobalAdmin(ctx);
                         return;
                     case 2:
-                        await AuditAllServerAdmin(ctx);
+                        await Statistics.AuditAllServerAdmin(ctx);
                         return;
                 }
             }

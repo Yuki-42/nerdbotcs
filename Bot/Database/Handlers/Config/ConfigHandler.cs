@@ -32,9 +32,9 @@ public class ConfigHandler(string connectionString) : BaseHandler(connectionStri
 
         return !reader.Read() ? null : new ConfigData(ConnectionString, HandlersGroup, reader);
     }
-    
+
     /// <summary>
-    /// Creates a new configuration entry in the database or gets an existing one.
+    ///     Creates a new configuration entry in the database or gets an existing one.
     /// </summary>
     /// <param name="key">Key</param>
     /// <returns></returns>
@@ -42,17 +42,17 @@ public class ConfigHandler(string connectionString) : BaseHandler(connectionStri
     {
         ConfigData? data = await Get(key);
         if (data is not null) return data;
-        
+
         // Get a new connection
         await using NpgsqlConnection connection = await Connection();
         await using NpgsqlCommand command = connection.CreateCommand();
-        
+
         command.CommandText = "INSERT INTO config.data (key) VALUES (@key) RETURNING id;";
         command.Parameters.Add(new NpgsqlParameter("key", NpgsqlDbType.Text) { Value = key });
-        
+
         await using NpgsqlDataReader reader = await ExecuteReader(command);
         await reader.ReadAsync();
-        
+
         return new ConfigData(ConnectionString, HandlersGroup, reader);
     }
 }

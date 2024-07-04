@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Data.Common;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -55,7 +54,7 @@ public class PublicChannelUser(string connectionString, HandlersGroup handlersGr
             command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)UserId });
             command.Parameters.Add(new NpgsqlParameter("channel_id", NpgsqlDbType.Numeric) { Value = (long)ChannelId });
 
-            command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Numeric) { Value = (long)value });
+            command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Numeric) { Value = value });
             ExecuteNonQuery(command);
         }
     }

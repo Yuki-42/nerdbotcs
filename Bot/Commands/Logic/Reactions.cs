@@ -48,7 +48,7 @@ public class Reactions
     }
 
     /// <summary>
-    /// Checks if a user has the appropriate permissions to list reactions.
+    ///     Checks if a user has the appropriate permissions to list reactions.
     /// </summary>
     /// <param name="ctx">Context.</param>
     /// <param name="targetUser">The target user for the emoji list.</param>
@@ -57,17 +57,17 @@ public class Reactions
     {
         // Check if the user is the target user
         if (ctx.User.Id == targetUser.Id) return true;
-        
+
         // Get the required handlers
         PublicHandler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-        
+
         // Check if the user is a global bot admin
         PublicUser publicUser = await publicHandler.Users.Get(ctx.User);
         return publicUser.Admin;
     }
-    
+
     /// <summary>
-    /// Checks if an emoji add command has appropriate permissions. 
+    ///     Checks if an emoji add command has appropriate permissions.
     /// </summary>
     /// <param name="ctx">Context.</param>
     /// <param name="targetUser">Target user for emoji add.</param>
@@ -76,31 +76,31 @@ public class Reactions
     {
         // First check if the target user and invoker are the same
         if (ctx.User.Id == targetUser.Id) return true;
-        
+
         // Get the required handlers
         PublicHandler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-        
+
         // Check if the user is a global bot admin
         PublicUser publicUser = await publicHandler.Users.Get(ctx.User);
         if (publicUser.Admin) return true;
-        
+
         // If the guild is null then the user is not a server admin
         if (ctx.Guild is null) return false;
-        
+
         // Check if the user is a server admin
         DiscordMember member = await ctx.Guild.GetMemberAsync(ctx.User.Id);
         return member.Permissions.HasPermission(Permissions.ModerateMembers);
     }
 
-    
+
     public static async Task<bool> RemovePermissionsCheck(BaseContext ctx, DiscordUser targetUser)
     {
         // Check if the user is the target user
         if (ctx.User.Id == targetUser.Id) return true;
-        
+
         // Get the required handlers
         PublicHandler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-        
+
         // Check if the user is a global bot admin
         PublicUser publicUser = await publicHandler.Users.Get(ctx.User);
         return publicUser.Admin;

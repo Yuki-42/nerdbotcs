@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Data.Common;
 using DisCatSharp.Enums;
 using Npgsql;
 using NpgsqlTypes;
@@ -12,7 +11,7 @@ public class PublicChannel(string connectionString, HandlersGroup handlersGroup,
     ///     User's discord id.
     /// </summary>
     public new ulong Id { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("id"));
-    
+
     /// <summary>
     ///     Guild id.
     /// </summary>

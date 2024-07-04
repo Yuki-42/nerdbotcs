@@ -25,7 +25,7 @@ public class ReactionsCommands : ApplicationCommandsModule
         )
         {
             // Create response 
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder { Content = "Listing reactions...", IsEphemeral = true});
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder { Content = "Listing reactions...", IsEphemeral = true });
 
             // Get the required services
             Database.Database database = ctx.Services.GetRequiredService<Database.Database>();
@@ -49,7 +49,7 @@ public class ReactionsCommands : ApplicationCommandsModule
 
             // Get the reactions
             IEnumerable<ReactionsReaction> reactions = await reactionsHandler.GetReactions(user.Id);
-            
+
             // Create the reactions text 
             string reactionsText = "";
             IEnumerable<ReactionsReaction> reactionsReactions = reactions.ToList();
@@ -65,9 +65,11 @@ public class ReactionsCommands : ApplicationCommandsModule
                 {
                     emoji = reaction.Emoji;
                 }
-                reactionsText += $"ID: `{reaction.Id}` | {emoji}{(reaction.ChannelId != null ? $" | Channel: {reaction.ChannelId.Value}" : "")}{(reaction.GuildId != null ? $" | Guild: {reaction.GuildId}" : "")}\n";
+
+                reactionsText +=
+                    $"ID: `{reaction.Id}` | {emoji}{(reaction.ChannelId != null ? $" | Channel: {reaction.ChannelId.Value}" : "")}{(reaction.GuildId != null ? $" | Guild: {reaction.GuildId}" : "")}\n";
             }
-            
+
 
             // Edit the response
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Reactions: \n" + reactionsText));

@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Data.Common;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -34,7 +33,7 @@ public class ConfigData(string connectionString, HandlersGroup handlersGroup, ID
             command.CommandText = "UPDATE config.data SET value = @value WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Uuid) { Value = Id });
 
-            command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Text) { Value = value });   // TODO: Add error handling for when value is null
+            command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Text) { Value = value }); // TODO: Add error handling for when value is null
             ExecuteNonQuery(command);
         }
     }

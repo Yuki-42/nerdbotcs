@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using Bot.Database.Types.Public;
+﻿using Bot.Database.Types.Public;
 using DisCatSharp.Entities;
 using Npgsql;
 using NpgsqlTypes;

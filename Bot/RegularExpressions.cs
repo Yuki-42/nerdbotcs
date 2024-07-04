@@ -34,9 +34,9 @@ internal partial class RegularExpressions
     /// <inheritdoc cref="Guild" />
     public static Regex GuildEmoji { get; } = BuildGuild();
 
-    /// <inheritdoc cref="Number"/>
+    /// <inheritdoc cref="Number" />
     private static Regex NumberRegex { get; } = BuildNumber();
-    
+
     /// <inheritdoc cref="Unicode" />
     [GeneratedRegex(Unicode, RegexOptions.Compiled)]
     private static partial Regex BuildUnicode();
@@ -49,12 +49,12 @@ internal partial class RegularExpressions
     [GeneratedRegex(Guild, RegexOptions.Compiled)]
     private static partial Regex BuildGuild();
 
-    /// <inheritdoc cref="Number"/>
+    /// <inheritdoc cref="Number" />
     [GeneratedRegex(Number, RegexOptions.Compiled)]
     private static partial Regex BuildNumber();
 
     /// <summary>
-    /// Extracts the ID from a Guild Emoji.
+    ///     Extracts the ID from a Guild Emoji.
     /// </summary>
     /// <returns>Id. 0 if invalid.</returns>
     public static ulong ExtractId(string emojiText)

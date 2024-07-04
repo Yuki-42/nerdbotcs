@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using Bot.Database.Types.Public;
+﻿using Bot.Database.Types.Public;
 using DisCatSharp.Entities;
 using Npgsql;
 using NpgsqlTypes;
@@ -32,7 +31,7 @@ public class PublicChannelsHandler(string connectionString) : BaseHandler(connec
         // Check if the user already exists.
         PublicChannel? user = await Get(id);
         if (user != null) return user;
-        
+
         // Get a new connection
         await using NpgsqlConnection connection = await Connection();
         await using NpgsqlCommand command = connection.CreateCommand();

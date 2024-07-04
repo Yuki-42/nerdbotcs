@@ -37,7 +37,7 @@ public class BaseHandler
                 await Task.Delay(500);
                 timeWaited += 500;
             }
-        
+
         connection.Open();
         return connection;
     }
