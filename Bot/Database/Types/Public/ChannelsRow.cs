@@ -42,6 +42,16 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
             ExecuteNonQuery(command);
         }
     }
+    
+    public async Task Delete()
+    {
+        await using NpgsqlConnection connection = await GetConnectionAsync();
+        await using NpgsqlCommand command = connection.CreateCommand();
+        command.CommandText = "DELETE FROM public.channels WHERE id = @id;";
+        command.Parameters.Add(new NpgsqlParameter("id", DbType.VarNumeric) { Value = Id });
+
+        await command.ExecuteNonQueryAsync();
+    }
 
     public string Name
     {

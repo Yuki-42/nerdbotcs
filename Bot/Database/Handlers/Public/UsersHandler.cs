@@ -49,4 +49,21 @@ public class UsersHandler(string connectionString) : BaseHandler(connectionStrin
     {
         return await Get(user.Id, user.Username);
     }
+    
+    public async Task<IReadOnlyList<UsersRow>> GetAll()
+    {
+        // Get a new connection
+        await using NpgsqlConnection connection = await Connection();
+        await using NpgsqlCommand command = connection.CreateCommand();
+        command.CommandText = "SELECT * FROM public.users;";
+
+        await using NpgsqlDataReader reader = await ExecuteReader(command);
+        List<UsersRow> users = [];
+        while (await reader.ReadAsync())
+        {
+            users.Add(new UsersRow(ConnectionString, HandlersGroup, reader));
+        }
+
+        return users;
+    }
 }

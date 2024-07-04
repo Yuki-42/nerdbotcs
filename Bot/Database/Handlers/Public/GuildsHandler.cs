@@ -46,4 +46,21 @@ public class GuildsHandler(string connectionString) : BaseHandler(connectionStri
     {
         return await Get(guild.Id, guild.Name);
     }
+
+    public async Task<IReadOnlyList<GuildsRow>> GetAll()
+    {
+        // Get a new connection
+        await using NpgsqlConnection connection = await Connection();
+        await using NpgsqlCommand command = connection.CreateCommand();
+        command.CommandText = "SELECT * FROM public.guilds";
+
+        await using NpgsqlDataReader reader = await ExecuteReader(command);
+        List<GuildsRow> guilds = [];
+        while (await reader.ReadAsync())
+        {
+            guilds.Add(new GuildsRow(ConnectionString, HandlersGroup, reader));
+        }
+
+        return guilds;
+    }
 }

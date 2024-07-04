@@ -1,7 +1,4 @@
 ﻿using System.Data;
-using System.Data.Common;
-using System.Diagnostics;
-using Npgsql;
 
 namespace Bot.Database.Types;
 
@@ -20,7 +17,6 @@ public class BaseRow(string connectionString, HandlersGroup handlersGroup, IData
     /// </summary>
     public DateTime CreatedAt { get; } = reader.GetDateTime(reader.GetOrdinal("created_at"));
 
-    
 
     private static Guid? TryGetGuid(IDataRecord reader, string column)
     {
@@ -33,6 +29,4 @@ public class BaseRow(string connectionString, HandlersGroup handlersGroup, IData
             return null;
         }
     }
-
-    
 }

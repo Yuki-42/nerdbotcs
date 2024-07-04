@@ -108,4 +108,15 @@ public class UsersRow(string connectionString, HandlersGroup handlersGroup, IDat
             ExecuteNonQuery(command);
         }
     }
+    
+    public async Task Delete()
+    {
+        Console.WriteLine($"Deleting user {Username}");
+        await using NpgsqlConnection connection = await GetConnectionAsync();
+        await using NpgsqlCommand command = connection.CreateCommand();
+        command.CommandText = "DELETE FROM public.users WHERE id = @id;";
+        command.Parameters.Add(new NpgsqlParameter("id", DbType.VarNumeric) { Value = Id });
+
+        await command.ExecuteNonQueryAsync();
+    }
 }

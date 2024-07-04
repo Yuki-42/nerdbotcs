@@ -57,4 +57,39 @@ public class ChannelsHandler(string connectionString) : BaseHandler(connectionSt
     {
         return await Get(channel.Id, channel.GuildId);
     }
+    
+    public async Task<IReadOnlyList<ChannelsRow>> GetAll()
+    {
+        // Get a new connection
+        await using NpgsqlConnection connection = await Connection();
+        await using NpgsqlCommand command = connection.CreateCommand();
+        command.CommandText = "SELECT * FROM public.channels";
+
+        await using NpgsqlDataReader reader = await ExecuteReader(command);
+        List<ChannelsRow> channels = [];
+        while (await reader.ReadAsync())
+        {
+            channels.Add(new ChannelsRow(ConnectionString, HandlersGroup, reader));
+        }
+
+        return channels;
+    }
+    
+    public async Task<IReadOnlyList<ChannelsRow>> GetAll(ulong guildId)
+    {
+        // Get a new connection
+        await using NpgsqlConnection connection = await Connection();
+        await using NpgsqlCommand command = connection.CreateCommand();
+        command.CommandText = "SELECT * FROM public.channels WHERE guild_id = @guild_id";
+        command.Parameters.Add(new NpgsqlParameter("guild_id", NpgsqlDbType.Numeric) { Value = (long)guildId });
+
+        await using NpgsqlDataReader reader = await ExecuteReader(command);
+        List<ChannelsRow> channels = [];
+        while (await reader.ReadAsync())
+        {
+            channels.Add(new ChannelsRow(ConnectionString, HandlersGroup, reader));
+        }
+
+        return channels;
+    }
 }

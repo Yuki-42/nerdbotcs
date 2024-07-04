@@ -43,4 +43,14 @@ public class GuildsUsersRow(string connectionString, HandlersGroup handlersGroup
     {
         return await HandlersGroup.Public.Guilds.Get(GuildId) ?? throw new MissingMemberException();
     }
+    
+    public async Task Delete()
+    {
+        await using NpgsqlConnection connection = await GetConnectionAsync();
+        await using NpgsqlCommand command = connection.CreateCommand();
+        command.CommandText = "DELETE FROM public.guilds_users WHERE id = @id;";
+        command.Parameters.Add(new NpgsqlParameter("id", DbType.Guid) { Value = Id });
+
+        await command.ExecuteNonQueryAsync();
+    }
 }

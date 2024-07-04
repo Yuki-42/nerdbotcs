@@ -68,4 +68,14 @@ public class ChannelsUsersRow(string connectionString, HandlersGroup handlersGro
     {
         return await HandlersGroup.Public.Channels.Get(ChannelId, null) ?? throw new MissingMemberException();
     }
+    
+    public async Task Delete()
+    {
+        await using NpgsqlConnection connection = await GetConnectionAsync();
+        await using NpgsqlCommand command = connection.CreateCommand();
+        command.CommandText = "DELETE FROM public.channels_users WHERE id = @id;";
+        command.Parameters.Add(new NpgsqlParameter("id", DbType.Guid) { Value = Id });
+
+        await command.ExecuteNonQueryAsync();
+    }
 }

@@ -131,6 +131,13 @@ public class Statistics
         DiscordGuild[] guilds = ctx.Client.Guilds.Values.ToArray();
 
         foreach (DiscordGuild guild in guilds) await AuditGuild(ctx, guild, handler);
+        
+        // Check that there are no guilds in the database that are not in the bot
+        IEnumerable<GuildsRow> publicGuilds = await handler.Guilds.GetAll();
+        foreach (GuildsRow publicGuild in publicGuilds)
+        {
+            if (guilds.All(guild => guild.Id != publicGuild.Id)) await publicGuild.Delete();
+        }
     }
 
     /// <summary>
@@ -207,6 +214,13 @@ public class Statistics
             // Update the type if it's different
             if (publicChannel.Type != channel.Type) publicChannel.Type = channel.Type; // This updates the type in the database through the setter
         }
+        
+        // Check that there are no channels in the database that are not in the bot
+        IEnumerable<ChannelsRow> publicChannels = await handler.Channels.GetAll(guild.Id);
+        foreach (ChannelsRow publicChannel in publicChannels)
+        {
+            if (channels.All(channel => channel.Id != publicChannel.Id)) await publicChannel.Delete();
+        }
     }
 
     /// <summary>
@@ -222,7 +236,24 @@ public class Statistics
         DiscordGuild?[] guilds = ctx.Client.Guilds.Values.ToArray();
 
         // Get all users
+        IEnumerable<DiscordMember> members = [];
+        // ReSharper disable once LoopCanBeConvertedToQuery  // This is a bu_g in ReSharper, it doesn't understand the await keyword // also apparently the word bu-g is a to-do item
+        foreach (DiscordGuild? guild in  guilds)
+        {
+            if (guild is null) continue;
+            members = members.Concat(await guild.GetAllMembersAsync());
+        }
+        
         foreach (DiscordGuild? guild in guilds) await AuditGuildUsers(ctx, guild, handler);
+        
+        // Check that there are no users in the database that are not in the bot
+        IEnumerable<UsersRow> publicUsers = await handler.Users.GetAll();
+        
+        // Get a list of all users in the bot
+        foreach (UsersRow publicUser in publicUsers)
+        {
+            if (members.All(member => member.Id != publicUser.Id)) await publicUser.Delete();
+        }
     }
 
     public static async Task AuditGuildUsers(BaseContext ctx, DiscordGuild? guild, Handler? handler = null)

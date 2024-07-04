@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Bot.Commands.Logic;
 using Bot.Database.Handlers.Public;
+using Bot.Database.Handlers.Public.Views;
 using Bot.Database.Types.Public;
+using Bot.Database.Types.Public.Views;
 using DisCatSharp.ApplicationCommands;
 using DisCatSharp.ApplicationCommands.Attributes;
 using DisCatSharp.ApplicationCommands.Context;
@@ -28,19 +30,37 @@ public class StatisticsCommands : ApplicationCommandsModule
         public async Task LeaderboardCommand(
             InteractionContext ctx,
             [Option("context", "The context to show the leaderboard for.")]
-            LeaderboardContext context = LeaderboardContext.Guild
+            LeaderboardContext context = LeaderboardContext.Guild,
+            [Option("limit", "Limit the number of entries to show.")]
+            int limit = 10
         )
         {
+            // Check that this command was executed in a guild
+            if (ctx.Guild is null)
+            {
+                await ctx.CreateResponseAsync(
+                    InteractionResponseType.ChannelMessageWithSource,
+                    new DiscordInteractionResponseBuilder
+                    {
+                        Content = "This command can only be run in a guild."
+                    });
+                return;
+            }
+
             await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
                 new DiscordInteractionResponseBuilder
                 {
                     Content = "Constructing leaderboard..."
                 });
-            
+
+            // Get the public handler
+            ViewsHandler viewsHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public.Views;
+
             // Check what context to use for the leaderboard
             switch (context)
             {
                 case LeaderboardContext.Global:
+                {
                     // Permissions check
                     int permission = await Shared.CheckPermissions(ctx);
                     if (permission != 1)
@@ -50,17 +70,77 @@ public class StatisticsCommands : ApplicationCommandsModule
                             {
                                 Content = "You do not have permission to run this command."
                             });
-                        return;
                     }
                     
-                    // Get the public handler
-                    Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+                    // Get the rows
+                    IReadOnlyList<GlobalMessageViewRow> rows = await viewsHandler.GetGlobalMessages(limit);
                     
+                    // Create the leaderboard
+                    string content = $"@silent Messages Leaderboard.\nShowing the top {limit} users globally.";
+                    for (int i = 0; i < rows.Count; i++)
+                    {
+                        // Get discord user
+                        DiscordUser user = await ctx.Client.GetUserAsync(rows[i].UserId); // TODO: This will throw an error when the user is not found.
+                        content += $"\n{i + 1}. {user.Mention} - {rows[i].MessagesSent}";
+                    }
                     
+                    // Edit the response
+                    await ctx.EditResponseAsync(
+                        new DiscordWebhookBuilder
+                        {
+                            Content = content
+                        });
+                    
+                    break;
+                }
+
                     break;
                 case LeaderboardContext.Guild:
+                {
+                    // Get the rows
+                    IReadOnlyList<GuildMessageViewRow> rows = await viewsHandler.GetGuildMessages(ctx.Guild, limit);
+                    
+                    // Create the leaderboard
+                    string content = $"@silent Messages Leaderboard.\nShowing the top {limit} users in {ctx.Guild.Name}";
+                    
+                    for (int i = 0; i < rows.Count; i++)
+                    {
+                        // Get discord user
+                        DiscordUser user = await ctx.Client.GetUserAsync(rows[i].UserId); // TODO: This will throw an error when the user is not found.
+                        content += $"\n{i + 1}. {user.Mention} - {rows[i].MessagesSent}";
+                    }
+                    
+                    // Edit the response
+                    await ctx.EditResponseAsync(
+                        new DiscordWebhookBuilder
+                        {
+                            Content = content
+                        });
+                    
                     break;
+                }
+
                 case LeaderboardContext.Channel:
+                {
+                    // Get the rows
+                    IReadOnlyList<ChannelMessageViewRow> rows = await viewsHandler.GetChannelMessages(ctx.Channel, limit);
+
+                    // Create the leaderboard
+                    string content = $"@silent Messages Leaderboard.\nShowing the top {limit} users in {ctx.Channel.Mention}";
+                    for (int i = 0; i < rows.Count; i++)
+                    {
+                        // Get discord user
+                        DiscordUser user = await ctx.Client.GetUserAsync(rows[i].UserId); // TODO: This will throw an error when the user is not found.
+                        content += $"\n{i + 1}. {user.Mention} - {rows[i].MessagesSent}";
+                    }
+
+                    // Edit the response
+                    await ctx.EditResponseAsync(
+                        new DiscordWebhookBuilder
+                        {
+                            Content = content
+                        });
+                }
                     break;
                 default:
                     await ctx.EditResponseAsync(

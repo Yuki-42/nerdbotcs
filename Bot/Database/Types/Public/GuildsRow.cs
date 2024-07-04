@@ -63,4 +63,14 @@ public class GuildsRow(string connectionString, HandlersGroup handlersGroup, IDa
             ExecuteNonQuery(command);
         }
     }
+    
+    public async Task Delete()
+    {
+        await using NpgsqlConnection connection = await GetConnectionAsync();
+        await using NpgsqlCommand command = connection.CreateCommand();
+        command.CommandText = "DELETE FROM public.guilds WHERE id = @id;";
+        command.Parameters.Add(new NpgsqlParameter("id", DbType.VarNumeric) { Value = (long)Id });
+
+        await command.ExecuteNonQueryAsync();
+    }
 }

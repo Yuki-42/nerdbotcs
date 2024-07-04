@@ -279,10 +279,4 @@ GRANT USAGE ON ALL SEQUENCES IN SCHEMA filter TO nerdbot;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA reactions TO nerdbot;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA logs TO nerdbot;
 
-/* Add autofill data */
-INSERT INTO public.users (id, username)
-VALUES (1, 'System');
-INSERT INTO public.guilds (id, name)
-VALUES (1, 'System');
-INSERT INTO public.channels (id, guild_id, name, type)
-VALUES (1, 1, 'System', 'System');
+

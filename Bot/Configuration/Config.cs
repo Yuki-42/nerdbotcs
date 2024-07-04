@@ -16,7 +16,7 @@ public class Bot(string token)
 /// <summary>
 ///     Database configuration.
 /// </summary>
-public class Database(string host, int port, string username, string name, string password)
+public class DatabaseConfig(string host, int port, string username, string name, string password)
 {
     public readonly string Host = host;
     public readonly string Name = name;
@@ -31,7 +31,7 @@ public class Config(IConfiguration config)
         config["Bot:Token"] ?? throw new MissingFieldException("Bot:Token")
     );
 
-    public Database Database { get; } = new(
+    public DatabaseConfig Database { get; } = new(
         config["Database:Host"] ?? throw new MissingFieldException("Database:Host"),
         int.Parse(config["Database:Port"] ?? throw new MissingFieldException("Database:Port")),
         config["Database:Username"] ?? throw new MissingFieldException("Database:Username"),
