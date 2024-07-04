@@ -48,7 +48,7 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
         await using NpgsqlConnection connection = await GetConnectionAsync();
         await using NpgsqlCommand command = connection.CreateCommand();
         command.CommandText = "DELETE FROM public.channels WHERE id = @id;";
-        command.Parameters.Add(new NpgsqlParameter("id", DbType.VarNumeric) { Value = Id });
+        command.Parameters.Add(new NpgsqlParameter("id", DbType.VarNumeric) { Value = (long)Id });
 
         await command.ExecuteNonQueryAsync();
     }

@@ -3,6 +3,8 @@ using Bot.Commands.SlashCommands;
 using Bot.Configuration;
 using DisCatSharp;
 using DisCatSharp.ApplicationCommands;
+using DisCatSharp.ApplicationCommands.EventArgs;
+using DisCatSharp.Entities;
 using DisCatSharp.Enums;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -65,6 +67,24 @@ public class Program
         commands.RegisterGlobalCommands<PrivacyCommands>();
         commands.RegisterGlobalCommands<ReactionsCommands>();
         commands.RegisterGuildCommands<Testing>(config.Bot.TestingChannel);
+        
+        commands.SlashCommandErrored += async (ApplicationCommandsExtension extension, SlashCommandErrorEventArgs args) =>
+        {
+            ErrorHandler.Handle(args.Exception, args.Context);
+            
+            // Let the user know that the command errored
+            await args.Context.CreateResponseAsync(
+                InteractionResponseType.ChannelMessageWithSource,
+                new DiscordInteractionResponseBuilder
+                {
+                    Content = "An error occured while executing the command. The error has been logged and the devs notified."
+                });
+            
+            // Edit the response to show the error, this is done in case the command errored after it was already responded to
+            await args.Context.EditResponseAsync(new DiscordWebhookBuilder().WithContent("An error occurred while executing the command. The error has been logged and the devs notified."));
+            
+            await Task.CompletedTask;
+        };
 
         // Run bot
         await discord.ConnectAsync();

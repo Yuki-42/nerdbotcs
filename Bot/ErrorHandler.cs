@@ -24,7 +24,7 @@ public class ErrorHandler
         await using StreamWriter writer = ErrorLogPath.AppendText();
         
         // Create error message 
-        string errorMessage = $"========================================[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {exception.Message}\n{exception.StackTrace}\n========================================";
+        string errorMessage = $"========================================\n[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]\n `{exception.Message}`\n```{exception.StackTrace}```\n========================================";
         
         // Write the exception details to the file
         await writer.WriteLineAsync(errorMessage);
@@ -35,7 +35,7 @@ public class ErrorHandler
         if (context is null) return;
         // Get the config service
         Config config = context.Services.GetRequiredService<Config>();
-            
+        
         // Get the channel to log to
         DiscordChannel channel = await context.Client.GetChannelAsync(config.Logging.LogsChannel);
             
@@ -45,11 +45,6 @@ public class ErrorHandler
             await channel.SendMessageAsync(
                 new DiscordMessageBuilder()
                     .WithContent($"An error occurred: {exception.Message}")
-                    .WithEmbed(new DiscordEmbedBuilder()
-                        .WithTitle(exception.Message)
-                        .WithDescription(errorMessage)
-                        .WithColor(DiscordColor.Red)
-                    )
             );
         }
         catch (Exception e)

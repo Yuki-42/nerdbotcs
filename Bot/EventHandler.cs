@@ -7,6 +7,7 @@ using Bot.Database.Types.Config;
 using Bot.Database.Types.Public;
 using Bot.Database.Types.Reactions;
 using DisCatSharp;
+using DisCatSharp.ApplicationCommands;
 using DisCatSharp.Entities;
 using DisCatSharp.Enums;
 using DisCatSharp.EventArgs;

@@ -7,6 +7,7 @@ using Bot.Database.Types.Public.Views;
 using DisCatSharp.ApplicationCommands;
 using DisCatSharp.ApplicationCommands.Attributes;
 using DisCatSharp.ApplicationCommands.Context;
+using DisCatSharp.ApplicationCommands.EventArgs;
 using DisCatSharp.Entities;
 using DisCatSharp.Enums;
 using Microsoft.Extensions.DependencyInjection;
@@ -175,6 +176,18 @@ public class StatisticsCommands : ApplicationCommandsModule
         [SlashCommandGroup("audit", "Audit commands.")]
         public class AuditGroup : ApplicationCommandsModule
         {
+            public async void SlashCommandErrored(SlashCommandErrorEventArgs e)
+            {
+                await e.Context.CreateResponseAsync(
+                    InteractionResponseType.ChannelMessageWithSource,
+                    new DiscordInteractionResponseBuilder
+                    {
+                        Content = "An error occurred while running this command."
+                    });
+                
+                ErrorHandler.Handle(e.Exception, e.Context);
+            }
+            
             /// <summary>
             ///     Audits all categories.
             /// </summary>
@@ -320,14 +333,7 @@ public class StatisticsCommands : ApplicationCommandsModule
                         await Statistics.AuditAllMessages(ctx);
                         break;
                     case 2:
-                        try
-                        {
-                            await Statistics.AuditGuildMessages(ctx, ctx.Guild);
-                        }
-                        catch (Exception exception)
-                        {
-                            ErrorHandler.Handle(exception, ctx);
-                        }
+                        await Statistics.AuditGuildMessages(ctx, ctx.Guild);
                         break;
                 }
 
