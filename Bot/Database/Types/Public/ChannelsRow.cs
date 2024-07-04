@@ -5,7 +5,7 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Types.Public;
 
-public class PublicChannel(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseType(connectionString, handlersGroup, reader)
+public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseRow(connectionString, handlersGroup, reader)
 {
     /// <summary>
     ///     User's discord id.
@@ -96,7 +96,7 @@ public class PublicChannel(string connectionString, HandlersGroup handlersGroup,
     ///     Associated guild object.
     /// </summary>
     /// <returns>Guild</returns>
-    public async Task<PublicGuild?> GetGuild()
+    public async Task<GuildsRow?> GetGuild()
     {
         return await HandlersGroup.Public.Guilds.Get(GuildId);
     }

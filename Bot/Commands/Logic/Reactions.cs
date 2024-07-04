@@ -59,10 +59,10 @@ public class Reactions
         if (ctx.User.Id == targetUser.Id) return true;
 
         // Get the required handlers
-        PublicHandler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        Handler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // Check if the user is a global bot admin
-        PublicUser publicUser = await publicHandler.Users.Get(ctx.User);
+        UsersRow publicUser = await publicHandler.Users.Get(ctx.User);
         return publicUser.Admin;
     }
 
@@ -78,10 +78,10 @@ public class Reactions
         if (ctx.User.Id == targetUser.Id) return true;
 
         // Get the required handlers
-        PublicHandler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        Handler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // Check if the user is a global bot admin
-        PublicUser publicUser = await publicHandler.Users.Get(ctx.User);
+        UsersRow publicUser = await publicHandler.Users.Get(ctx.User);
         if (publicUser.Admin) return true;
 
         // If the guild is null then the user is not a server admin
@@ -99,10 +99,10 @@ public class Reactions
         if (ctx.User.Id == targetUser.Id) return true;
 
         // Get the required handlers
-        PublicHandler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        Handler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // Check if the user is a global bot admin
-        PublicUser publicUser = await publicHandler.Users.Get(ctx.User);
+        UsersRow publicUser = await publicHandler.Users.Get(ctx.User);
         return publicUser.Admin;
     }
 }

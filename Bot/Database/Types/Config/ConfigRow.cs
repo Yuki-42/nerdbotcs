@@ -4,7 +4,7 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Types.Config;
 
-public class ConfigData(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseType(connectionString, handlersGroup, reader)
+public class ConfigRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseRow(connectionString, handlersGroup, reader)
 {
     /// <summary>
     ///     Configuration string key.

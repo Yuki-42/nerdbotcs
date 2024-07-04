@@ -5,14 +5,14 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Handlers.Public;
 
-public class PublicGuildsHandler(string connectionString) : BaseHandler(connectionString)
+public class GuildsHandler(string connectionString) : BaseHandler(connectionString)
 {
     /// <summary>
     ///     Get a guild from the database.
     /// </summary>
     /// <param name="id">Guild ID</param>
     /// <returns>Guild.</returns>
-    public async Task<PublicGuild?> Get(ulong id)
+    public async Task<GuildsRow?> Get(ulong id)
     {
         // Get a new connection
         await using NpgsqlConnection connection = await Connection();
@@ -21,13 +21,13 @@ public class PublicGuildsHandler(string connectionString) : BaseHandler(connecti
         command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)id });
 
         await using NpgsqlDataReader reader = await ExecuteReader(command);
-        return !reader.Read() ? null : new PublicGuild(ConnectionString, HandlersGroup, reader);
+        return !reader.Read() ? null : new GuildsRow(ConnectionString, HandlersGroup, reader);
     }
 
-    public async Task<PublicGuild> Get(ulong id, string username)
+    public async Task<GuildsRow> Get(ulong id, string name)
     {
         // Check if the guild already exists
-        PublicGuild? guild = await Get(id);
+        GuildsRow? guild = await Get(id);
         if (guild != null) return guild;
 
         // Create a new guild
@@ -36,13 +36,13 @@ public class PublicGuildsHandler(string connectionString) : BaseHandler(connecti
         await using NpgsqlCommand command = connection.CreateCommand();
         command.CommandText = "INSERT INTO public.guilds (id, name) VALUES (@id, @name)";
         command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)id });
-        command.Parameters.Add(new NpgsqlParameter("name", NpgsqlDbType.Text) { Value = username });
+        command.Parameters.Add(new NpgsqlParameter("name", NpgsqlDbType.Text) { Value = name });
 
         await ExecuteNonQuery(command);
         return await Get(id)! ?? throw new MissingMemberException();
     }
 
-    public async Task<PublicGuild> Get(DiscordGuild guild)
+    public async Task<GuildsRow> Get(DiscordGuild guild)
     {
         return await Get(guild.Id, guild.Name);
     }

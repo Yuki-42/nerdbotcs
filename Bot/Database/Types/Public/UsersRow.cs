@@ -4,7 +4,7 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Types.Public;
 
-public class PublicUser(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseType(connectionString, handlersGroup, reader)
+public class UsersRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseRow(connectionString, handlersGroup, reader)
 {
     /// <summary>
     ///     User's discord id.

@@ -7,9 +7,9 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Handlers.Reactions;
 
-public class ReactionsHandler(string connectionString) : BaseHandler(connectionString)
+public class Handler(string connectionString) : BaseHandler(connectionString)
 {
-    public async Task<ReactionsReaction?> Get(Guid id)
+    public async Task<ReactionsRow?> Get(Guid id)
     {
         // Get a new connection
         await using NpgsqlConnection connection = await Connection();
@@ -18,7 +18,7 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
         command.Parameters.Add(new NpgsqlParameter("id", DbType.Guid) { Value = id });
 
         await using NpgsqlDataReader reader = await ExecuteReader(command);
-        return !reader.Read() ? null : new ReactionsReaction(ConnectionString, HandlersGroup, reader);
+        return !reader.Read() ? null : new ReactionsRow(ConnectionString, HandlersGroup, reader);
     }
 
     public async Task<bool> Exists(string emoji, ulong userId, ulong? guildId = null, ulong? channelId = null)
@@ -36,7 +36,7 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
 
         while (await reader.ReadAsync())
         {
-            ReactionsReaction reaction = new(ConnectionString, HandlersGroup, reader);
+            ReactionsRow reaction = new(ConnectionString, HandlersGroup, reader);
             if (guildId != null && reaction.GuildId != guildId) continue;
             if (channelId != null && reaction.ChannelId != channelId) continue;
             return true;
@@ -45,7 +45,7 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
         return false;
     }
 
-    public async Task<ReactionsReaction> New(string emoji, ulong appliesTo, ulong? guildId = null, ulong? channelId = null)
+    public async Task<ReactionsRow> New(string emoji, ulong appliesTo, ulong? guildId = null, ulong? channelId = null)
     {
         // Get a new connection
         await using NpgsqlConnection connection = await Connection();
@@ -101,12 +101,12 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
         }
     }
 
-    public async Task<ReactionsReaction> New(string emoji, PublicUser appliesTo, PublicGuild? guild = null, PublicChannel? channel = null)
+    public async Task<ReactionsRow> New(string emoji, UsersRow appliesTo, GuildsRow? guild = null, ChannelsRow? channel = null)
     {
         return await New(emoji, appliesTo.Id, guild?.Id, channel?.Id);
     }
 
-    public async Task<IEnumerable<ReactionsReaction>> GetReactions(ulong user, ulong? guildId = null, ulong? channelId = null)
+    public async Task<IEnumerable<ReactionsRow>> GetReactions(ulong user, ulong? guildId = null, ulong? channelId = null)
     {
         // Get a new connection
         await using NpgsqlConnection connection = await Connection();
@@ -115,8 +115,8 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
         command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)user });
 
         await using NpgsqlDataReader reader = await ExecuteReader(command);
-        List<ReactionsReaction> reactions = [];
-        while (await reader.ReadAsync()) reactions.Add(new ReactionsReaction(ConnectionString, HandlersGroup, reader));
+        List<ReactionsRow> reactions = [];
+        while (await reader.ReadAsync()) reactions.Add(new ReactionsRow(ConnectionString, HandlersGroup, reader));
 
         // Now filter the reactions by guild and channel.
         if (guildId != null) reactions = reactions.Where(x => x.GuildId == guildId).ToList();

@@ -5,9 +5,9 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Handlers.Public;
 
-public class PublicUsersHandler(string connectionString) : BaseHandler(connectionString)
+public class UsersHandler(string connectionString) : BaseHandler(connectionString)
 {
-    public async Task<PublicUser?> Get(ulong id)
+    public async Task<UsersRow?> Get(ulong id)
     {
         // Get a new connection
         await using NpgsqlConnection connection = await Connection();
@@ -16,7 +16,7 @@ public class PublicUsersHandler(string connectionString) : BaseHandler(connectio
         command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)id });
 
         await using NpgsqlDataReader reader = await ExecuteReader(command);
-        return !reader.Read() ? null : new PublicUser(ConnectionString, HandlersGroup, reader);
+        return !reader.Read() ? null : new UsersRow(ConnectionString, HandlersGroup, reader);
     }
 
     /// <summary>
@@ -26,10 +26,10 @@ public class PublicUsersHandler(string connectionString) : BaseHandler(connectio
     /// <param name="username"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<PublicUser> Get(ulong id, string username)
+    public async Task<UsersRow> Get(ulong id, string username)
     {
         // Check if the user already exists.
-        PublicUser? user = await Get(id);
+        UsersRow? user = await Get(id);
         if (user != null) return user;
 
         // Get a new connection
@@ -45,7 +45,7 @@ public class PublicUsersHandler(string connectionString) : BaseHandler(connectio
     }
 
 
-    public async Task<PublicUser> Get(DiscordUser user)
+    public async Task<UsersRow> Get(DiscordUser user)
     {
         return await Get(user.Id, user.Username);
     }

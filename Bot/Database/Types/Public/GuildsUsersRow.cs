@@ -4,7 +4,7 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Types.Public;
 
-public class PublicGuildUser(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseType(connectionString, handlersGroup, reader)
+public class GuildsUsersRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseRow(connectionString, handlersGroup, reader)
 {
     public ulong UserId { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("user_id"));
     public ulong GuildId { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("guild_id"));
@@ -34,12 +34,12 @@ public class PublicGuildUser(string connectionString, HandlersGroup handlersGrou
         }
     }
 
-    public async Task<PublicUser?> GetUser()
+    public async Task<UsersRow?> GetUser()
     {
         return await HandlersGroup.Public.Users.Get(UserId) ?? throw new MissingMemberException();
     }
 
-    public async Task<PublicGuild?> GetGuild()
+    public async Task<GuildsRow?> GetGuild()
     {
         return await HandlersGroup.Public.Guilds.Get(GuildId) ?? throw new MissingMemberException();
     }

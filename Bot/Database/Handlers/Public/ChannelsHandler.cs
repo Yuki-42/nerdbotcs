@@ -5,9 +5,9 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Handlers.Public;
 
-public class PublicChannelsHandler(string connectionString) : BaseHandler(connectionString)
+public class ChannelsHandler(string connectionString) : BaseHandler(connectionString)
 {
-    public async Task<PublicChannel?> Get(ulong id)
+    public async Task<ChannelsRow?> Get(ulong id)
     {
         // Get a new connection
         await using NpgsqlConnection connection = await Connection();
@@ -16,7 +16,7 @@ public class PublicChannelsHandler(string connectionString) : BaseHandler(connec
         command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)id });
 
         await using NpgsqlDataReader reader = await ExecuteReader(command);
-        return !reader.Read() ? null : new PublicChannel(ConnectionString, HandlersGroup, reader);
+        return !reader.Read() ? null : new ChannelsRow(ConnectionString, HandlersGroup, reader);
     }
 
     /// <summary>
@@ -26,10 +26,10 @@ public class PublicChannelsHandler(string connectionString) : BaseHandler(connec
     /// <param name="guildId"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async Task<PublicChannel> Get(ulong id, ulong? guildId)
+    public async Task<ChannelsRow> Get(ulong id, ulong? guildId)
     {
         // Check if the user already exists.
-        PublicChannel? user = await Get(id);
+        ChannelsRow? user = await Get(id);
         if (user != null) return user;
 
         // Get a new connection
@@ -53,7 +53,7 @@ public class PublicChannelsHandler(string connectionString) : BaseHandler(connec
         return await Get(id) ?? throw new MissingMemberException();
     }
 
-    public async Task<PublicChannel> Get(DiscordChannel channel)
+    public async Task<ChannelsRow> Get(DiscordChannel channel)
     {
         return await Get(channel.Id, channel.GuildId);
     }

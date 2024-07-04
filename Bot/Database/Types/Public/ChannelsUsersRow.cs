@@ -4,7 +4,7 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Types.Public;
 
-public class PublicChannelUser(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseType(connectionString, handlersGroup, reader)
+public class ChannelsUsersRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseRow(connectionString, handlersGroup, reader)
 {
     public ulong UserId { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("user_id"));
     public ulong ChannelId { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("channel_id"));
@@ -59,12 +59,12 @@ public class PublicChannelUser(string connectionString, HandlersGroup handlersGr
         }
     }
 
-    public async Task<PublicUser?> GetUser()
+    public async Task<UsersRow?> GetUser()
     {
         return await HandlersGroup.Public.Users.Get(UserId) ?? throw new MissingMemberException();
     }
 
-    public async Task<PublicChannel?> GetChannel()
+    public async Task<ChannelsRow?> GetChannel()
     {
         return await HandlersGroup.Public.Channels.Get(ChannelId, null) ?? throw new MissingMemberException();
     }

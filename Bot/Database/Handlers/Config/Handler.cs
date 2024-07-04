@@ -5,9 +5,9 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Handlers.Config;
 
-public class ConfigHandler(string connectionString) : BaseHandler(connectionString)
+public class Handler(string connectionString) : BaseHandler(connectionString)
 {
-    public async Task<ConfigData?> Get(Guid id)
+    public async Task<ConfigRow?> Get(Guid id)
     {
         // Get a new connection
         await using NpgsqlConnection connection = await Connection();
@@ -17,10 +17,10 @@ public class ConfigHandler(string connectionString) : BaseHandler(connectionStri
 
         await using NpgsqlDataReader reader = await ExecuteReader(command);
 
-        return !await reader.ReadAsync() ? null : new ConfigData(ConnectionString, HandlersGroup, reader);
+        return !await reader.ReadAsync() ? null : new ConfigRow(ConnectionString, HandlersGroup, reader);
     }
 
-    public async Task<ConfigData?> Get(string key)
+    public async Task<ConfigRow?> Get(string key)
     {
         // Get a new connection
         await using NpgsqlConnection connection = await Connection();
@@ -30,7 +30,7 @@ public class ConfigHandler(string connectionString) : BaseHandler(connectionStri
 
         await using NpgsqlDataReader reader = await ExecuteReader(command);
 
-        return !reader.Read() ? null : new ConfigData(ConnectionString, HandlersGroup, reader);
+        return !reader.Read() ? null : new ConfigRow(ConnectionString, HandlersGroup, reader);
     }
 
     /// <summary>
@@ -38,9 +38,9 @@ public class ConfigHandler(string connectionString) : BaseHandler(connectionStri
     /// </summary>
     /// <param name="key">Key</param>
     /// <returns></returns>
-    public async Task<ConfigData> NGet(string key)
+    public async Task<ConfigRow> NGet(string key)
     {
-        ConfigData? data = await Get(key);
+        ConfigRow? data = await Get(key);
         if (data is not null) return data;
 
         // Get a new connection
@@ -53,6 +53,6 @@ public class ConfigHandler(string connectionString) : BaseHandler(connectionStri
         await using NpgsqlDataReader reader = await ExecuteReader(command);
         await reader.ReadAsync();
 
-        return new ConfigData(ConnectionString, HandlersGroup, reader);
+        return new ConfigRow(ConnectionString, HandlersGroup, reader);
     }
 }

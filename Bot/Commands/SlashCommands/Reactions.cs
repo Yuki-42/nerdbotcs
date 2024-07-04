@@ -9,6 +9,7 @@ using DisCatSharp.ApplicationCommands.Context;
 using DisCatSharp.Entities;
 using DisCatSharp.Enums;
 using Microsoft.Extensions.DependencyInjection;
+using Handler = Bot.Database.Handlers.Reactions.Handler;
 
 // ReSharper disable UnusedMember.Global
 namespace Bot.Commands.SlashCommands;
@@ -31,14 +32,14 @@ public class ReactionsCommands : ApplicationCommandsModule
             Database.Database database = ctx.Services.GetRequiredService<Database.Database>();
 
             // Get the required handlers
-            PublicHandler publicHandler = database.Handlers.Public;
-            ReactionsHandler reactionsHandler = database.Handlers.Reactions;
+            Database.Handlers.Public.Handler publicHandler = database.Handlers.Public;
+            Handler reactionsHandler = database.Handlers.Reactions;
 
             // Set target user if null
             user ??= ctx.User;
 
             // Get the user
-            PublicUser publicUser = await publicHandler.Users.Get(user);
+            UsersRow publicUser = await publicHandler.Users.Get(user);
 
             // Check if the user has permission to list reactions
             if (!await Reactions.ListPermissionsCheck(ctx, user))
@@ -48,12 +49,12 @@ public class ReactionsCommands : ApplicationCommandsModule
             }
 
             // Get the reactions
-            IEnumerable<ReactionsReaction> reactions = await reactionsHandler.GetReactions(user.Id);
+            IEnumerable<ReactionsRow> reactions = await reactionsHandler.GetReactions(user.Id);
 
             // Create the reactions text 
             string reactionsText = "";
-            IEnumerable<ReactionsReaction> reactionsReactions = reactions.ToList();
-            foreach (ReactionsReaction reaction in reactionsReactions)
+            IEnumerable<ReactionsRow> reactionsReactions = reactions.ToList();
+            foreach (ReactionsRow reaction in reactionsReactions)
             {
                 string emoji;
                 if (reaction.Emoji is null)
@@ -94,11 +95,11 @@ public class ReactionsCommands : ApplicationCommandsModule
             Database.Database database = ctx.Services.GetRequiredService<Database.Database>();
 
             // Get the required handlers
-            PublicHandler publicHandler = database.Handlers.Public;
-            ReactionsHandler reactionsHandler = database.Handlers.Reactions;
+            Database.Handlers.Public.Handler publicHandler = database.Handlers.Public;
+            Handler reactionsHandler = database.Handlers.Reactions;
 
             // Get the user
-            PublicUser publicUser = await publicHandler.Users.Get(user);
+            UsersRow publicUser = await publicHandler.Users.Get(user);
 
             // For now, only allow the bot owner to use this command
             if (!await Reactions.AddPermissionsChecks(ctx, user))
@@ -115,10 +116,10 @@ public class ReactionsCommands : ApplicationCommandsModule
             }
 
             // Get the channel if it's not null
-            PublicChannel? publicChannel = channel is null ? null : await publicHandler.Channels.Get(channel);
+            ChannelsRow? publicChannel = channel is null ? null : await publicHandler.Channels.Get(channel);
 
             // Get the guild if it's not null
-            PublicGuild? publicGuild = channel is null ? null : await publicHandler.Guilds.Get(channel.Guild);
+            GuildsRow? publicGuild = channel is null ? null : await publicHandler.Guilds.Get(channel.Guild);
 
             // Add the reaction
 
@@ -129,7 +130,7 @@ public class ReactionsCommands : ApplicationCommandsModule
                 return;
             }
 
-            ReactionsReaction reaction = await reactionsHandler.New(emoji, publicUser, publicGuild, publicChannel);
+            ReactionsRow reaction = await reactionsHandler.New(emoji, publicUser, publicGuild, publicChannel);
 
             // Edit the response
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Added reaction {emoji} to {user.Username}"));
@@ -151,14 +152,14 @@ public class ReactionsCommands : ApplicationCommandsModule
             Database.Database database = ctx.Services.GetRequiredService<Database.Database>();
 
             // Get the required handlers
-            PublicHandler publicHandler = database.Handlers.Public;
-            ReactionsHandler reactionsHandler = database.Handlers.Reactions;
+            Database.Handlers.Public.Handler publicHandler = database.Handlers.Public;
+            Handler reactionsHandler = database.Handlers.Reactions;
 
             // Set target user if null
             user ??= ctx.User;
 
             // Get the user
-            PublicUser publicUser = await publicHandler.Users.Get(user);
+            UsersRow publicUser = await publicHandler.Users.Get(user);
 
             // Check if the user has permission to remove reactions
             if (!await Reactions.RemovePermissionsCheck(ctx, user))
@@ -168,7 +169,7 @@ public class ReactionsCommands : ApplicationCommandsModule
             }
 
             // Get the reaction
-            ReactionsReaction? reaction = await reactionsHandler.Get(new Guid(reactionId));
+            ReactionsRow? reaction = await reactionsHandler.Get(new Guid(reactionId));
 
             // Check if the reaction exists
             if (reaction is null)

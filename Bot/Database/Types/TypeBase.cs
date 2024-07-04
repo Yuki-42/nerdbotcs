@@ -5,28 +5,18 @@ using Npgsql;
 
 namespace Bot.Database.Types;
 
-/// <summary>
-///     Base class for all database types.
-/// </summary>
-public class BaseType(string connectionString, HandlersGroup handlersGroup, IDataRecord reader)
+public class TypeBase(string connectionString, HandlersGroup handlersGroup, IDataRecord reader)
 {
     /// <summary>
     ///     Handlers group.
     /// </summary>
     protected HandlersGroup HandlersGroup = handlersGroup;
 
-    public string ConnectionString { get; } = connectionString;
-
     /// <summary>
-    ///     Row id.
+    ///     Connection string.
     /// </summary>
-    public Guid Id { get; } = TryGetGuid(reader, "id") ?? Guid.Empty;
-
-    /// <summary>
-    ///     Row added to db.
-    /// </summary>
-    public DateTime CreatedAt { get; } = reader.GetDateTime(reader.GetOrdinal("created_at"));
-
+    private string ConnectionString { get; } = connectionString;
+    
     protected NpgsqlConnection GetConnection()
     {
         NpgsqlConnection connection;
@@ -96,19 +86,13 @@ public class BaseType(string connectionString, HandlersGroup handlersGroup, IDat
 
         transaction.Commit();
     }
-
-    private static Guid? TryGetGuid(IDataRecord reader, string column)
-    {
-        try
-        {
-            return reader.GetGuid(reader.GetOrdinal("id"));
-        }
-        catch (InvalidCastException)
-        {
-            return null;
-        }
-    }
-
+    
+    /// <summary>
+    /// Gets a nullable ulong from the reader.
+    /// </summary>
+    /// <param name="reader">Reader.</param>
+    /// <param name="column">Column name.</param>
+    /// <returns>Requested value if present, else null.</returns>
     protected static ulong? GetNullableUlong(IDataRecord reader, string column)
     {
         int ordinal = reader.GetOrdinal(column);

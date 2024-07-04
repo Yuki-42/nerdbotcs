@@ -11,6 +11,7 @@ using DisCatSharp.Entities;
 using DisCatSharp.Enums;
 using DisCatSharp.EventArgs;
 using Microsoft.Extensions.Logging;
+using Handler = Bot.Database.Handlers.Public.Handler;
 
 namespace Bot;
 
@@ -19,21 +20,21 @@ internal static class EventLogic
     public static async Task MessageStatisticsTask(DiscordClient client, MessageCreateEventArgs eventArgs, Database.Database database)
     {
         // Get the required services
-        PublicHandler handler = database.Handlers.Public;
+        Handler handler = database.Handlers.Public;
 
         // Get the user
         DiscordUser discordUser = eventArgs.Author;
-        PublicUser localUser = await handler.Users.Get(discordUser);
+        UsersRow localUser = await handler.Users.Get(discordUser);
 
         // Get the channel and channel user
         DiscordChannel discordChannel = eventArgs.Channel;
-        PublicChannel localChannel = await handler.Channels.Get(discordChannel);
-        PublicChannelUser localChannelUser = await handler.ChannelUsers.Get(discordUser, discordChannel);
+        ChannelsRow localChannel = await handler.Channels.Get(discordChannel);
+        ChannelsUsersRow localChannelUser = await handler.ChannelUsers.Get(discordUser, discordChannel);
 
         // Get the guild and guild user
         DiscordGuild discordGuild = discordChannel.Guild;
-        PublicGuild localGuild = await handler.Guilds.Get(discordGuild);
-        PublicGuildUser localGuildUser = await handler.GuildUsers.Get(discordUser, discordGuild);
+        GuildsRow localGuild = await handler.Guilds.Get(discordGuild);
+        GuildsUsersRow localGuildUser = await handler.GuildUsers.Get(discordUser, discordGuild);
 
 
 
@@ -53,17 +54,17 @@ internal static class EventLogic
         Console.WriteLine($"ReactionsTask for {eventArgs.Author.Username}");
         
         // Get the required services
-        PublicHandler handler = database.Handlers.Public;
-        ReactionsHandler reactionsHandler = database.Handlers.Reactions;
+        Handler handler = database.Handlers.Public;
+        Database.Handlers.Reactions.Handler reactionsHandler = database.Handlers.Reactions;
         
         // Get the user
-        PublicUser publicUser = await handler.Users.Get(eventArgs.Author);
+        UsersRow publicUser = await handler.Users.Get(eventArgs.Author);
 
         // Get the reactions for the user 
-        IEnumerable<ReactionsReaction> reactions = await reactionsHandler.GetReactions(publicUser.Id);
+        IEnumerable<ReactionsRow> reactions = await reactionsHandler.GetReactions(publicUser.Id);
         
         // Try add the reaction to the message
-        foreach (ReactionsReaction reaction in reactions)
+        foreach (ReactionsRow reaction in reactions)
         {
             Console.WriteLine($"Adding reaction {reaction.Emoji}({reaction.EmojiId}) to message.");
 
@@ -99,11 +100,11 @@ public class EventHandler(Database.Database database)
         Console.WriteLine("Bot is ready to process events.");
         
         // Get the config service
-        ConfigHandler configHandler = Database.Handlers.Config;
+        Database.Handlers.Config.Handler handler = Database.Handlers.Config;
         
         // Get the bot status and status type
-        ConfigData? lStatus = await configHandler.Get("status");
-        ConfigData? lStatusType = await configHandler.Get("status_type");
+        ConfigRow? lStatus = await handler.Get("status");
+        ConfigRow? lStatusType = await handler.Get("status_type");
         
         // Check if either values are null
         if (lStatus == null || lStatusType == null)

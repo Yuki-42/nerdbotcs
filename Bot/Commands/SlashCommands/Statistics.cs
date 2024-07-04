@@ -11,12 +11,84 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Bot.Commands.SlashCommands;
 
+public enum LeaderboardContext
+{
+    Global = 0,
+    Guild = 1,
+    Channel = 2
+}
+
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class StatisticsCommands : ApplicationCommandsModule
 {
     [SlashCommandGroup("statistics", "Statistics commands.")]
     public class StatisticsCommandGroup : ApplicationCommandsModule
     {
+        [SlashCommand("leaderboard", "Shows the leaderboard.")]
+        public async Task LeaderboardCommand(
+            InteractionContext ctx,
+            [Option("context", "The context to show the leaderboard for.")]
+            LeaderboardContext context = LeaderboardContext.Guild
+        )
+        {
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+                new DiscordInteractionResponseBuilder
+                {
+                    Content = "Constructing leaderboard..."
+                });
+            
+            // Check what context to use for the leaderboard
+            switch (context)
+            {
+                case LeaderboardContext.Global:
+                    // Permissions check
+                    int permission = await Shared.CheckPermissions(ctx);
+                    if (permission != 1)
+                    {
+                        await ctx.EditResponseAsync(
+                            new DiscordWebhookBuilder
+                            {
+                                Content = "You do not have permission to run this command."
+                            });
+                        return;
+                    }
+                    
+                    // Get the public handler
+                    Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+                    
+                    
+                    break;
+                case LeaderboardContext.Guild:
+                    break;
+                case LeaderboardContext.Channel:
+                    break;
+                default:
+                    await ctx.EditResponseAsync(
+                        new DiscordWebhookBuilder
+                        {
+                            Content = "This command is not yet implemented."
+                        });
+                    break;
+            }
+        }
+
+        [SlashCommand("individual", "Shows the statistics for an individual.")]
+        public async Task IndividualCommand(
+            InteractionContext ctx,
+            [Option("user", "The user to show statistics for.")]
+            DiscordUser? user = null,
+            [Option("context", "The context to show the statistics for.")]
+            LeaderboardContext context = LeaderboardContext.Global
+        )
+        {
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+                new DiscordInteractionResponseBuilder
+                {
+                    Content = "This command is not yet implemented."
+                });
+        }
+
+
         /// <summary>
         ///     Audit related commands.
         /// </summary>
@@ -31,8 +103,8 @@ public class StatisticsCommands : ApplicationCommandsModule
             public async Task AuditAllCommand(InteractionContext ctx)
             {
                 // Check if the user is a global bot admin
-                PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-                PublicUser user = await handler.Users.Get(ctx.User);
+                Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+                UsersRow user = await handler.Users.Get(ctx.User);
 
                 // Perform permissions checks
                 int permission = await Shared.CheckPermissions(ctx);

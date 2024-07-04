@@ -5,9 +5,9 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Handlers.Public;
 
-public class PublicChannelsUsersHandler(string connectionString) : BaseHandler(connectionString)
+public class ChannelsUsersHandler(string connectionString) : BaseHandler(connectionString)
 {
-    public async Task<PublicChannelUser?> Get(ulong id)
+    public async Task<ChannelsUsersRow?> Get(ulong id)
     {
         // Get a new connection
         await using NpgsqlConnection connection = await Connection();
@@ -16,10 +16,10 @@ public class PublicChannelsUsersHandler(string connectionString) : BaseHandler(c
         command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)id });
 
         await using NpgsqlDataReader reader = await ExecuteReader(command);
-        return !reader.Read() ? null : new PublicChannelUser(ConnectionString, HandlersGroup, reader);
+        return !reader.Read() ? null : new ChannelsUsersRow(ConnectionString, HandlersGroup, reader);
     }
 
-    private async Task<PublicChannelUser?> PGet(ulong userId, ulong channelId)
+    private async Task<ChannelsUsersRow?> PGet(ulong userId, ulong channelId)
     {
         // Get a new connection
         await using NpgsqlConnection connection = await Connection();
@@ -29,13 +29,13 @@ public class PublicChannelsUsersHandler(string connectionString) : BaseHandler(c
         command.Parameters.Add(new NpgsqlParameter("cid", NpgsqlDbType.Numeric) { Value = (long)channelId });
 
         await using NpgsqlDataReader reader = await ExecuteReader(command);
-        return !reader.Read() ? null : new PublicChannelUser(ConnectionString, HandlersGroup, reader);
+        return !reader.Read() ? null : new ChannelsUsersRow(ConnectionString, HandlersGroup, reader);
     }
 
-    public async Task<PublicChannelUser> Get(ulong userId, ulong channelId)
+    public async Task<ChannelsUsersRow> Get(ulong userId, ulong channelId)
     {
         // Check if the user already exists.
-        PublicChannelUser? user = await PGet(userId, channelId);
+        ChannelsUsersRow? user = await PGet(userId, channelId);
         if (user != null) return user;
 
         // Get a new connection
@@ -50,7 +50,7 @@ public class PublicChannelsUsersHandler(string connectionString) : BaseHandler(c
         return await PGet(userId, channelId) ?? throw new MissingMemberException();
     }
 
-    public async Task<PublicChannelUser> Get(DiscordUser user, DiscordChannel channel)
+    public async Task<ChannelsUsersRow> Get(DiscordUser user, DiscordChannel channel)
     {
         return await Get(user.Id, channel.Id);
     }

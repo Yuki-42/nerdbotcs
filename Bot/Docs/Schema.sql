@@ -146,7 +146,7 @@ ALTER TABLE reactions.reactions
     ADD CONSTRAINT check_reactions_reactions_emoji_or_emoji_id_null CHECK (emoji IS NULL OR emoji_id IS NULL);
 
 /* Create views */
-CREATE VIEW per_channel_message_view AS
+CREATE VIEW channel_message_view AS
 SELECT g.id             AS guild_id,
        c.id             AS channel_id,
        u.id             AS user_id,
@@ -161,7 +161,7 @@ FROM channels_users AS cu
          JOIN public.guilds g ON c.guild_id = g.id
 ;
 
-CREATE VIEW per_guild_message_view AS
+CREATE VIEW guild_message_view AS
 SELECT g.id                  AS guild_id,
        u.id                  AS user_id,
        g.name                AS guild_name,

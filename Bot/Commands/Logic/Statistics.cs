@@ -125,7 +125,7 @@ public class Statistics
     public static async Task AuditAllGuilds(BaseContext ctx)
     {
         // Get the required handlers
-        PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // Get all guilds
         DiscordGuild[] guilds = ctx.Client.Guilds.Values.ToArray();
@@ -139,7 +139,7 @@ public class Statistics
     /// <param name="ctx">Context</param>
     /// <param name="guild">Guild</param>
     /// <param name="handler">Handler</param>
-    public static async Task AuditGuild(BaseContext ctx, DiscordGuild? guild, PublicHandler? handler = null)
+    public static async Task AuditGuild(BaseContext ctx, DiscordGuild? guild, Handler? handler = null)
     {
         // Check if the guild is null
         if (guild is null) return;
@@ -148,7 +148,7 @@ public class Statistics
         handler ??= ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // Check if the guild exists in the database
-        PublicGuild publicGuild = await handler.Guilds.Get(guild);
+        GuildsRow publicGuild = await handler.Guilds.Get(guild);
 
         // Update the guild name if it's different
         if (publicGuild.Name != guild.Name) publicGuild.Name = guild.Name; // This updates the name in the database through the setter
@@ -158,7 +158,7 @@ public class Statistics
         foreach (DiscordMember member in members)
         {
             // Check if the user exists in the database
-            PublicUser user = await handler.Users.Get(member); // This creates a new user if it doesn't exist
+            UsersRow user = await handler.Users.Get(member); // This creates a new user if it doesn't exist
 
             // Update the username if it's different
             if (user.Username != member.Username) user.Username = member.Username; // This updates the username in the database through the setter
@@ -172,7 +172,7 @@ public class Statistics
     public static async Task AuditAllChannels(BaseContext ctx)
     {
         // Get the required handlers
-        PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // Get all guilds
         DiscordGuild[] guilds = ctx.Client.Guilds.Values.ToArray();
@@ -186,7 +186,7 @@ public class Statistics
     /// <param name="ctx">Context</param>
     /// <param name="guild">Guild</param>
     /// <param name="handler">Handler</param>
-    public static async Task AuditGuildChannels(BaseContext ctx, DiscordGuild? guild, PublicHandler? handler = null)
+    public static async Task AuditGuildChannels(BaseContext ctx, DiscordGuild? guild, Handler? handler = null)
     {
         // Check if the guild is null
         if (guild is null) return;
@@ -199,7 +199,7 @@ public class Statistics
         foreach (DiscordChannel channel in channels)
         {
             // Check if the channel exists in the database
-            PublicChannel publicChannel = await handler.Channels.Get(channel);
+            ChannelsRow publicChannel = await handler.Channels.Get(channel);
 
             // Update the name if it's different
             if (publicChannel.Name != channel.Name) publicChannel.Name = channel.Name; // This updates the name in the database through the setter
@@ -216,7 +216,7 @@ public class Statistics
     public static async Task AuditAllUsers(BaseContext ctx)
     {
         // Get the required handler
-        PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // First get all servers that the bot is in
         DiscordGuild?[] guilds = ctx.Client.Guilds.Values.ToArray();
@@ -225,7 +225,7 @@ public class Statistics
         foreach (DiscordGuild? guild in guilds) await AuditGuildUsers(ctx, guild, handler);
     }
 
-    public static async Task AuditGuildUsers(BaseContext ctx, DiscordGuild? guild, PublicHandler? handler = null)
+    public static async Task AuditGuildUsers(BaseContext ctx, DiscordGuild? guild, Handler? handler = null)
     {
         // Check if the guild is null
         if (guild is null) return;
@@ -237,7 +237,7 @@ public class Statistics
         foreach (DiscordMember member in members)
         {
             // Check if the user exists in the database // This is already done in the New method
-            PublicUser user = await handler.Users.Get(member);
+            UsersRow user = await handler.Users.Get(member);
 
             // Update the username if it's different
             if (user.Username != member.Username) user.Username = member.Username; // This updates the username in the database through the setter
@@ -270,7 +270,7 @@ public class Statistics
         // Note: This is a very expensive operation and should be used sparingly.
 
         // Get the required handlers
-        PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // Get all guilds
         DiscordGuild[] guilds = ctx.Client.Guilds.Values.ToArray();
@@ -278,7 +278,7 @@ public class Statistics
         foreach (DiscordGuild guild in guilds) await AuditGuildMessages(ctx, guild, handler);
     }
 
-    public static async Task AuditGuildMessages(BaseContext ctx, DiscordGuild? guild, PublicHandler? handler = null)
+    public static async Task AuditGuildMessages(BaseContext ctx, DiscordGuild? guild, Handler? handler = null)
     {
         // Check if the guild is null
         if (guild is null) return;
@@ -287,15 +287,15 @@ public class Statistics
         handler ??= ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // First check if message tracking is enabled for the guild
-        PublicGuild publicGuild = await handler.Guilds.Get(guild);
+        GuildsRow publicGuild = await handler.Guilds.Get(guild);
         if (!publicGuild.MessageTracking) return;
 
         // Lookup table for message tracking on a per-user basis
         Dictionary<DiscordUser, bool> userMessageTracking = new();
         foreach (DiscordMember member in await guild.GetAllMembersAsync())
         {
-            PublicUser user = await handler.Users.Get(member);
-            PublicGuildUser guildUser = await handler.GuildUsers.Get(member, guild);
+            UsersRow user = await handler.Users.Get(member);
+            GuildsUsersRow guildUser = await handler.GuildUsers.Get(member, guild);
             userMessageTracking.Add(member, user.MessageTracking && guildUser.MessageTracking);
         }
 
@@ -307,7 +307,7 @@ public class Statistics
             if (channel.Type != ChannelType.Text) continue;
 
             // Check if message tracking is enabled for the channel
-            PublicChannel publicChannel = await handler.Channels.Get(channel);
+            ChannelsRow publicChannel = await handler.Channels.Get(channel);
             if (!publicChannel.MessageTracking) continue;
 
             // Check if the bot has permissions to read messages
@@ -346,7 +346,7 @@ public class Statistics
             // Update the message count for each user
             foreach (KeyValuePair<DiscordUser, long> user in users)
             {
-                PublicChannelUser guildUser = await handler.ChannelUsers.Get(user.Key, channel);
+                ChannelsUsersRow guildUser = await handler.ChannelUsers.Get(user.Key, channel);
                 guildUser.MessagesSent = user.Value;
             }
         }

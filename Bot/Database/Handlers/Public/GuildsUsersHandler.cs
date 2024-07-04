@@ -5,9 +5,9 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Handlers.Public;
 
-public class PublicGuildsUsersHandler(string connectionString) : BaseHandler(connectionString)
+public class GuildsUsersHandler(string connectionString) : BaseHandler(connectionString)
 {
-    public async Task<PublicGuildUser?> Get(ulong id)
+    public async Task<GuildsUsersRow?> Get(ulong id)
     {
         // Get a new connection
         await using NpgsqlConnection connection = await Connection();
@@ -16,10 +16,10 @@ public class PublicGuildsUsersHandler(string connectionString) : BaseHandler(con
         command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)id });
 
         await using NpgsqlDataReader reader = await ExecuteReader(command);
-        return !reader.Read() ? null : new PublicGuildUser(ConnectionString, HandlersGroup, reader);
+        return !reader.Read() ? null : new GuildsUsersRow(ConnectionString, HandlersGroup, reader);
     }
 
-    private async Task<PublicGuildUser?> PGet(ulong userId, ulong guildId)
+    private async Task<GuildsUsersRow?> PGet(ulong userId, ulong guildId)
     {
         // Get a new connection
         await using NpgsqlConnection connection = await Connection();
@@ -29,13 +29,13 @@ public class PublicGuildsUsersHandler(string connectionString) : BaseHandler(con
         command.Parameters.Add(new NpgsqlParameter("gid", NpgsqlDbType.Numeric) { Value = (long)guildId });
 
         await using NpgsqlDataReader reader = await ExecuteReader(command);
-        return !reader.Read() ? null : new PublicGuildUser(ConnectionString, HandlersGroup, reader);
+        return !reader.Read() ? null : new GuildsUsersRow(ConnectionString, HandlersGroup, reader);
     }
 
-    public async Task<PublicGuildUser> Get(ulong userId, ulong guildId)
+    public async Task<GuildsUsersRow> Get(ulong userId, ulong guildId)
     {
         // Check if the user already exists.
-        PublicGuildUser? user = await PGet(userId, guildId);
+        GuildsUsersRow? user = await PGet(userId, guildId);
         if (user != null) return user;
 
         // Get a new connection
@@ -50,7 +50,7 @@ public class PublicGuildsUsersHandler(string connectionString) : BaseHandler(con
         return await Get(userId, guildId) ?? throw new MissingMemberException();
     }
 
-    public async Task<PublicGuildUser> Get(DiscordUser user, DiscordGuild guild)
+    public async Task<GuildsUsersRow> Get(DiscordUser user, DiscordGuild guild)
     {
         return await Get(user.Id, guild.Id);
     }

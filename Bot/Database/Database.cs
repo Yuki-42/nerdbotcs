@@ -3,6 +3,7 @@ using Bot.Database.Handlers.Config;
 using Bot.Database.Handlers.Filter;
 using Bot.Database.Handlers.Public;
 using Bot.Database.Handlers.Reactions;
+using Handler = Bot.Database.Handlers.Filter.Handler;
 
 namespace Bot.Database;
 
@@ -28,10 +29,10 @@ public class Database
         // Create handlers
         Handlers = new HandlersGroup
         {
-            Config = new ConfigHandler(connectionString),
-            Filter = new FilterHandler(connectionString),
-            Public = new PublicHandler(connectionString),
-            Reactions = new ReactionsHandler(connectionString)
+            Config = new Handlers.Config.Handler(connectionString),
+            Filter = new Handler(connectionString),
+            Public = new Handlers.Public.Handler(connectionString),
+            Reactions = new Handlers.Reactions.Handler(connectionString)
         };
 
         // Now give all handlers access to each other 

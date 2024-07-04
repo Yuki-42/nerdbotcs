@@ -7,7 +7,7 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Types.Reactions;
 
-public class ReactionsReaction(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseType(connectionString, handlersGroup, reader)
+public class ReactionsRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseRow(connectionString, handlersGroup, reader)
 {
     // This is nullable, so we need to use the GetValueOrDefault method.
     public ulong? GuildId { get; } = GetNullableUlong(reader, "guild_id");
@@ -122,17 +122,17 @@ public class ReactionsReaction(string connectionString, HandlersGroup handlersGr
         await command.ExecuteNonQueryAsync();
     }
 
-    public async Task<PublicUser> GetUser()
+    public async Task<UsersRow> GetUser()
     {
         return (await HandlersGroup.Public.Users.Get(UserId))!;
     }
 
-    public async Task<PublicChannel?> GetChannel()
+    public async Task<ChannelsRow?> GetChannel()
     {
         return ChannelId is null ? null : await HandlersGroup.Public.Channels.Get(ChannelId.Value);
     }
 
-    public async Task<PublicGuild?> GetGuild()
+    public async Task<GuildsRow?> GetGuild()
     {
         return GuildId is null ? null : await HandlersGroup.Public.Guilds.Get(GuildId.Value);
     }

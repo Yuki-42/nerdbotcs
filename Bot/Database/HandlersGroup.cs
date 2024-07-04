@@ -1,19 +1,20 @@
 ﻿using Bot.Database.Handlers;
-using Bot.Database.Handlers.Config;
-using Bot.Database.Handlers.Filter;
-using Bot.Database.Handlers.Public;
-using Bot.Database.Handlers.Reactions;
+using Config = Bot.Database.Handlers.Config;
+using Filter = Bot.Database.Handlers.Filter;
+using Public = Bot.Database.Handlers.Public;
+using Reactions = Bot.Database.Handlers.Reactions;
+
 
 namespace Bot.Database;
 
 public class HandlersGroup
 {
-    public required ConfigHandler Config;
-    public required FilterHandler Filter;
-    public required PublicHandler Public;
-    public required ReactionsHandler Reactions;
+    public required Config.Handler Config;
+    public required Filter.Handler Filter;
+    public required Public.Handler Public;
+    public required Reactions.Handler Reactions;
 
-    public BaseHandler[] Handlers =>
+    public IEnumerable<BaseHandler> Handlers =>
     [
         Config,
         Filter,

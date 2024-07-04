@@ -107,12 +107,12 @@ public class Privacy
         }
 
         // Get the guild
-        PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
         guild ??= ctx.Guild;
 
         Debug.Assert(guild is not null, nameof(guild) + " != null");
 
-        PublicGuild lGuild = await handler.Guilds.Get(guild);
+        GuildsRow lGuild = await handler.Guilds.Get(guild);
         lGuild.MessageTracking = value ?? !lGuild.MessageTracking;
 
         await ctx.EditResponseAsync(
@@ -166,9 +166,9 @@ public class Privacy
         }
 
         // Get the guild
-        PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
-        PublicChannel lChannel = await handler.Channels.Get(channel);
+        ChannelsRow lChannel = await handler.Channels.Get(channel);
         lChannel.MessageTracking = value ?? !lChannel.MessageTracking;
 
         await ctx.EditResponseAsync(
