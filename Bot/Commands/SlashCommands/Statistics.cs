@@ -320,7 +320,14 @@ public class StatisticsCommands : ApplicationCommandsModule
                         await Statistics.AuditAllMessages(ctx);
                         break;
                     case 2:
-                        await Statistics.AuditGuildMessages(ctx, ctx.Guild);
+                        try
+                        {
+                            await Statistics.AuditGuildMessages(ctx, ctx.Guild);
+                        }
+                        catch (Exception exception)
+                        {
+                            ErrorHandler.Handle(exception, ctx);
+                        }
                         break;
                 }
 

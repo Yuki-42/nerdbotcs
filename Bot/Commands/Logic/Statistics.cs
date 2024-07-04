@@ -109,8 +109,15 @@ public class Statistics
                 Content = AuditCompletion[3].Replace("%s", "server")
             });
 
-        await AuditGuildMessages(ctx, ctx.Guild);
-
+        try
+        {
+            await AuditGuildMessages(ctx, ctx.Guild);
+        }
+        catch (Exception error)
+        {
+            ErrorHandler.Handle(error, ctx);
+        }
+        
         await ctx.EditResponseAsync(
             new DiscordWebhookBuilder
             {
@@ -306,7 +313,17 @@ public class Statistics
         // Get all guilds
         DiscordGuild[] guilds = ctx.Client.Guilds.Values.ToArray();
 
-        foreach (DiscordGuild guild in guilds) await AuditGuildMessages(ctx, guild, handler);
+        foreach (DiscordGuild guild in guilds)
+        {
+            try
+            {
+                await AuditGuildMessages(ctx, guild, handler);
+            }
+            catch (Exception exception)
+            {
+                ErrorHandler.Handle(exception, ctx);   
+            }
+        }
     }
 
     public static async Task AuditGuildMessages(BaseContext ctx, DiscordGuild? guild, Handler? handler = null)
@@ -336,6 +353,8 @@ public class Statistics
         {
             // Check if channel is a text channel
             if (channel.Type != ChannelType.Text) continue;
+            
+            Console.WriteLine($"Auditing channel {channel.Name} in guild {guild.Name}.");
 
             // Check if message tracking is enabled for the channel
             ChannelsRow publicChannel = await handler.Channels.Get(channel);
@@ -355,9 +374,18 @@ public class Statistics
             ulong oldestId = 0;
             while (true)
             {
-                IReadOnlyList<DiscordMessage> messages = oldestId != 0
-                    ? await channel.GetMessagesBeforeAsync(oldestId)
-                    : await channel.GetMessagesAsync();
+                IReadOnlyList<DiscordMessage> messages;
+                try
+                {
+                    messages = oldestId != 0
+                        ? await channel.GetMessagesBeforeAsync(oldestId)
+                        : await channel.GetMessagesAsync();
+                }
+                catch (ArgumentException exception)
+                {
+                    ErrorHandler.Handle(exception, ctx);
+                    continue;
+                }
 
                 // Check if there are no messages
                 if (messages.Count <= 0) break;

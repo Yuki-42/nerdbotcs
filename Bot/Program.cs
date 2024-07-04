@@ -59,11 +59,12 @@ public class Program
         {
             ServiceProvider = serviceProvider
         });
+
         commands.RegisterGlobalCommands<GeneralCommands>();
         commands.RegisterGlobalCommands<StatisticsCommands>();
         commands.RegisterGlobalCommands<PrivacyCommands>();
         commands.RegisterGlobalCommands<ReactionsCommands>();
-        commands.RegisterGuildCommands<Testing>(1023182344087146546);
+        commands.RegisterGuildCommands<Testing>(config.Bot.TestingChannel);
 
         // Run bot
         await discord.ConnectAsync();
