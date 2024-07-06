@@ -75,7 +75,7 @@ public class StatisticsCommands : ApplicationCommandsModule
                     IReadOnlyList<GlobalMessageViewRow> rows = await viewsHandler.GetGlobalMessages(limit);
 
                     // Create the leaderboard
-                    string content = $"@silent Messages Leaderboard.\nShowing the top {limit} users globally.";
+                    string content = $"Messages Leaderboard.\nShowing the top {limit} users globally.";
                     for (int i = 0; i < rows.Count; i++)
                     {
                         // Get discord user
@@ -97,7 +97,7 @@ public class StatisticsCommands : ApplicationCommandsModule
                     IReadOnlyList<GuildMessageViewRow> rows = await viewsHandler.GetGuildMessages(ctx.Guild, limit);
 
                     // Create the leaderboard
-                    string content = $"@silent Messages Leaderboard.\nShowing the top {limit} users in {ctx.Guild.Name}";
+                    string content = $"Messages Leaderboard.\nShowing the top {limit} users in {ctx.Guild.Name}";
 
                     for (int i = 0; i < rows.Count; i++)
                     {
@@ -122,7 +122,7 @@ public class StatisticsCommands : ApplicationCommandsModule
                     IReadOnlyList<ChannelMessageViewRow> rows = await viewsHandler.GetChannelMessages(ctx.Channel, limit);
 
                     // Create the leaderboard
-                    string content = $"@silent Messages Leaderboard.\nShowing the top {limit} users in {ctx.Channel.Mention}";
+                    string content = $"Messages Leaderboard.\nShowing the top {limit} users in {ctx.Channel.Mention}";
                     for (int i = 0; i < rows.Count; i++)
                     {
                         // Get discord user
