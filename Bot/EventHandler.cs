@@ -52,8 +52,6 @@ internal static class EventLogic
 
     public static async Task ReactionsTask(DiscordClient client, MessageCreateEventArgs eventArgs, Database.Database database)
     {
-        Console.WriteLine($"ReactionsTask for {eventArgs.Author.Username}");
-        
         // Get the required services
         Handler handler = database.Handlers.Public;
         Database.Handlers.Reactions.Handler reactionsHandler = database.Handlers.Reactions;
@@ -67,8 +65,6 @@ internal static class EventLogic
         // Try add the reaction to the message
         foreach (ReactionsRow reaction in reactions)
         {
-            Console.WriteLine($"Adding reaction {reaction.Emoji}({reaction.EmojiId}) to message.");
-
             bool success = reaction.TryGetEmoji(client, out DiscordEmoji? emoji);
 
             if (!success)

@@ -111,7 +111,6 @@ public class UsersRow(string connectionString, HandlersGroup handlersGroup, IDat
     
     public async Task Delete()
     {
-        Console.WriteLine($"Deleting user {Username}");
         await using NpgsqlConnection connection = await GetConnectionAsync();
         await using NpgsqlCommand command = connection.CreateCommand();
         command.CommandText = "DELETE FROM public.users WHERE id = @id;";

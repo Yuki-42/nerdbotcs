@@ -84,9 +84,7 @@ public class Handler(string connectionString) : BaseHandler(connectionString)
             command.Parameters.Add(new NpgsqlParameter("emoji_id", NpgsqlDbType.Numeric) { Value = DBNull.Value });
         }
 
-        Console.WriteLine(emojiType);
         command.Parameters.Add(new NpgsqlParameter("type", NpgsqlDbType.Text) { Value = emojiType });
-        Console.WriteLine(emojiType);
 
         try
         {
