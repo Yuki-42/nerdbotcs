@@ -25,10 +25,10 @@ public class GeneralCommands : ApplicationCommandsModule
     [SlashCommand("status", "Set the bot status.")]
     public async Task StatusCommand(
         InteractionContext ctx,
-        [Option("status", "The status to set.")]
-        string status,
         [Option("type", "The type of status to set.")]
-        ActivityType type
+        ActivityType type,
+        [Option("status", "The status to set.")]
+        string status
     )
     {
         DiscordActivity activity = new()
