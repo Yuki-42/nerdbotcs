@@ -14,9 +14,9 @@
 
 
     <ItemGroup>
-        <PackageReference Include="DisCatSharp" Version="10.6.5-nightly-002"/>
-        <PackageReference Include="DisCatSharp.ApplicationCommands" Version="10.6.5-nightly-002"/>
-        <PackageReference Include="DisCatSharp.Common" Version="10.6.5-nightly-002"/>
+        <PackageReference Include="DisCatSharp" Version="10.6.6-nightly-018"/>
+        <PackageReference Include="DisCatSharp.ApplicationCommands" Version="10.6.6-nightly-018"/>
+        <PackageReference Include="DisCatSharp.Common" Version="10.6.6-nightly-018"/>
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0-preview.5.24306.7"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.0-preview.5.24306.7"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0-preview.5.24306.7"/>
