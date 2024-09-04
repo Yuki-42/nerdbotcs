@@ -181,6 +181,9 @@ public class Statistics
 
         // Get all guilds
         DiscordGuild[] guilds = ctx.Client.Guilds.Values.ToArray();
+        Console.Write("\n\n\n\n\n\n\n");
+        Console.WriteLine("AUDITING ALL CHANNELS");
+        Console.Write("\n\n\n\n\n\n\n");
 
         foreach (DiscordGuild guild in guilds) await AuditGuildChannels(ctx, guild, handler);
     }
@@ -204,8 +207,8 @@ public class Statistics
         foreach (DiscordChannel channel in channels)
         {
             // Check if the channel exists in the database
-            ChannelsRow publicChannel = await handler.Channels.Get(channel);
-
+            ChannelsRow? publicChannel = await handler.Channels.Get(channel);
+            
             // Update the name if it's different
             if (publicChannel.Name != channel.Name) publicChannel.Name = channel.Name; // This updates the name in the database through the setter
 

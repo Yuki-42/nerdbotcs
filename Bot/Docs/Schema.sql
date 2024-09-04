@@ -71,7 +71,7 @@ CREATE TABLE public.channels
     guild_id         NUMERIC,
     message_tracking BOOLEAN   NOT NULL DEFAULT TRUE,
     name             TEXT      NOT NULL,
-    type             TEXT      NOT NULL,
+    type             TEXT      NOT NULL DEFAULT 'text',
     PRIMARY KEY (id)
 );
 
@@ -278,5 +278,3 @@ GRANT USAGE ON ALL SEQUENCES IN SCHEMA reply TO nerdbot;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA filter TO nerdbot;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA reactions TO nerdbot;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA logs TO nerdbot;
-
-
