@@ -181,10 +181,6 @@ public class Statistics
 
         // Get all guilds
         DiscordGuild[] guilds = ctx.Client.Guilds.Values.ToArray();
-        Console.Write("\n\n\n\n\n\n\n");
-        Console.WriteLine("AUDITING ALL CHANNELS");
-        Console.Write("\n\n\n\n\n\n\n");
-
         foreach (DiscordGuild guild in guilds) await AuditGuildChannels(ctx, guild, handler);
     }
 
