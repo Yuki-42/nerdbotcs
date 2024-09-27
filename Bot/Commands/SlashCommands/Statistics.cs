@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using Bot.Commands.Logic;
 using Bot.Database.Handlers.Public;
 using Bot.Database.Handlers.Public.Views;
@@ -10,7 +11,9 @@ using DisCatSharp.ApplicationCommands.Context;
 using DisCatSharp.ApplicationCommands.EventArgs;
 using DisCatSharp.Entities;
 using DisCatSharp.Enums;
+using DisCatSharp.Net.Models;
 using Microsoft.Extensions.DependencyInjection;
+using MessageType = NuGet.Protocol.Plugins.MessageType;
 
 namespace Bot.Commands.SlashCommands;
 
@@ -51,7 +54,8 @@ public class StatisticsCommands : ApplicationCommandsModule
             await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
                 new DiscordInteractionResponseBuilder
                 {
-                    Content = "Constructing leaderboard..."
+                    Content = "Constructing leaderboard...",
+                    NotificationsSuppressed = true
                 });
 
             // Get the public handler
@@ -105,7 +109,7 @@ public class StatisticsCommands : ApplicationCommandsModule
                         DiscordUser user = await ctx.Client.GetUserAsync(rows[i].UserId); // TODO: This will throw an error when the user is not found.
                         content += $"\n{i + 1}. {user.Mention} - {rows[i].MessagesSent}";
                     }
-
+                    
                     // Edit the response
                     await ctx.EditResponseAsync(
                         new DiscordWebhookBuilder
