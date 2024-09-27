@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Bot.Commands.Logic;
 using Bot.Database.Handlers.Public;
 using Bot.Database.Handlers.Public.Views;
@@ -11,9 +10,7 @@ using DisCatSharp.ApplicationCommands.Context;
 using DisCatSharp.ApplicationCommands.EventArgs;
 using DisCatSharp.Entities;
 using DisCatSharp.Enums;
-using DisCatSharp.Net.Models;
 using Microsoft.Extensions.DependencyInjection;
-using MessageType = NuGet.Protocol.Plugins.MessageType;
 
 namespace Bot.Commands.SlashCommands;
 
@@ -86,7 +83,15 @@ public class StatisticsCommands : ApplicationCommandsModule
                         DiscordUser user = await ctx.Client.GetUserAsync(rows[i].UserId); // TODO: This will throw an error when the user is not found.
                         content += $"\n{i + 1}. {user.Mention} - {rows[i].MessagesSent}";
                     }
-
+                    
+                    // Check character length
+                    if (content.Length >= 2000)
+                        await ctx.EditResponseAsync(
+                            new DiscordWebhookBuilder
+                            {
+                                Content = $"Leaderboard too long. Maximum length 2000, actual length {content.Length}"
+                            });
+                    
                     // Edit the response
                     await ctx.EditResponseAsync(
                         new DiscordWebhookBuilder
