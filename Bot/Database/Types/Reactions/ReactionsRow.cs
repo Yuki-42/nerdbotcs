@@ -7,7 +7,8 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Types.Reactions;
 
-public class ReactionsRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseRow(connectionString, handlersGroup, reader)
+public class ReactionsRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader)
+    : BaseRow(connectionString, handlersGroup, reader)
 {
     // This is nullable, so we need to use the GetValueOrDefault method.
     public ulong? GuildId { get; } = GetNullableUlong(reader, "guild_id");
@@ -20,8 +21,8 @@ public class ReactionsRow(string connectionString, HandlersGroup handlersGroup, 
     {
         get
         {
-            using NpgsqlConnection connection = GetConnection();
-            using NpgsqlCommand command = connection.CreateCommand();
+            using var connection = GetConnection();
+            using var command = connection.CreateCommand();
             command.CommandText = "SELECT emoji FROM reactions.reactions WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", DbType.Guid) { Value = Id });
 
@@ -30,10 +31,11 @@ public class ReactionsRow(string connectionString, HandlersGroup handlersGroup, 
         }
         set
         {
-            using NpgsqlConnection connection = GetConnection();
-            using NpgsqlCommand command = connection.CreateCommand();
+            using var connection = GetConnection();
+            using var command = connection.CreateCommand();
             command.CommandText = "UPDATE reactions.reactions SET emoji = @value WHERE id = @id;";
-            command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)UserId }); // TODO: Add error handling for when value is null
+            command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric)
+                { Value = (long)UserId }); // TODO: Add error handling for when value is null
 
             command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Text) { Value = value });
             ExecuteNonQuery(command);
@@ -45,8 +47,8 @@ public class ReactionsRow(string connectionString, HandlersGroup handlersGroup, 
     {
         get
         {
-            using NpgsqlConnection connection = GetConnection();
-            using NpgsqlCommand command = connection.CreateCommand();
+            using var connection = GetConnection();
+            using var command = connection.CreateCommand();
             command.CommandText = "SELECT emoji_id FROM reactions.reactions WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", DbType.Guid) { Value = Id });
 
@@ -55,12 +57,13 @@ public class ReactionsRow(string connectionString, HandlersGroup handlersGroup, 
         }
         set
         {
-            using NpgsqlConnection connection = GetConnection();
-            using NpgsqlCommand command = connection.CreateCommand();
+            using var connection = GetConnection();
+            using var command = connection.CreateCommand();
             command.CommandText = "UPDATE reactions.reactions SET emoji_id = @value WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", DbType.Guid) { Value = Id });
 
-            command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Numeric) { Value = value }); // TODO: Add error handling for when value is null
+            command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Numeric)
+                { Value = value }); // TODO: Add error handling for when value is null
             ExecuteNonQuery(command);
         }
     }
@@ -69,8 +72,8 @@ public class ReactionsRow(string connectionString, HandlersGroup handlersGroup, 
     {
         get
         {
-            using NpgsqlConnection connection = GetConnection();
-            using NpgsqlCommand command = connection.CreateCommand();
+            using var connection = GetConnection();
+            using var command = connection.CreateCommand();
             command.CommandText = "SELECT type FROM reactions.reactions WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", DbType.Guid) { Value = Id });
             return (string?)command.ExecuteScalar();
@@ -82,7 +85,7 @@ public class ReactionsRow(string connectionString, HandlersGroup handlersGroup, 
         try
         {
             // Get the type of the emoji
-            string? type = Type;
+            var type = Type;
 
             if (type is null)
             {
@@ -112,8 +115,8 @@ public class ReactionsRow(string connectionString, HandlersGroup handlersGroup, 
 
     public async Task Delete()
     {
-        await using NpgsqlConnection connection = await GetConnectionAsync();
-        await using NpgsqlCommand command = connection.CreateCommand();
+        await using var connection = await GetConnectionAsync();
+        await using var command = connection.CreateCommand();
         command.CommandText = "DELETE FROM reactions.reactions WHERE id = @id;";
         command.Parameters.Add(new NpgsqlParameter("id", DbType.Guid) { Value = Id });
 

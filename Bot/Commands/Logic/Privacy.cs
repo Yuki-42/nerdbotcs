@@ -1,7 +1,4 @@
 ﻿using System.Diagnostics;
-using Bot.Database.Handlers.Public;
-using Bot.Database.Types.Public;
-using DisCatSharp;
 using DisCatSharp.ApplicationCommands.Context;
 using DisCatSharp.Entities;
 using DisCatSharp.Enums;
@@ -20,7 +17,7 @@ public class Privacy
     public static async Task<bool> CheckChannelAccessible(BaseContext ctx, DiscordChannel channel)
     {
         // Get the client
-        DiscordClient client = ctx.Client;
+        var client = ctx.Client;
 
         // Check if the channel is accessible by the bot
         try
@@ -38,7 +35,7 @@ public class Privacy
     public static async Task<bool> CheckBotInGuild(BaseContext ctx, DiscordGuild? guild)
     {
         // Get the client
-        DiscordClient client = ctx.Client;
+        var client = ctx.Client;
 
         if (guild is null) return false;
 
@@ -89,7 +86,7 @@ public class Privacy
         }
 
         // Check permissions
-        int permission = await Shared.CheckPermissions(ctx);
+        var permission = await Shared.CheckPermissions(ctx);
 
         switch (permission)
         {
@@ -107,12 +104,12 @@ public class Privacy
         }
 
         // Get the guild
-        Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
         guild ??= ctx.Guild;
 
         Debug.Assert(guild is not null, nameof(guild) + " != null");
 
-        GuildsRow lGuild = await handler.Guilds.Get(guild);
+        var lGuild = await handler.Guilds.Get(guild);
         lGuild.MessageTracking = value ?? !lGuild.MessageTracking;
 
         await ctx.EditResponseAsync(
@@ -148,7 +145,7 @@ public class Privacy
         }
 
         // Check permissions
-        int permission = await Shared.CheckPermissions(ctx);
+        var permission = await Shared.CheckPermissions(ctx);
 
         switch (permission)
         {
@@ -166,9 +163,9 @@ public class Privacy
         }
 
         // Get the guild
-        Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
-        ChannelsRow lChannel = await handler.Channels.Get(channel);
+        var lChannel = await handler.Channels.Get(channel);
         lChannel.MessageTracking = value ?? !lChannel.MessageTracking;
 
         await ctx.EditResponseAsync(

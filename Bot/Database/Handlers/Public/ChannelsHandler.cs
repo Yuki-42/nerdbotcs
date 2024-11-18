@@ -10,12 +10,12 @@ public class ChannelsHandler(string connectionString) : BaseHandler(connectionSt
     public async Task<ChannelsRow?> Get(ulong id)
     {
         // Get a new connection
-        await using NpgsqlConnection connection = await Connection();
-        await using NpgsqlCommand command = connection.CreateCommand();
+        await using var connection = await Connection();
+        await using var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM public.channels WHERE id = @id";
         command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)id });
 
-        await using NpgsqlDataReader reader = await ExecuteReader(command);
+        await using var reader = await ExecuteReader(command);
         return !reader.Read() ? null : new ChannelsRow(ConnectionString, HandlersGroup, reader);
     }
 
@@ -30,19 +30,16 @@ public class ChannelsHandler(string connectionString) : BaseHandler(connectionSt
     public async Task<ChannelsRow> Get(ulong id, ulong? guildId, string? name = null)
     {
         // Check if the channel already exists.
-        ChannelsRow? channel = await Get(id);
+        var channel = await Get(id);
         if (channel != null) return channel;
-        
+
         // The channel does not exist in the db, add it.
-        if (name is null)
-        {
-            throw new Exception("Channel does not exist in the database and no name was provided.");
-        }
+        if (name is null) throw new Exception("Channel does not exist in the database and no name was provided.");
 
         // Get a new connection
-        await using NpgsqlConnection connection = await Connection();
-        await using NpgsqlCommand command = connection.CreateCommand();
-        
+        await using var connection = await Connection();
+        await using var command = connection.CreateCommand();
+
         if (guildId == null)
         {
             command.CommandText = "INSERT INTO public.channels (id, name) VALUES (@id, @name)";
@@ -65,38 +62,32 @@ public class ChannelsHandler(string connectionString) : BaseHandler(connectionSt
     {
         return await Get(channel.Id, channel.GuildId, channel.Name);
     }
-    
+
     public async Task<IReadOnlyList<ChannelsRow>> GetAll()
     {
         // Get a new connection
-        await using NpgsqlConnection connection = await Connection();
-        await using NpgsqlCommand command = connection.CreateCommand();
+        await using var connection = await Connection();
+        await using var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM public.channels";
 
-        await using NpgsqlDataReader reader = await ExecuteReader(command);
+        await using var reader = await ExecuteReader(command);
         List<ChannelsRow> channels = [];
-        while (await reader.ReadAsync())
-        {
-            channels.Add(new ChannelsRow(ConnectionString, HandlersGroup, reader));
-        }
+        while (await reader.ReadAsync()) channels.Add(new ChannelsRow(ConnectionString, HandlersGroup, reader));
 
         return channels;
     }
-    
+
     public async Task<IReadOnlyList<ChannelsRow>> GetAll(ulong guildId)
     {
         // Get a new connection
-        await using NpgsqlConnection connection = await Connection();
-        await using NpgsqlCommand command = connection.CreateCommand();
+        await using var connection = await Connection();
+        await using var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM public.channels WHERE guild_id = @guild_id";
         command.Parameters.Add(new NpgsqlParameter("guild_id", NpgsqlDbType.Numeric) { Value = (long)guildId });
 
-        await using NpgsqlDataReader reader = await ExecuteReader(command);
+        await using var reader = await ExecuteReader(command);
         List<ChannelsRow> channels = [];
-        while (await reader.ReadAsync())
-        {
-            channels.Add(new ChannelsRow(ConnectionString, HandlersGroup, reader));
-        }
+        while (await reader.ReadAsync()) channels.Add(new ChannelsRow(ConnectionString, HandlersGroup, reader));
 
         return channels;
     }

@@ -1,7 +1,4 @@
 ﻿using Bot.Commands.Logic;
-using Bot.Database.Handlers.Public;
-using Bot.Database.Handlers.Reactions;
-using Bot.Database.Types.Public;
 using Bot.Database.Types.Reactions;
 using DisCatSharp.ApplicationCommands;
 using DisCatSharp.ApplicationCommands.Attributes;
@@ -9,7 +6,6 @@ using DisCatSharp.ApplicationCommands.Context;
 using DisCatSharp.Entities;
 using DisCatSharp.Enums;
 using Microsoft.Extensions.DependencyInjection;
-using Handler = Bot.Database.Handlers.Reactions.Handler;
 
 // ReSharper disable UnusedMember.Global
 namespace Bot.Commands.SlashCommands;
@@ -26,25 +22,28 @@ public class ReactionsCommands : ApplicationCommandsModule
         )
         {
             // Create response 
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder { Content = "Listing reactions...", IsEphemeral = true });
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+                new DiscordInteractionResponseBuilder { Content = "Listing reactions...", IsEphemeral = true });
 
             // Get the required services
-            Database.Database database = ctx.Services.GetRequiredService<Database.Database>();
+            var database = ctx.Services.GetRequiredService<Database.Database>();
 
             // Get the required handlers
-            Database.Handlers.Public.Handler publicHandler = database.Handlers.Public;
-            Handler reactionsHandler = database.Handlers.Reactions;
+            var publicHandler = database.Handlers.Public;
+            var reactionsHandler = database.Handlers.Reactions;
 
             // Set target user if null
             user ??= ctx.User;
 
             // Get the user
-            UsersRow publicUser = await publicHandler.Users.Get(user);
+            var publicUser = await publicHandler.Users.Get(user);
 
             // Check if the user has permission to list reactions
             if (!await Reactions.ListPermissionsCheck(ctx, user))
             {
-                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("You do not have permission to list reactions for other users."));
+                await ctx.EditResponseAsync(
+                    new DiscordWebhookBuilder().WithContent(
+                        "You do not have permission to list reactions for other users."));
                 return;
             }
 
@@ -52,15 +51,16 @@ public class ReactionsCommands : ApplicationCommandsModule
             IEnumerable<ReactionsRow> reactions = await reactionsHandler.GetReactions(user.Id);
 
             // Create the reactions text 
-            string reactionsText = "";
+            var reactionsText = "";
             IEnumerable<ReactionsRow> reactionsReactions = reactions.ToList();
-            foreach (ReactionsRow reaction in reactionsReactions)
+            foreach (var reaction in reactionsReactions)
             {
                 string emoji;
                 if (reaction.Emoji is null)
                 {
-                    reaction.TryGetEmoji(ctx.Client, out DiscordEmoji? dEmoji);
-                    emoji = dEmoji?.Name ?? throw new InvalidOperationException("Both reaction.Emoji and discord emoji are null.");
+                    reaction.TryGetEmoji(ctx.Client, out var dEmoji);
+                    emoji = dEmoji?.Name ??
+                            throw new InvalidOperationException("Both reaction.Emoji and discord emoji are null.");
                 }
                 else
                 {
@@ -89,22 +89,25 @@ public class ReactionsCommands : ApplicationCommandsModule
         )
         {
             // Create response
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder { Content = $"Adding reaction {emoji} to {user.Username}" });
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+                new DiscordInteractionResponseBuilder { Content = $"Adding reaction {emoji} to {user.Username}" });
 
             // Get the required services
-            Database.Database database = ctx.Services.GetRequiredService<Database.Database>();
+            var database = ctx.Services.GetRequiredService<Database.Database>();
 
             // Get the required handlers
-            Database.Handlers.Public.Handler publicHandler = database.Handlers.Public;
-            Handler reactionsHandler = database.Handlers.Reactions;
+            var publicHandler = database.Handlers.Public;
+            var reactionsHandler = database.Handlers.Reactions;
 
             // Get the user
-            UsersRow publicUser = await publicHandler.Users.Get(user);
+            var publicUser = await publicHandler.Users.Get(user);
 
             // For now, only allow the bot owner to use this command
             if (!await Reactions.AddPermissionsChecks(ctx, user))
             {
-                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("You do not have permission to add reactions for other users."));
+                await ctx.EditResponseAsync(
+                    new DiscordWebhookBuilder().WithContent(
+                        "You do not have permission to add reactions for other users."));
                 return;
             }
 
@@ -116,24 +119,26 @@ public class ReactionsCommands : ApplicationCommandsModule
             }
 
             // Get the channel if it's not null
-            ChannelsRow? publicChannel = channel is null ? null : await publicHandler.Channels.Get(channel);
+            var publicChannel = channel is null ? null : await publicHandler.Channels.Get(channel);
 
             // Get the guild if it's not null
-            GuildsRow? publicGuild = channel is null ? null : await publicHandler.Guilds.Get(channel.Guild);
+            var publicGuild = channel is null ? null : await publicHandler.Guilds.Get(channel.Guild);
 
             // Add the reaction
 
             // Check if the reaction already exists
             if (await reactionsHandler.Exists(emoji, publicUser.Id, publicGuild?.Id, publicChannel?.Id))
             {
-                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Reaction {emoji} already exists for {user.Username} with the same settings."));
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent(
+                    $"Reaction {emoji} already exists for {user.Username} with the same settings."));
                 return;
             }
 
-            ReactionsRow reaction = await reactionsHandler.New(emoji, publicUser, publicGuild, publicChannel);
+            var reaction = await reactionsHandler.New(emoji, publicUser, publicGuild, publicChannel);
 
             // Edit the response
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Added reaction {emoji} to {user.Username}"));
+            await ctx.EditResponseAsync(
+                new DiscordWebhookBuilder().WithContent($"Added reaction {emoji} to {user.Username}"));
         }
 
         [SlashCommand("remove", "Remove a reaction.")]
@@ -146,30 +151,33 @@ public class ReactionsCommands : ApplicationCommandsModule
         )
         {
             // Create response
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder { Content = "Removing reaction..." });
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+                new DiscordInteractionResponseBuilder { Content = "Removing reaction..." });
 
             // Get the required services
-            Database.Database database = ctx.Services.GetRequiredService<Database.Database>();
+            var database = ctx.Services.GetRequiredService<Database.Database>();
 
             // Get the required handlers
-            Database.Handlers.Public.Handler publicHandler = database.Handlers.Public;
-            Handler reactionsHandler = database.Handlers.Reactions;
+            var publicHandler = database.Handlers.Public;
+            var reactionsHandler = database.Handlers.Reactions;
 
             // Set target user if null
             user ??= ctx.User;
 
             // Get the user
-            UsersRow publicUser = await publicHandler.Users.Get(user);
+            var publicUser = await publicHandler.Users.Get(user);
 
             // Check if the user has permission to remove reactions
             if (!await Reactions.RemovePermissionsCheck(ctx, user))
             {
-                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("You do not have permission to remove reactions for other users."));
+                await ctx.EditResponseAsync(
+                    new DiscordWebhookBuilder().WithContent(
+                        "You do not have permission to remove reactions for other users."));
                 return;
             }
 
             // Get the reaction
-            ReactionsRow? reaction = await reactionsHandler.Get(new Guid(reactionId));
+            var reaction = await reactionsHandler.Get(new Guid(reactionId));
 
             // Check if the reaction exists
             if (reaction is null)
@@ -181,7 +189,8 @@ public class ReactionsCommands : ApplicationCommandsModule
             // Check if the user has permission to remove the reaction
             if (reaction.UserId != publicUser.Id)
             {
-                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("You do not have permission to remove this reaction."));
+                await ctx.EditResponseAsync(
+                    new DiscordWebhookBuilder().WithContent("You do not have permission to remove this reaction."));
                 return;
             }
 

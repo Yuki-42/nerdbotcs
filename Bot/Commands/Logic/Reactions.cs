@@ -1,6 +1,4 @@
-﻿using Bot.Database.Handlers.Public;
-using Bot.Database.Types.Public;
-using DisCatSharp;
+﻿using DisCatSharp;
 using DisCatSharp.ApplicationCommands.Context;
 using DisCatSharp.Entities;
 using DisCatSharp.Enums;
@@ -24,12 +22,14 @@ public class Reactions
     /// <returns>If the passed string is a valid discord emoji.</returns>
     public static bool CheckValidEmoji(DiscordClient client, string emoji)
     {
-        return CheckValidUnicodeEmoji(client, emoji) || CheckValidDiscordEmoji(client, emoji) || CheckValidGuildEmoji(client, emoji);
+        return CheckValidUnicodeEmoji(client, emoji) || CheckValidDiscordEmoji(client, emoji) ||
+               CheckValidGuildEmoji(client, emoji);
     }
 
     private static bool CheckValidUnicodeEmoji(DiscordClient client, string emoji)
     {
-        return RegularExpressions.UnicodeEmoji.Match(emoji).Success && DiscordEmoji.TryFromUnicode(client, emoji, out _);
+        return RegularExpressions.UnicodeEmoji.Match(emoji).Success &&
+               DiscordEmoji.TryFromUnicode(client, emoji, out _);
     }
 
     private static bool CheckValidDiscordEmoji(DiscordClient client, string emoji)
@@ -43,7 +43,7 @@ public class Reactions
         if (!RegularExpressions.GuildEmoji.Match(emoji).Success) return false;
 
         // Extract the emoji ID and check with the API
-        ulong emojiId = RegularExpressions.ExtractId(emoji);
+        var emojiId = RegularExpressions.ExtractId(emoji);
         return DiscordEmoji.TryFromGuildEmote(client, emojiId, out _);
     }
 
@@ -59,10 +59,10 @@ public class Reactions
         if (ctx.User.Id == targetUser.Id) return true;
 
         // Get the required handlers
-        Handler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        var publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // Check if the user is a global bot admin
-        UsersRow publicUser = await publicHandler.Users.Get(ctx.User);
+        var publicUser = await publicHandler.Users.Get(ctx.User);
         return publicUser.Admin;
     }
 
@@ -78,17 +78,17 @@ public class Reactions
         if (ctx.User.Id == targetUser.Id) return true;
 
         // Get the required handlers
-        Handler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        var publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // Check if the user is a global bot admin
-        UsersRow publicUser = await publicHandler.Users.Get(ctx.User);
+        var publicUser = await publicHandler.Users.Get(ctx.User);
         if (publicUser.Admin) return true;
 
         // If the guild is null then the user is not a server admin
         if (ctx.Guild is null) return false;
 
         // Check if the user is a server admin
-        DiscordMember member = await ctx.Guild.GetMemberAsync(ctx.User.Id);
+        var member = await ctx.Guild.GetMemberAsync(ctx.User.Id);
         return member.Permissions.HasPermission(Permissions.ModerateMembers);
     }
 
@@ -99,10 +99,10 @@ public class Reactions
         if (ctx.User.Id == targetUser.Id) return true;
 
         // Get the required handlers
-        Handler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        var publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // Check if the user is a global bot admin
-        UsersRow publicUser = await publicHandler.Users.Get(ctx.User);
+        var publicUser = await publicHandler.Users.Get(ctx.User);
         return publicUser.Admin;
     }
 }

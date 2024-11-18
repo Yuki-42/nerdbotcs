@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Bot.Commands.Logic;
-using Bot.Database.Handlers.Public;
-using Bot.Database.Types.Public;
 using DisCatSharp.ApplicationCommands;
 using DisCatSharp.ApplicationCommands.Attributes;
 using DisCatSharp.ApplicationCommands.Context;
@@ -28,9 +26,9 @@ public class PrivacyCommands : ApplicationCommandsModule
                 });
 
             // Get the user
-            Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+            var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
-            UsersRow user = await handler.Users.Get(ctx.User);
+            var user = await handler.Users.Get(ctx.User);
 
             user.MessageTracking = false;
 
@@ -42,7 +40,8 @@ public class PrivacyCommands : ApplicationCommandsModule
                 });
         }
 
-        [SlashCommand("opt-in", "Quickly opt in to user data collection. Note: This will not overwrite any more-specific settings.")]
+        [SlashCommand("opt-in",
+            "Quickly opt in to user data collection. Note: This will not overwrite any more-specific settings.")]
         public async Task QuickInCommand(InteractionContext ctx)
         {
             await ctx.CreateResponseAsync(
@@ -53,9 +52,9 @@ public class PrivacyCommands : ApplicationCommandsModule
                 });
 
             // Get the user
-            Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+            var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
-            UsersRow user = await handler.Users.Get(ctx.User);
+            var user = await handler.Users.Get(ctx.User);
 
             user.MessageTracking = true;
 
@@ -108,8 +107,8 @@ public class PrivacyCommands : ApplicationCommandsModule
                     });
 
                 // Get the user
-                Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-                UsersRow user = await handler.Users.Get(ctx.User);
+                var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+                var user = await handler.Users.Get(ctx.User);
 
                 user.MessageTracking = false;
 
@@ -142,19 +141,20 @@ public class PrivacyCommands : ApplicationCommandsModule
                 }
 
                 // Get the GuildUser
-                Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-                DiscordGuild server = ctx.Guild;
+                var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+                var server = ctx.Guild;
 
                 // Check if server is still null
                 if (server is null) throw new InvalidOperationException();
 
-                GuildsUsersRow user = await handler.GuildUsers.Get(ctx.User, server);
+                var user = await handler.GuildUsers.Get(ctx.User, server);
                 user.MessageTracking = false;
 
                 await ctx.EditResponseAsync(
                     new DiscordWebhookBuilder
                     {
-                        Content = "Opt out completed. Your messages will no longer be counted by the bot in this server."
+                        Content =
+                            "Opt out completed. Your messages will no longer be counted by the bot in this server."
                     });
             }
 
@@ -169,19 +169,20 @@ public class PrivacyCommands : ApplicationCommandsModule
                     });
 
                 // Get the GuildUser
-                Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-                DiscordChannel server = ctx.Channel;
+                var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+                var server = ctx.Channel;
 
                 // Check if server is still null
                 if (server is null) throw new InvalidOperationException();
 
-                ChannelsUsersRow user = await handler.ChannelUsers.Get(ctx.User, server);
+                var user = await handler.ChannelUsers.Get(ctx.User, server);
                 user.MessageTracking = false;
 
                 await ctx.EditResponseAsync(
                     new DiscordWebhookBuilder
                     {
-                        Content = $"Opt out completed. Your messages will no longer be counted by the bot in {ctx.Channel.Mention}."
+                        Content =
+                            $"Opt out completed. Your messages will no longer be counted by the bot in {ctx.Channel.Mention}."
                     });
             }
         }
@@ -200,8 +201,8 @@ public class PrivacyCommands : ApplicationCommandsModule
                     });
 
                 // Get the user
-                Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-                UsersRow user = await handler.Users.Get(ctx.User);
+                var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+                var user = await handler.Users.Get(ctx.User);
 
                 user.MessageTracking = true;
 
@@ -235,13 +236,13 @@ public class PrivacyCommands : ApplicationCommandsModule
                 }
 
                 // Get the GuildUser
-                Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-                DiscordGuild server = ctx.Guild;
+                var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+                var server = ctx.Guild;
 
                 // Check if server is still null
                 if (server is null) throw new InvalidOperationException();
 
-                GuildsUsersRow user = await handler.GuildUsers.Get(ctx.User, server);
+                var user = await handler.GuildUsers.Get(ctx.User, server);
                 user.MessageTracking = true;
 
                 await ctx.EditResponseAsync(
@@ -274,13 +275,13 @@ public class PrivacyCommands : ApplicationCommandsModule
                 }
 
                 // Get the GuildUser
-                Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-                DiscordGuild server = ctx.Guild;
+                var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+                var server = ctx.Guild;
 
                 // Check if server is still null
                 if (server is null) throw new InvalidOperationException();
 
-                GuildsUsersRow user = await handler.GuildUsers.Get(ctx.User, server);
+                var user = await handler.GuildUsers.Get(ctx.User, server);
                 user.MessageTracking = true;
 
                 await ctx.EditResponseAsync(

@@ -5,7 +5,8 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Types.Public;
 
-public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseRow(connectionString, handlersGroup, reader)
+public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader)
+    : BaseRow(connectionString, handlersGroup, reader)
 {
     /// <summary>
     ///     User's discord id.
@@ -24,8 +25,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
     {
         get
         {
-            using NpgsqlConnection connection = GetConnection();
-            using NpgsqlCommand command = connection.CreateCommand();
+            using var connection = GetConnection();
+            using var command = connection.CreateCommand();
             command.CommandText = "SELECT message_tracking FROM public.channels WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -33,8 +34,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
         }
         set
         {
-            using NpgsqlConnection connection = GetConnection();
-            using NpgsqlCommand command = connection.CreateCommand();
+            using var connection = GetConnection();
+            using var command = connection.CreateCommand();
             command.CommandText = "UPDATE public.channels SET message_tracking = @value WHERE id = @id;";
 
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
@@ -42,23 +43,13 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
             ExecuteNonQuery(command);
         }
     }
-    
-    public async Task Delete()
-    {
-        await using NpgsqlConnection connection = await GetConnectionAsync();
-        await using NpgsqlCommand command = connection.CreateCommand();
-        command.CommandText = "DELETE FROM public.channels WHERE id = @id;";
-        command.Parameters.Add(new NpgsqlParameter("id", DbType.VarNumeric) { Value = (long)Id });
-
-        await command.ExecuteNonQueryAsync();
-    }
 
     public string Name
     {
         get
         {
-            using NpgsqlConnection connection = GetConnection();
-            using NpgsqlCommand command = connection.CreateCommand();
+            using var connection = GetConnection();
+            using var command = connection.CreateCommand();
             command.CommandText = "SELECT name FROM public.channels WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -66,8 +57,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
         }
         set
         {
-            using NpgsqlConnection connection = GetConnection();
-            using NpgsqlCommand command = connection.CreateCommand();
+            using var connection = GetConnection();
+            using var command = connection.CreateCommand();
             command.CommandText = "UPDATE public.channels SET name = @value WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -80,8 +71,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
     {
         get
         {
-            using NpgsqlConnection connection = GetConnection();
-            using NpgsqlCommand command = connection.CreateCommand();
+            using var connection = GetConnection();
+            using var command = connection.CreateCommand();
             command.CommandText = "SELECT type FROM public.channels WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -92,14 +83,24 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
         }
         set
         {
-            using NpgsqlConnection connection = GetConnection();
-            using NpgsqlCommand command = connection.CreateCommand();
+            using var connection = GetConnection();
+            using var command = connection.CreateCommand();
             command.CommandText = "UPDATE public.channels SET type = @value WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
             command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Text) { Value = value.ToString() });
             ExecuteNonQuery(command);
         }
+    }
+
+    public async Task Delete()
+    {
+        await using var connection = await GetConnectionAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = "DELETE FROM public.channels WHERE id = @id;";
+        command.Parameters.Add(new NpgsqlParameter("id", DbType.VarNumeric) { Value = (long)Id });
+
+        await command.ExecuteNonQueryAsync();
     }
 
     /// <summary>

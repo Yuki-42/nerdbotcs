@@ -4,7 +4,8 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Types.Config;
 
-public class ConfigRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseRow(connectionString, handlersGroup, reader)
+public class ConfigRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader)
+    : BaseRow(connectionString, handlersGroup, reader)
 {
     /// <summary>
     ///     Configuration string key.
@@ -18,8 +19,8 @@ public class ConfigRow(string connectionString, HandlersGroup handlersGroup, IDa
     {
         get
         {
-            using NpgsqlConnection connection = GetConnectionAsync().Result;
-            using NpgsqlCommand command = connection.CreateCommand();
+            using var connection = GetConnectionAsync().Result;
+            using var command = connection.CreateCommand();
             command.CommandText = "SELECT value FROM config.data WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Uuid) { Value = Id });
 
@@ -28,12 +29,13 @@ public class ConfigRow(string connectionString, HandlersGroup handlersGroup, IDa
         }
         set
         {
-            using NpgsqlConnection connection = GetConnection();
-            using NpgsqlCommand command = connection.CreateCommand();
+            using var connection = GetConnection();
+            using var command = connection.CreateCommand();
             command.CommandText = "UPDATE config.data SET value = @value WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Uuid) { Value = Id });
 
-            command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Text) { Value = value }); // TODO: Add error handling for when value is null
+            command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Text)
+                { Value = value }); // TODO: Add error handling for when value is null
             ExecuteNonQuery(command);
         }
     }

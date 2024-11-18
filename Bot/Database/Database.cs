@@ -1,9 +1,4 @@
-﻿using Bot.Database.Handlers;
-using Bot.Database.Handlers.Config;
-using Bot.Database.Handlers.Filter;
-using Bot.Database.Handlers.Public;
-using Bot.Database.Handlers.Reactions;
-using Handler = Bot.Database.Handlers.Filter.Handler;
+﻿using Handler = Bot.Database.Handlers.Filter.Handler;
 
 namespace Bot.Database;
 
@@ -24,7 +19,8 @@ public class Database
         string password
     )
     {
-        string connectionString = $"Host={host};Port={port};Username={username};Database={database};Password={password};Include Error Detail=true;";
+        var connectionString =
+            $"Host={host};Port={port};Username={username};Database={database};Password={password};Include Error Detail=true;";
 
         // Create handlers
         Handlers = new HandlersGroup
@@ -36,6 +32,6 @@ public class Database
         };
 
         // Now give all handlers access to each other 
-        foreach (BaseHandler handler in Handlers.Handlers) handler.Populate(Handlers);
+        foreach (var handler in Handlers.Handlers) handler.Populate(Handlers);
     }
 }

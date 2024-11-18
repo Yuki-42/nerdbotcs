@@ -12,27 +12,27 @@ public class Handler(string connectionString) : BaseHandler(connectionString)
     public async Task<ReactionsRow?> Get(Guid id)
     {
         // Get a new connection
-        await using NpgsqlConnection connection = await Connection();
-        await using NpgsqlCommand command = connection.CreateCommand();
+        await using var connection = await Connection();
+        await using var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM reactions.reactions WHERE id = @id";
         command.Parameters.Add(new NpgsqlParameter("id", DbType.Guid) { Value = id });
 
-        await using NpgsqlDataReader reader = await ExecuteReader(command);
+        await using var reader = await ExecuteReader(command);
         return !reader.Read() ? null : new ReactionsRow(ConnectionString, HandlersGroup, reader);
     }
 
     public async Task<bool> Exists(string emoji, ulong userId, ulong? guildId = null, ulong? channelId = null)
     {
         // Get a new connection
-        await using NpgsqlConnection connection = await Connection();
-        await using NpgsqlCommand command = connection.CreateCommand();
+        await using var connection = await Connection();
+        await using var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM reactions.reactions WHERE emoji = @emoji AND user_id = @user_id";
         command.Parameters.Add(new NpgsqlParameter("emoji", NpgsqlDbType.Text) { Value = emoji });
         command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)userId });
 
         // I cannot be bothered to make the rest of this work in SQL so I will do it in C#.
 
-        await using NpgsqlDataReader reader = await ExecuteReader(command);
+        await using var reader = await ExecuteReader(command);
 
         while (await reader.ReadAsync())
         {
@@ -48,13 +48,15 @@ public class Handler(string connectionString) : BaseHandler(connectionString)
     public async Task<ReactionsRow> New(string emoji, ulong appliesTo, ulong? guildId = null, ulong? channelId = null)
     {
         // Get a new connection
-        await using NpgsqlConnection connection = await Connection();
-        await using NpgsqlCommand command = connection.CreateCommand();
+        await using var connection = await Connection();
+        await using var command = connection.CreateCommand();
         command.CommandText =
             "INSERT INTO reactions.reactions (emoji, emoji_id, user_id, guild_id, channel_id, type) VALUES (@emoji, @emoji_id, @user_id, @guild_id, @channel_id, @type) RETURNING id;";
         command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)appliesTo });
-        command.Parameters.Add(new NpgsqlParameter("guild_id", NpgsqlDbType.Numeric) { Value = guildId == null ? DBNull.Value : (long)guildId });
-        command.Parameters.Add(new NpgsqlParameter("channel_id", NpgsqlDbType.Numeric) { Value = channelId == null ? DBNull.Value : (long)channelId });
+        command.Parameters.Add(new NpgsqlParameter("guild_id", NpgsqlDbType.Numeric)
+            { Value = guildId == null ? DBNull.Value : (long)guildId });
+        command.Parameters.Add(new NpgsqlParameter("channel_id", NpgsqlDbType.Numeric)
+            { Value = channelId == null ? DBNull.Value : (long)channelId });
 
         string emojiType;
 
@@ -75,7 +77,8 @@ public class Handler(string connectionString) : BaseHandler(connectionString)
         {
             emojiType = EmojiTypes.Guild;
             command.Parameters.Add(new NpgsqlParameter("emoji", NpgsqlDbType.Text) { Value = DBNull.Value });
-            command.Parameters.Add(new NpgsqlParameter("emoji_id", NpgsqlDbType.Numeric) { Value = (long)RegularExpressions.ExtractId(emoji) });
+            command.Parameters.Add(new NpgsqlParameter("emoji_id", NpgsqlDbType.Numeric)
+                { Value = (long)RegularExpressions.ExtractId(emoji) });
         }
         else
         {
@@ -88,7 +91,7 @@ public class Handler(string connectionString) : BaseHandler(connectionString)
 
         try
         {
-            await using NpgsqlDataReader reader = await ExecuteReader(command);
+            await using var reader = await ExecuteReader(command);
             reader.Read();
             return (await Get(reader.GetGuid(0)))!;
         }
@@ -99,20 +102,22 @@ public class Handler(string connectionString) : BaseHandler(connectionString)
         }
     }
 
-    public async Task<ReactionsRow> New(string emoji, UsersRow appliesTo, GuildsRow? guild = null, ChannelsRow? channel = null)
+    public async Task<ReactionsRow> New(string emoji, UsersRow appliesTo, GuildsRow? guild = null,
+        ChannelsRow? channel = null)
     {
         return await New(emoji, appliesTo.Id, guild?.Id, channel?.Id);
     }
 
-    public async Task<IEnumerable<ReactionsRow>> GetReactions(ulong user, ulong? guildId = null, ulong? channelId = null)
+    public async Task<IEnumerable<ReactionsRow>> GetReactions(ulong user, ulong? guildId = null,
+        ulong? channelId = null)
     {
         // Get a new connection
-        await using NpgsqlConnection connection = await Connection();
-        await using NpgsqlCommand command = connection.CreateCommand();
+        await using var connection = await Connection();
+        await using var command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM reactions.reactions WHERE user_id = @user_id;";
         command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)user });
 
-        await using NpgsqlDataReader reader = await ExecuteReader(command);
+        await using var reader = await ExecuteReader(command);
         List<ReactionsRow> reactions = [];
         while (await reader.ReadAsync()) reactions.Add(new ReactionsRow(ConnectionString, HandlersGroup, reader));
 

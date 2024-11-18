@@ -23,7 +23,7 @@ public class BaseHandler
     protected async Task<NpgsqlConnection> Connection()
     {
         NpgsqlConnection connection;
-        int timeWaited = 0;
+        var timeWaited = 0;
         while (true)
             try
             {
@@ -33,7 +33,8 @@ public class BaseHandler
             catch (PostgresException exception)
             {
                 if (exception.SqlState != "53300") throw;
-                Console.WriteLine($"Connection limit hit. Waiting 500ms before trying again. Total time waited {timeWaited}");
+                Console.WriteLine(
+                    $"Connection limit hit. Waiting 500ms before trying again. Total time waited {timeWaited}");
                 await Task.Delay(500);
                 timeWaited += 500;
             }
@@ -49,8 +50,8 @@ public class BaseHandler
 
     protected async Task ExecuteNonQuery(DbCommand command)
     {
-        await using NpgsqlConnection connection = await Connection();
-        await using NpgsqlTransaction transaction = await connection.BeginTransactionAsync();
+        await using var connection = await Connection();
+        await using var transaction = await connection.BeginTransactionAsync();
         command.Transaction = transaction;
 
         try

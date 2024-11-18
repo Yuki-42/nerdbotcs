@@ -5,7 +5,8 @@ namespace Bot.Database.Types;
 /// <summary>
 ///     Base class for all database types.
 /// </summary>
-public class BaseRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : TypeBase(connectionString, handlersGroup)
+public class BaseRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader)
+    : TypeBase(connectionString, handlersGroup)
 {
     /// <summary>
     ///     Row id.

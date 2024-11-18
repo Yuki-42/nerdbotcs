@@ -1,8 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Bot.Commands.Logic;
-using Bot.Database.Handlers.Public;
-using Bot.Database.Handlers.Public.Views;
-using Bot.Database.Types.Public;
 using Bot.Database.Types.Public.Views;
 using DisCatSharp.ApplicationCommands;
 using DisCatSharp.ApplicationCommands.Attributes;
@@ -56,7 +53,7 @@ public class StatisticsCommands : ApplicationCommandsModule
                 });
 
             // Get the public handler
-            ViewsHandler viewsHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public.Views;
+            var viewsHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public.Views;
 
             // Check what context to use for the leaderboard
             switch (context)
@@ -64,7 +61,7 @@ public class StatisticsCommands : ApplicationCommandsModule
                 case LeaderboardContext.Global:
                 {
                     // Permissions check
-                    int permission = await Shared.CheckPermissions(ctx);
+                    var permission = await Shared.CheckPermissions(ctx);
                     if (permission != 1)
                         await ctx.EditResponseAsync(
                             new DiscordWebhookBuilder
@@ -76,14 +73,15 @@ public class StatisticsCommands : ApplicationCommandsModule
                     IReadOnlyList<GlobalMessageViewRow> rows = await viewsHandler.GetGlobalMessages(limit);
 
                     // Create the leaderboard
-                    string content = $"Messages Leaderboard.\nShowing the top {limit} users globally.";
-                    for (int i = 0; i < rows.Count; i++)
+                    var content = $"Messages Leaderboard.\nShowing the top {limit} users globally.";
+                    for (var i = 0; i < rows.Count; i++)
                     {
                         // Get discord user
-                        DiscordUser user = await ctx.Client.GetUserAsync(rows[i].UserId); // TODO: This will throw an error when the user is not found.
+                        var user = await ctx.Client.GetUserAsync(rows[i]
+                            .UserId); // TODO: This will throw an error when the user is not found.
                         content += $"\n{i + 1}. {user.Mention} - {rows[i].MessagesSent}";
                     }
-                    
+
                     // Check character length
                     if (content.Length >= 2000)
                         await ctx.EditResponseAsync(
@@ -91,7 +89,7 @@ public class StatisticsCommands : ApplicationCommandsModule
                             {
                                 Content = $"Leaderboard too long. Maximum length 2000, actual length {content.Length}"
                             });
-                    
+
                     // Edit the response
                     await ctx.EditResponseAsync(
                         new DiscordWebhookBuilder
@@ -106,15 +104,16 @@ public class StatisticsCommands : ApplicationCommandsModule
                     IReadOnlyList<GuildMessageViewRow> rows = await viewsHandler.GetGuildMessages(ctx.Guild, limit);
 
                     // Create the leaderboard
-                    string content = $"Messages Leaderboard.\nShowing the top {limit} users in {ctx.Guild.Name}";
+                    var content = $"Messages Leaderboard.\nShowing the top {limit} users in {ctx.Guild.Name}";
 
-                    for (int i = 0; i < rows.Count; i++)
+                    for (var i = 0; i < rows.Count; i++)
                     {
                         // Get discord user
-                        DiscordUser user = await ctx.Client.GetUserAsync(rows[i].UserId); // TODO: This will throw an error when the user is not found.
+                        var user = await ctx.Client.GetUserAsync(rows[i]
+                            .UserId); // TODO: This will throw an error when the user is not found.
                         content += $"\n{i + 1}. {user.Mention} - {rows[i].MessagesSent}";
                     }
-                    
+
                     // Edit the response
                     await ctx.EditResponseAsync(
                         new DiscordWebhookBuilder
@@ -128,14 +127,16 @@ public class StatisticsCommands : ApplicationCommandsModule
                 case LeaderboardContext.Channel:
                 {
                     // Get the rows
-                    IReadOnlyList<ChannelMessageViewRow> rows = await viewsHandler.GetChannelMessages(ctx.Channel, limit);
+                    IReadOnlyList<ChannelMessageViewRow> rows =
+                        await viewsHandler.GetChannelMessages(ctx.Channel, limit);
 
                     // Create the leaderboard
-                    string content = $"Messages Leaderboard.\nShowing the top {limit} users in {ctx.Channel.Mention}";
-                    for (int i = 0; i < rows.Count; i++)
+                    var content = $"Messages Leaderboard.\nShowing the top {limit} users in {ctx.Channel.Mention}";
+                    for (var i = 0; i < rows.Count; i++)
                     {
                         // Get discord user
-                        DiscordUser user = await ctx.Client.GetUserAsync(rows[i].UserId); // TODO: This will throw an error when the user is not found.
+                        var user = await ctx.Client.GetUserAsync(rows[i]
+                            .UserId); // TODO: This will throw an error when the user is not found.
                         content += $"\n{i + 1}. {user.Mention} - {rows[i].MessagesSent}";
                     }
 
@@ -200,11 +201,11 @@ public class StatisticsCommands : ApplicationCommandsModule
             public async Task AuditAllCommand(InteractionContext ctx)
             {
                 // Check if the user is a global bot admin
-                Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-                UsersRow user = await handler.Users.Get(ctx.User);
+                var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+                var user = await handler.Users.Get(ctx.User);
 
                 // Perform permissions checks
-                int permission = await Shared.CheckPermissions(ctx);
+                var permission = await Shared.CheckPermissions(ctx);
 
                 switch (permission)
                 {
@@ -240,7 +241,7 @@ public class StatisticsCommands : ApplicationCommandsModule
                     });
 
                 // Do permissions checks
-                int permission = await Shared.CheckPermissions(ctx);
+                var permission = await Shared.CheckPermissions(ctx);
 
                 switch (permission)
                 {
@@ -281,7 +282,7 @@ public class StatisticsCommands : ApplicationCommandsModule
                     });
 
                 // Do permissions checks
-                int permission = await Shared.CheckPermissions(ctx);
+                var permission = await Shared.CheckPermissions(ctx);
 
                 switch (permission)
                 {
@@ -322,7 +323,7 @@ public class StatisticsCommands : ApplicationCommandsModule
                     });
 
                 // Do permissions checks
-                int permission = await Shared.CheckPermissions(ctx);
+                var permission = await Shared.CheckPermissions(ctx);
 
                 switch (permission)
                 {

@@ -7,11 +7,12 @@ namespace Bot.Configuration;
 /// </summary>
 public class Bot(string token, ulong testingGuild)
 {
+    public readonly ulong TestingChannel = testingGuild;
+
     /// <summary>
     ///     Bot token.
     /// </summary>
     public readonly string Token = token;
-    public readonly ulong TestingChannel = testingGuild;
 }
 
 public class Logging(ulong logsChannel)
@@ -41,7 +42,7 @@ public class Config(IConfiguration config)
     public Logging Logging { get; } = new(
         ulong.Parse(config["Logging:Channel"] ?? throw new MissingFieldException("Logging:LogsChannel"))
     );
-    
+
     public DatabaseConfig Database { get; } = new(
         config["Database:Host"] ?? throw new MissingFieldException("Database:Host"),
         int.Parse(config["Database:Port"] ?? throw new MissingFieldException("Database:Port")),

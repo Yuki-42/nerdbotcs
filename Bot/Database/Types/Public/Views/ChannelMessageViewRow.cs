@@ -4,7 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 namespace Bot.Database.Types.Public.Views;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-public class ChannelMessageViewRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader) : BaseViewRow(connectionString, handlersGroup)
+public class ChannelMessageViewRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader)
+    : BaseViewRow(connectionString, handlersGroup)
 {
     /// <summary>
     ///     Guild id.
