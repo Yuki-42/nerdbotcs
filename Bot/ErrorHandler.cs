@@ -20,10 +20,10 @@ public class ErrorHandler
     public static async void Handle(Exception exception, BaseContext? context = null)
     {
         // Open the error log file
-        await using var writer = ErrorLogPath.AppendText();
+        await using StreamWriter? writer = ErrorLogPath.AppendText();
 
         // Create error message 
-        var errorMessage =
+        string? errorMessage =
             $"========================================\n[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]\n `{exception.Message}`\n```{exception.StackTrace}```\n========================================";
 
         // Write the exception details to the file
@@ -34,10 +34,10 @@ public class ErrorHandler
 
         if (context is null) return;
         // Get the config service
-        var config = context.Services.GetRequiredService<Config>();
+        Config? config = context.Services.GetRequiredService<Config>();
 
         // Get the channel to log to
-        var channel = await context.Client.GetChannelAsync(config.Logging.LogsChannel);
+        DiscordChannel? channel = await context.Client.GetChannelAsync(config.Logging.LogsChannel);
 
         // Try and send the error message to the channel
         try

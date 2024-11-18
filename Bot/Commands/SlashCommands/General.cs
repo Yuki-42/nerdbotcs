@@ -1,4 +1,6 @@
-﻿using DisCatSharp.ApplicationCommands;
+﻿using Bot.Database.Handlers.Config;
+using Bot.Database.Types.Config;
+using DisCatSharp.ApplicationCommands;
 using DisCatSharp.ApplicationCommands.Attributes;
 using DisCatSharp.ApplicationCommands.Context;
 using DisCatSharp.Entities;
@@ -36,14 +38,14 @@ public class GeneralCommands : ApplicationCommandsModule
         };
 
         // Get the config service
-        var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Config;
+        Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Config;
 
         // Update the status in the database
-        var row = await handler.NGet("status");
+        ConfigRow? row = await handler.NGet("status");
         row.Value = status;
 
         // Update the status type in the database
-        var typeRow = await handler.NGet("status_type");
+        ConfigRow? typeRow = await handler.NGet("status_type");
         typeRow.Value = ((int)type).ToString();
 
         await ctx.Client.UpdateStatusAsync(activity);

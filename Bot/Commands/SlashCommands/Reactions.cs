@@ -1,4 +1,6 @@
 ﻿using Bot.Commands.Logic;
+using Bot.Database.Handlers.Public;
+using Bot.Database.Types.Public;
 using Bot.Database.Types.Reactions;
 using DisCatSharp.ApplicationCommands;
 using DisCatSharp.ApplicationCommands.Attributes;
@@ -26,17 +28,17 @@ public class ReactionsCommands : ApplicationCommandsModule
                 new DiscordInteractionResponseBuilder { Content = "Listing reactions...", IsEphemeral = true });
 
             // Get the required services
-            var database = ctx.Services.GetRequiredService<Database.Database>();
+            Database.Database? database = ctx.Services.GetRequiredService<Database.Database>();
 
             // Get the required handlers
-            var publicHandler = database.Handlers.Public;
-            var reactionsHandler = database.Handlers.Reactions;
+            Handler? publicHandler = database.Handlers.Public;
+            Database.Handlers.Reactions.Handler? reactionsHandler = database.Handlers.Reactions;
 
             // Set target user if null
             user ??= ctx.User;
 
             // Get the user
-            var publicUser = await publicHandler.Users.Get(user);
+            UsersRow? publicUser = await publicHandler.Users.Get(user);
 
             // Check if the user has permission to list reactions
             if (!await Reactions.ListPermissionsCheck(ctx, user))
@@ -51,14 +53,14 @@ public class ReactionsCommands : ApplicationCommandsModule
             IEnumerable<ReactionsRow> reactions = await reactionsHandler.GetReactions(user.Id);
 
             // Create the reactions text 
-            var reactionsText = "";
+            string? reactionsText = "";
             IEnumerable<ReactionsRow> reactionsReactions = reactions.ToList();
-            foreach (var reaction in reactionsReactions)
+            foreach (ReactionsRow? reaction in reactionsReactions)
             {
                 string emoji;
                 if (reaction.Emoji is null)
                 {
-                    reaction.TryGetEmoji(ctx.Client, out var dEmoji);
+                    reaction.TryGetEmoji(ctx.Client, out DiscordEmoji? dEmoji);
                     emoji = dEmoji?.Name ??
                             throw new InvalidOperationException("Both reaction.Emoji and discord emoji are null.");
                 }
@@ -93,14 +95,14 @@ public class ReactionsCommands : ApplicationCommandsModule
                 new DiscordInteractionResponseBuilder { Content = $"Adding reaction {emoji} to {user.Username}" });
 
             // Get the required services
-            var database = ctx.Services.GetRequiredService<Database.Database>();
+            Database.Database? database = ctx.Services.GetRequiredService<Database.Database>();
 
             // Get the required handlers
-            var publicHandler = database.Handlers.Public;
-            var reactionsHandler = database.Handlers.Reactions;
+            Handler? publicHandler = database.Handlers.Public;
+            Database.Handlers.Reactions.Handler? reactionsHandler = database.Handlers.Reactions;
 
             // Get the user
-            var publicUser = await publicHandler.Users.Get(user);
+            UsersRow? publicUser = await publicHandler.Users.Get(user);
 
             // For now, only allow the bot owner to use this command
             if (!await Reactions.AddPermissionsChecks(ctx, user))
@@ -119,10 +121,10 @@ public class ReactionsCommands : ApplicationCommandsModule
             }
 
             // Get the channel if it's not null
-            var publicChannel = channel is null ? null : await publicHandler.Channels.Get(channel);
+            ChannelsRow? publicChannel = channel is null ? null : await publicHandler.Channels.Get(channel);
 
             // Get the guild if it's not null
-            var publicGuild = channel is null ? null : await publicHandler.Guilds.Get(channel.Guild);
+            GuildsRow? publicGuild = channel is null ? null : await publicHandler.Guilds.Get(channel.Guild);
 
             // Add the reaction
 
@@ -134,7 +136,7 @@ public class ReactionsCommands : ApplicationCommandsModule
                 return;
             }
 
-            var reaction = await reactionsHandler.New(emoji, publicUser, publicGuild, publicChannel);
+            ReactionsRow? reaction = await reactionsHandler.New(emoji, publicUser, publicGuild, publicChannel);
 
             // Edit the response
             await ctx.EditResponseAsync(
@@ -155,17 +157,17 @@ public class ReactionsCommands : ApplicationCommandsModule
                 new DiscordInteractionResponseBuilder { Content = "Removing reaction..." });
 
             // Get the required services
-            var database = ctx.Services.GetRequiredService<Database.Database>();
+            Database.Database? database = ctx.Services.GetRequiredService<Database.Database>();
 
             // Get the required handlers
-            var publicHandler = database.Handlers.Public;
-            var reactionsHandler = database.Handlers.Reactions;
+            Handler? publicHandler = database.Handlers.Public;
+            Database.Handlers.Reactions.Handler? reactionsHandler = database.Handlers.Reactions;
 
             // Set target user if null
             user ??= ctx.User;
 
             // Get the user
-            var publicUser = await publicHandler.Users.Get(user);
+            UsersRow? publicUser = await publicHandler.Users.Get(user);
 
             // Check if the user has permission to remove reactions
             if (!await Reactions.RemovePermissionsCheck(ctx, user))
@@ -177,7 +179,7 @@ public class ReactionsCommands : ApplicationCommandsModule
             }
 
             // Get the reaction
-            var reaction = await reactionsHandler.Get(new Guid(reactionId));
+            ReactionsRow? reaction = await reactionsHandler.Get(new Guid(reactionId));
 
             // Check if the reaction exists
             if (reaction is null)

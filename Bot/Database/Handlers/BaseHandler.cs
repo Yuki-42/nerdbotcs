@@ -23,7 +23,7 @@ public class BaseHandler
     protected async Task<NpgsqlConnection> Connection()
     {
         NpgsqlConnection connection;
-        var timeWaited = 0;
+        int timeWaited = 0;
         while (true)
             try
             {
@@ -50,8 +50,8 @@ public class BaseHandler
 
     protected async Task ExecuteNonQuery(DbCommand command)
     {
-        await using var connection = await Connection();
-        await using var transaction = await connection.BeginTransactionAsync();
+        await using NpgsqlConnection? connection = await Connection();
+        await using NpgsqlTransaction? transaction = await connection.BeginTransactionAsync();
         command.Transaction = transaction;
 
         try

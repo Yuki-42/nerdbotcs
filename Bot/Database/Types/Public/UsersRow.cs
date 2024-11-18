@@ -19,8 +19,8 @@ public class UsersRow(string connectionString, HandlersGroup handlersGroup, IDat
     {
         get
         {
-            using var connection = GetConnection();
-            using var command = connection.CreateCommand();
+            using NpgsqlConnection? connection = GetConnection();
+            using NpgsqlCommand? command = connection.CreateCommand();
             command.CommandText = "SELECT username FROM public.users WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -28,8 +28,8 @@ public class UsersRow(string connectionString, HandlersGroup handlersGroup, IDat
         }
         set
         {
-            using var connection = GetConnection();
-            using var command = connection.CreateCommand();
+            using NpgsqlConnection? connection = GetConnection();
+            using NpgsqlCommand? command = connection.CreateCommand();
             command.CommandText = "UPDATE public.users SET username = @value WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -45,8 +45,8 @@ public class UsersRow(string connectionString, HandlersGroup handlersGroup, IDat
     {
         get
         {
-            using var connection = GetConnection();
-            using var command = connection.CreateCommand();
+            using NpgsqlConnection? connection = GetConnection();
+            using NpgsqlCommand? command = connection.CreateCommand();
             command.CommandText = "SELECT banned FROM public.users WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -54,8 +54,8 @@ public class UsersRow(string connectionString, HandlersGroup handlersGroup, IDat
         }
         set
         {
-            using var connection = GetConnection();
-            using var command = connection.CreateCommand();
+            using NpgsqlConnection? connection = GetConnection();
+            using NpgsqlCommand? command = connection.CreateCommand();
             command.CommandText = "UPDATE public.users SET banned = @value WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -68,8 +68,8 @@ public class UsersRow(string connectionString, HandlersGroup handlersGroup, IDat
     {
         get
         {
-            using var connection = GetConnection();
-            using var command = connection.CreateCommand();
+            using NpgsqlConnection? connection = GetConnection();
+            using NpgsqlCommand? command = connection.CreateCommand();
             command.CommandText = "SELECT message_tracking FROM public.users WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -77,8 +77,8 @@ public class UsersRow(string connectionString, HandlersGroup handlersGroup, IDat
         }
         set
         {
-            using var connection = GetConnection();
-            using var command = connection.CreateCommand();
+            using NpgsqlConnection? connection = GetConnection();
+            using NpgsqlCommand? command = connection.CreateCommand();
             command.CommandText = "UPDATE public.users SET message_tracking = @value WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -91,8 +91,8 @@ public class UsersRow(string connectionString, HandlersGroup handlersGroup, IDat
     {
         get
         {
-            using var connection = GetConnection();
-            using var command = connection.CreateCommand();
+            using NpgsqlConnection? connection = GetConnection();
+            using NpgsqlCommand? command = connection.CreateCommand();
             command.CommandText = "SELECT admin FROM public.users WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -100,8 +100,8 @@ public class UsersRow(string connectionString, HandlersGroup handlersGroup, IDat
         }
         set
         {
-            using var connection = GetConnection();
-            using var command = connection.CreateCommand();
+            using NpgsqlConnection? connection = GetConnection();
+            using NpgsqlCommand? command = connection.CreateCommand();
             command.CommandText = "UPDATE public.users SET admin = @value WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -112,8 +112,8 @@ public class UsersRow(string connectionString, HandlersGroup handlersGroup, IDat
 
     public async Task Delete()
     {
-        await using var connection = await GetConnectionAsync();
-        await using var command = connection.CreateCommand();
+        await using NpgsqlConnection? connection = await GetConnectionAsync();
+        await using NpgsqlCommand? command = connection.CreateCommand();
         command.CommandText = "DELETE FROM public.users WHERE id = @id;";
         command.Parameters.Add(new NpgsqlParameter("id", DbType.VarNumeric) { Value = (long)Id });
 

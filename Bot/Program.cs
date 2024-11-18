@@ -57,7 +57,7 @@ public class Program
         discord.RegisterEventHandlers(Assembly.GetExecutingAssembly());
 
         // Register commands
-        var commands = discord.UseApplicationCommands(new ApplicationCommandsConfiguration
+        ApplicationCommandsExtension commands = discord.UseApplicationCommands(new ApplicationCommandsConfiguration
         {
             ServiceProvider = serviceProvider
         });

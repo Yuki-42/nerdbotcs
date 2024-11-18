@@ -1,6 +1,10 @@
-﻿using Bot.Database.Types;
+﻿using Bot.Database.Handlers.Public;
+using Bot.Database.Types;
+using Bot.Database.Types.Config;
+using Bot.Database.Types.Public;
 using Bot.Database.Types.Reactions;
 using DisCatSharp;
+using DisCatSharp.Entities;
 using DisCatSharp.Enums;
 using DisCatSharp.EventArgs;
 using Microsoft.Extensions.Logging;
@@ -13,21 +17,21 @@ internal static class EventLogic
         Database.Database database)
     {
         // Get the required services
-        var handler = database.Handlers.Public;
+        Handler? handler = database.Handlers.Public;
 
         // Get the user
-        var discordUser = eventArgs.Author;
-        var localUser = await handler.Users.Get(discordUser);
+        DiscordUser? discordUser = eventArgs.Author;
+        UsersRow? localUser = await handler.Users.Get(discordUser);
 
         // Get the channel and channel user
-        var discordChannel = eventArgs.Channel;
-        var localChannel = await handler.Channels.Get(discordChannel);
-        var localChannelUser = await handler.ChannelUsers.Get(discordUser, discordChannel);
+        DiscordChannel? discordChannel = eventArgs.Channel;
+        ChannelsRow? localChannel = await handler.Channels.Get(discordChannel);
+        ChannelsUsersRow? localChannelUser = await handler.ChannelUsers.Get(discordUser, discordChannel);
 
         // Get the guild and guild user
-        var discordGuild = discordChannel.Guild;
-        var localGuild = await handler.Guilds.Get(discordGuild);
-        var localGuildUser = await handler.GuildUsers.Get(discordUser, discordGuild);
+        DiscordGuild? discordGuild = discordChannel.Guild;
+        GuildsRow? localGuild = await handler.Guilds.Get(discordGuild);
+        GuildsUsersRow? localGuildUser = await handler.GuildUsers.Get(discordUser, discordGuild);
 
 
         // Check if statistics tracking is enabled
@@ -45,19 +49,19 @@ internal static class EventLogic
         Database.Database database)
     {
         // Get the required services
-        var handler = database.Handlers.Public;
-        var reactionsHandler = database.Handlers.Reactions;
+        Handler? handler = database.Handlers.Public;
+        Database.Handlers.Reactions.Handler? reactionsHandler = database.Handlers.Reactions;
 
         // Get the user
-        var publicUser = await handler.Users.Get(eventArgs.Author);
+        UsersRow? publicUser = await handler.Users.Get(eventArgs.Author);
 
         // Get the reactions for the user 
         IEnumerable<ReactionsRow> reactions = await reactionsHandler.GetReactions(publicUser.Id);
 
         // Try add the reaction to the message
-        foreach (var reaction in reactions)
+        foreach (ReactionsRow? reaction in reactions)
         {
-            var success = reaction.TryGetEmoji(client, out var emoji);
+            bool success = reaction.TryGetEmoji(client, out DiscordEmoji? emoji);
 
             if (!success)
             {
@@ -89,11 +93,11 @@ public class EventHandler(Database.Database database)
         Console.WriteLine("Bot is ready to process events.");
 
         // Get the config service
-        var handler = Database.Handlers.Config;
+        Database.Handlers.Config.Handler? handler = Database.Handlers.Config;
 
         // Get the bot status and status type
-        var lStatus = await handler.Get("status");
-        var lStatusType = await handler.Get("status_type");
+        ConfigRow? lStatus = await handler.Get("status");
+        ConfigRow? lStatusType = await handler.Get("status_type");
 
         // Check if either values are null
         if (lStatus == null || lStatusType == null)
@@ -103,14 +107,14 @@ public class EventHandler(Database.Database database)
         }
 
         // Check that the status type is an int
-        if (!int.TryParse(lStatusType.Value, out var statusTypeInt))
+        if (!int.TryParse(lStatusType.Value, out int statusTypeInt))
         {
             Console.WriteLine("Could not parse status type to int.");
             return;
         }
 
         // Get the status type
-        var activity = StatusType.GetActivityType(statusTypeInt, lStatus.Value!);
+        DiscordActivity? activity = StatusType.GetActivityType(statusTypeInt, lStatus.Value!);
 
         // Set the bot status
         await client.UpdateStatusAsync(activity);

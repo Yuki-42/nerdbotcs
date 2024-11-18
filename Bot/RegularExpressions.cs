@@ -60,9 +60,9 @@ internal partial class RegularExpressions
     public static ulong ExtractId(string emojiText)
     {
         // Match the string to the text
-        var match = NumberRegex.Match(emojiText);
+        Match? match = NumberRegex.Match(emojiText);
 
         // Parse to ulong
-        return !ulong.TryParse(match.Value, out var result) ? 0 : result;
+        return !ulong.TryParse(match.Value, out ulong result) ? 0 : result;
     }
 }

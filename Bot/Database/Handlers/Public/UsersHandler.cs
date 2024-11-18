@@ -10,12 +10,12 @@ public class UsersHandler(string connectionString) : BaseHandler(connectionStrin
     public async Task<UsersRow?> Get(ulong id)
     {
         // Get a new connection
-        await using var connection = await Connection();
-        await using var command = connection.CreateCommand();
+        await using NpgsqlConnection? connection = await Connection();
+        await using NpgsqlCommand? command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM public.users WHERE id = @id";
         command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)id });
 
-        await using var reader = await ExecuteReader(command);
+        await using NpgsqlDataReader? reader = await ExecuteReader(command);
         return !reader.Read() ? null : new UsersRow(ConnectionString, HandlersGroup, reader);
     }
 
@@ -29,12 +29,12 @@ public class UsersHandler(string connectionString) : BaseHandler(connectionStrin
     public async Task<UsersRow> Get(ulong id, string username)
     {
         // Check if the user already exists.
-        var user = await Get(id);
+        UsersRow? user = await Get(id);
         if (user != null) return user;
 
         // Get a new connection
-        await using var connection = await Connection();
-        await using var command = connection.CreateCommand();
+        await using NpgsqlConnection? connection = await Connection();
+        await using NpgsqlCommand? command = connection.CreateCommand();
         command.CommandText = "INSERT INTO public.users (id, username) VALUES (@id, @username)";
         command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)id });
         command.Parameters.AddWithValue("username", username);
@@ -53,11 +53,11 @@ public class UsersHandler(string connectionString) : BaseHandler(connectionStrin
     public async Task<IReadOnlyList<UsersRow>> GetAll()
     {
         // Get a new connection
-        await using var connection = await Connection();
-        await using var command = connection.CreateCommand();
+        await using NpgsqlConnection? connection = await Connection();
+        await using NpgsqlCommand? command = connection.CreateCommand();
         command.CommandText = "SELECT * FROM public.users;";
 
-        await using var reader = await ExecuteReader(command);
+        await using NpgsqlDataReader? reader = await ExecuteReader(command);
         List<UsersRow> users = [];
         while (await reader.ReadAsync()) users.Add(new UsersRow(ConnectionString, HandlersGroup, reader));
 

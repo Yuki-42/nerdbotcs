@@ -20,7 +20,7 @@ public class TypeBase(string connectionString, HandlersGroup handlersGroup)
     protected NpgsqlConnection GetConnection()
     {
         NpgsqlConnection connection;
-        var timeWaited = 0;
+        int timeWaited = 0;
         while (true)
             try
             {
@@ -46,7 +46,7 @@ public class TypeBase(string connectionString, HandlersGroup handlersGroup)
     protected async Task<NpgsqlConnection> GetConnectionAsync()
     {
         NpgsqlConnection connection;
-        var timeWaited = 0;
+        int timeWaited = 0;
         while (true)
             try
             {
@@ -73,7 +73,7 @@ public class TypeBase(string connectionString, HandlersGroup handlersGroup)
     public void ExecuteNonQuery(DbCommand command)
     {
         Debug.Assert(command.Connection is not null, "command.Connection != null");
-        using var transaction = command.Connection.BeginTransaction();
+        using DbTransaction? transaction = command.Connection.BeginTransaction();
         command.Transaction = transaction;
 
         try
@@ -97,7 +97,7 @@ public class TypeBase(string connectionString, HandlersGroup handlersGroup)
     /// <returns>Requested value if present, else null.</returns>
     protected static ulong? GetNullableUlong(IDataRecord reader, string column)
     {
-        var ordinal = reader.GetOrdinal(column);
+        int ordinal = reader.GetOrdinal(column);
         return reader.IsDBNull(ordinal) ? null : (ulong)reader.GetInt64(ordinal);
     }
 }

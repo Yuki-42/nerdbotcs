@@ -11,15 +11,15 @@ public class DotEnv
     {
         if (!file.Exists) return;
 
-        using var reader = file.OpenText();
+        using StreamReader? reader = file.OpenText();
 
         while (reader.ReadLine() is { } line)
         {
             string[] parts = line.Split('=', 2, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length != 2) continue;
 
-            var key = parts[0];
-            var value = parts[1];
+            string? key = parts[0];
+            string? value = parts[1];
 
             Environment.SetEnvironmentVariable(key, value);
         }

@@ -19,8 +19,8 @@ public class ConfigRow(string connectionString, HandlersGroup handlersGroup, IDa
     {
         get
         {
-            using var connection = GetConnectionAsync().Result;
-            using var command = connection.CreateCommand();
+            using NpgsqlConnection? connection = GetConnectionAsync().Result;
+            using NpgsqlCommand? command = connection.CreateCommand();
             command.CommandText = "SELECT value FROM config.data WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Uuid) { Value = Id });
 
@@ -29,8 +29,8 @@ public class ConfigRow(string connectionString, HandlersGroup handlersGroup, IDa
         }
         set
         {
-            using var connection = GetConnection();
-            using var command = connection.CreateCommand();
+            using NpgsqlConnection? connection = GetConnection();
+            using NpgsqlCommand? command = connection.CreateCommand();
             command.CommandText = "UPDATE config.data SET value = @value WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Uuid) { Value = Id });
 

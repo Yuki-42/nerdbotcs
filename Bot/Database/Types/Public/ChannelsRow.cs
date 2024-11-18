@@ -25,8 +25,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
     {
         get
         {
-            using var connection = GetConnection();
-            using var command = connection.CreateCommand();
+            using NpgsqlConnection? connection = GetConnection();
+            using NpgsqlCommand? command = connection.CreateCommand();
             command.CommandText = "SELECT message_tracking FROM public.channels WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -34,8 +34,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
         }
         set
         {
-            using var connection = GetConnection();
-            using var command = connection.CreateCommand();
+            using NpgsqlConnection? connection = GetConnection();
+            using NpgsqlCommand? command = connection.CreateCommand();
             command.CommandText = "UPDATE public.channels SET message_tracking = @value WHERE id = @id;";
 
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
@@ -48,8 +48,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
     {
         get
         {
-            using var connection = GetConnection();
-            using var command = connection.CreateCommand();
+            using NpgsqlConnection? connection = GetConnection();
+            using NpgsqlCommand? command = connection.CreateCommand();
             command.CommandText = "SELECT name FROM public.channels WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -57,8 +57,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
         }
         set
         {
-            using var connection = GetConnection();
-            using var command = connection.CreateCommand();
+            using NpgsqlConnection? connection = GetConnection();
+            using NpgsqlCommand? command = connection.CreateCommand();
             command.CommandText = "UPDATE public.channels SET name = @value WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -71,8 +71,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
     {
         get
         {
-            using var connection = GetConnection();
-            using var command = connection.CreateCommand();
+            using NpgsqlConnection? connection = GetConnection();
+            using NpgsqlCommand? command = connection.CreateCommand();
             command.CommandText = "SELECT type FROM public.channels WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -83,8 +83,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
         }
         set
         {
-            using var connection = GetConnection();
-            using var command = connection.CreateCommand();
+            using NpgsqlConnection? connection = GetConnection();
+            using NpgsqlCommand? command = connection.CreateCommand();
             command.CommandText = "UPDATE public.channels SET type = @value WHERE id = @id;";
             command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -95,8 +95,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
 
     public async Task Delete()
     {
-        await using var connection = await GetConnectionAsync();
-        await using var command = connection.CreateCommand();
+        await using NpgsqlConnection? connection = await GetConnectionAsync();
+        await using NpgsqlCommand? command = connection.CreateCommand();
         command.CommandText = "DELETE FROM public.channels WHERE id = @id;";
         command.Parameters.Add(new NpgsqlParameter("id", DbType.VarNumeric) { Value = (long)Id });
 

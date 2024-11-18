@@ -1,5 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Bot.Commands.Logic;
+using Bot.Database.Handlers.Public;
+using Bot.Database.Handlers.Public.Views;
+using Bot.Database.Types.Public;
 using Bot.Database.Types.Public.Views;
 using DisCatSharp.ApplicationCommands;
 using DisCatSharp.ApplicationCommands.Attributes;
@@ -53,7 +56,7 @@ public class StatisticsCommands : ApplicationCommandsModule
                 });
 
             // Get the public handler
-            var viewsHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public.Views;
+            ViewsHandler viewsHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public.Views;
 
             // Check what context to use for the leaderboard
             switch (context)
@@ -61,7 +64,7 @@ public class StatisticsCommands : ApplicationCommandsModule
                 case LeaderboardContext.Global:
                 {
                     // Permissions check
-                    var permission = await Shared.CheckPermissions(ctx);
+                    int permission = await Shared.CheckPermissions(ctx);
                     if (permission != 1)
                         await ctx.EditResponseAsync(
                             new DiscordWebhookBuilder
@@ -73,11 +76,11 @@ public class StatisticsCommands : ApplicationCommandsModule
                     IReadOnlyList<GlobalMessageViewRow> rows = await viewsHandler.GetGlobalMessages(limit);
 
                     // Create the leaderboard
-                    var content = $"Messages Leaderboard.\nShowing the top {limit} users globally.";
-                    for (var i = 0; i < rows.Count; i++)
+                    string content = $"Messages Leaderboard.\nShowing the top {limit} users globally.";
+                    for (int i = 0; i < rows.Count; i++)
                     {
                         // Get discord user
-                        var user = await ctx.Client.GetUserAsync(rows[i]
+                        DiscordUser user = await ctx.Client.GetUserAsync(rows[i]
                             .UserId); // TODO: This will throw an error when the user is not found.
                         content += $"\n{i + 1}. {user.Mention} - {rows[i].MessagesSent}";
                     }
@@ -104,12 +107,12 @@ public class StatisticsCommands : ApplicationCommandsModule
                     IReadOnlyList<GuildMessageViewRow> rows = await viewsHandler.GetGuildMessages(ctx.Guild, limit);
 
                     // Create the leaderboard
-                    var content = $"Messages Leaderboard.\nShowing the top {limit} users in {ctx.Guild.Name}";
+                    string content = $"Messages Leaderboard.\nShowing the top {limit} users in {ctx.Guild.Name}";
 
-                    for (var i = 0; i < rows.Count; i++)
+                    for (int i = 0; i < rows.Count; i++)
                     {
                         // Get discord user
-                        var user = await ctx.Client.GetUserAsync(rows[i]
+                        DiscordUser user = await ctx.Client.GetUserAsync(rows[i]
                             .UserId); // TODO: This will throw an error when the user is not found.
                         content += $"\n{i + 1}. {user.Mention} - {rows[i].MessagesSent}";
                     }
@@ -131,11 +134,11 @@ public class StatisticsCommands : ApplicationCommandsModule
                         await viewsHandler.GetChannelMessages(ctx.Channel, limit);
 
                     // Create the leaderboard
-                    var content = $"Messages Leaderboard.\nShowing the top {limit} users in {ctx.Channel.Mention}";
-                    for (var i = 0; i < rows.Count; i++)
+                    string content = $"Messages Leaderboard.\nShowing the top {limit} users in {ctx.Channel.Mention}";
+                    for (int i = 0; i < rows.Count; i++)
                     {
                         // Get discord user
-                        var user = await ctx.Client.GetUserAsync(rows[i]
+                        DiscordUser user = await ctx.Client.GetUserAsync(rows[i]
                             .UserId); // TODO: This will throw an error when the user is not found.
                         content += $"\n{i + 1}. {user.Mention} - {rows[i].MessagesSent}";
                     }
@@ -201,11 +204,11 @@ public class StatisticsCommands : ApplicationCommandsModule
             public async Task AuditAllCommand(InteractionContext ctx)
             {
                 // Check if the user is a global bot admin
-                var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-                var user = await handler.Users.Get(ctx.User);
+                Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+                UsersRow user = await handler.Users.Get(ctx.User);
 
                 // Perform permissions checks
-                var permission = await Shared.CheckPermissions(ctx);
+                int permission = await Shared.CheckPermissions(ctx);
 
                 switch (permission)
                 {
@@ -241,7 +244,7 @@ public class StatisticsCommands : ApplicationCommandsModule
                     });
 
                 // Do permissions checks
-                var permission = await Shared.CheckPermissions(ctx);
+                int permission = await Shared.CheckPermissions(ctx);
 
                 switch (permission)
                 {
@@ -282,7 +285,7 @@ public class StatisticsCommands : ApplicationCommandsModule
                     });
 
                 // Do permissions checks
-                var permission = await Shared.CheckPermissions(ctx);
+                int permission = await Shared.CheckPermissions(ctx);
 
                 switch (permission)
                 {
@@ -323,7 +326,7 @@ public class StatisticsCommands : ApplicationCommandsModule
                     });
 
                 // Do permissions checks
-                var permission = await Shared.CheckPermissions(ctx);
+                int permission = await Shared.CheckPermissions(ctx);
 
                 switch (permission)
                 {

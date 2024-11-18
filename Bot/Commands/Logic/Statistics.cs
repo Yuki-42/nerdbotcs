@@ -124,16 +124,16 @@ public class Statistics
     public static async Task AuditAllGuilds(BaseContext ctx)
     {
         // Get the required handlers
-        var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // Get all guilds
         DiscordGuild[] guilds = ctx.Client.Guilds.Values.ToArray();
 
-        foreach (var guild in guilds) await AuditGuild(ctx, guild, handler);
+        foreach (DiscordGuild? guild in guilds) await AuditGuild(ctx, guild, handler);
 
         // Check that there are no guilds in the database that are not in the bot
         IEnumerable<GuildsRow> publicGuilds = await handler.Guilds.GetAll();
-        foreach (var publicGuild in publicGuilds)
+        foreach (GuildsRow? publicGuild in publicGuilds)
             if (guilds.All(guild => guild.Id != publicGuild.Id))
                 await publicGuild.Delete();
     }
@@ -153,18 +153,18 @@ public class Statistics
         handler ??= ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // Check if the guild exists in the database
-        var publicGuild = await handler.Guilds.Get(guild);
+        GuildsRow? publicGuild = await handler.Guilds.Get(guild);
 
         // Update the guild name if it's different
         if (publicGuild.Name != guild.Name)
             publicGuild.Name = guild.Name; // This updates the name in the database through the setter
 
         // Add all users in the guild
-        var members = await guild.GetAllMembersAsync();
-        foreach (var member in members)
+        IReadOnlyCollection<DiscordMember>? members = await guild.GetAllMembersAsync();
+        foreach (DiscordMember? member in members)
         {
             // Check if the user exists in the database
-            var user = await handler.Users.Get(member); // This creates a new user if it doesn't exist
+            UsersRow? user = await handler.Users.Get(member); // This creates a new user if it doesn't exist
 
             // Update the username if it's different
             if (user.Username != member.Username)
@@ -179,11 +179,11 @@ public class Statistics
     public static async Task AuditAllChannels(BaseContext ctx)
     {
         // Get the required handlers
-        var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // Get all guilds
         DiscordGuild[] guilds = ctx.Client.Guilds.Values.ToArray();
-        foreach (var guild in guilds) await AuditGuildChannels(ctx, guild, handler);
+        foreach (DiscordGuild? guild in guilds) await AuditGuildChannels(ctx, guild, handler);
     }
 
     /// <summary>
@@ -202,10 +202,10 @@ public class Statistics
 
         // Get all channels in the guild
         IReadOnlyCollection<DiscordChannel> channels = await guild.GetChannelsAsync();
-        foreach (var channel in channels)
+        foreach (DiscordChannel? channel in channels)
         {
             // Check if the channel exists in the database
-            var publicChannel = await handler.Channels.Get(channel);
+            ChannelsRow? publicChannel = await handler.Channels.Get(channel);
 
             // Update the name if it's different
             if (publicChannel.Name != channel.Name)
@@ -218,7 +218,7 @@ public class Statistics
 
         // Check that there are no channels in the database that are not in the bot
         IEnumerable<ChannelsRow> publicChannels = await handler.Channels.GetAll(guild.Id);
-        foreach (var publicChannel in publicChannels)
+        foreach (ChannelsRow? publicChannel in publicChannels)
             if (channels.All(channel => channel.Id != publicChannel.Id))
                 await publicChannel.Delete();
     }
@@ -230,7 +230,7 @@ public class Statistics
     public static async Task AuditAllUsers(BaseContext ctx)
     {
         // Get the required handler
-        var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // First get all servers that the bot is in
         DiscordGuild?[] guilds = ctx.Client.Guilds.Values.ToArray();
@@ -238,19 +238,19 @@ public class Statistics
         // Get all users
         IEnumerable<DiscordMember> members = [];
         // ReSharper disable once LoopCanBeConvertedToQuery  // This is a bu_g in ReSharper, it doesn't understand the await keyword // also apparently the word bu-g is a to-do item
-        foreach (var guild in guilds)
+        foreach (DiscordGuild? guild in guilds)
         {
             if (guild is null) continue;
             members = members.Concat(await guild.GetAllMembersAsync());
         }
 
-        foreach (var guild in guilds) await AuditGuildUsers(ctx, guild, handler);
+        foreach (DiscordGuild? guild in guilds) await AuditGuildUsers(ctx, guild, handler);
 
         // Check that there are no users in the database that are not in the bot
         IEnumerable<UsersRow> publicUsers = await handler.Users.GetAll();
 
         // Get a list of all users in the bot
-        foreach (var publicUser in publicUsers)
+        foreach (UsersRow? publicUser in publicUsers)
             if (members.All(member => member.Id != publicUser.Id))
                 await publicUser.Delete();
     }
@@ -263,11 +263,11 @@ public class Statistics
         // Get the required handlers
         handler ??= ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
-        var members = await guild.GetAllMembersAsync();
-        foreach (var member in members)
+        IReadOnlyCollection<DiscordMember>? members = await guild.GetAllMembersAsync();
+        foreach (DiscordMember? member in members)
         {
             // Check if the user exists in the database // This is already done in the New method
-            var user = await handler.Users.Get(member);
+            UsersRow? user = await handler.Users.Get(member);
 
             // Update the username if it's different
             if (user.Username != member.Username)
@@ -284,7 +284,7 @@ public class Statistics
     private static void CountMessagesBlock(IEnumerable<DiscordMessage> messages,
         ref Dictionary<DiscordUser, long> users, ref Dictionary<DiscordUser, bool> userMessageTracking)
     {
-        foreach (var message in messages)
+        foreach (DiscordMessage? message in messages)
         {
             // Check if the user is a deleted user
             userMessageTracking.TryAdd(message.Author, false);
@@ -302,12 +302,12 @@ public class Statistics
         // Note: This is a very expensive operation and should be used sparingly.
 
         // Get the required handlers
-        var handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+        Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // Get all guilds
         DiscordGuild[] guilds = ctx.Client.Guilds.Values.ToArray();
 
-        foreach (var guild in guilds)
+        foreach (DiscordGuild? guild in guilds)
             try
             {
                 await AuditGuildMessages(ctx, guild, handler);
@@ -327,21 +327,21 @@ public class Statistics
         handler ??= ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
         // First check if message tracking is enabled for the guild
-        var publicGuild = await handler.Guilds.Get(guild);
+        GuildsRow? publicGuild = await handler.Guilds.Get(guild);
         if (!publicGuild.MessageTracking) return;
 
         // Lookup table for message tracking on a per-user basis
         Dictionary<DiscordUser, bool> userMessageTracking = new();
-        foreach (var member in await guild.GetAllMembersAsync())
+        foreach (DiscordMember? member in await guild.GetAllMembersAsync())
         {
-            var user = await handler.Users.Get(member);
-            var guildUser = await handler.GuildUsers.Get(member, guild);
+            UsersRow? user = await handler.Users.Get(member);
+            GuildsUsersRow? guildUser = await handler.GuildUsers.Get(member, guild);
             userMessageTracking.Add(member, user.MessageTracking && guildUser.MessageTracking);
         }
 
         // Get all channels in the guild
         IReadOnlyCollection<DiscordChannel> channels = await guild.GetChannelsAsync();
-        foreach (var channel in channels)
+        foreach (DiscordChannel? channel in channels)
         {
             // Check if channel is a text channel
             if (channel.Type != ChannelType.Text) continue;
@@ -349,11 +349,11 @@ public class Statistics
             Console.WriteLine($"Auditing channel {channel.Name} in guild {guild.Name}.");
 
             // Check if message tracking is enabled for the channel
-            var publicChannel = await handler.Channels.Get(channel);
+            ChannelsRow? publicChannel = await handler.Channels.Get(channel);
             if (!publicChannel.MessageTracking) continue;
 
             // Check if the bot has permissions to read messages
-            var bot = await guild.GetMemberAsync(ctx.Client.CurrentUser.Id);
+            DiscordMember? bot = await guild.GetMemberAsync(ctx.Client.CurrentUser.Id);
             if (!channel.PermissionsFor(bot).HasPermission(Permissions.AccessChannels)) continue;
 
             // Store the user's message count
@@ -388,7 +388,7 @@ public class Statistics
                 if (messages.Count <= 0) break;
 
                 // Check if any message is a duplicate
-                foreach (var message in messages)
+                foreach (DiscordMessage? message in messages)
                 {
                     Debug.Assert(!messageIds.Contains(message.Id), "Duplicate message found.");
                     messageIds.Add(message.Id);
@@ -402,7 +402,7 @@ public class Statistics
             // Update the message count for each user
             foreach (KeyValuePair<DiscordUser, long> user in users)
             {
-                var guildUser = await handler.ChannelUsers.Get(user.Key, channel);
+                ChannelsUsersRow? guildUser = await handler.ChannelUsers.Get(user.Key, channel);
                 guildUser.MessagesSent = user.Value;
             }
         }
