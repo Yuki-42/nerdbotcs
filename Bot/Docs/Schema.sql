@@ -1,6 +1,5 @@
 ﻿/* Move to the database that was automatically created */
-\C
-nerdbot
+\C nerdbot
 
 /* Add UUID extension */
 CREATE
@@ -52,6 +51,7 @@ CREATE TABLE public.guilds
     created_at       TIMESTAMP NOT NULL DEFAULT now(),
     name             text      NOT NULL,
     message_tracking boolean   NOT NULL DEFAULT TRUE,
+    reactions        BOOLEAN   NOT NULL DEFAULT FALSE,
     PRIMARY KEY (id)
 );
 

@@ -64,6 +64,29 @@ public class GuildsRow(string connectionString, HandlersGroup handlersGroup, IDa
             ExecuteNonQuery(command);
         }
     }
+    
+    public bool Reactions
+    {
+        get
+        {
+            using NpgsqlConnection connection = GetConnection();
+            using NpgsqlCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT reactions FROM public.guilds WHERE id = @id;";
+            command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
+
+            return (bool)command.ExecuteScalar()!;
+        }
+        set
+        {
+            using NpgsqlConnection connection = GetConnection();
+            using NpgsqlCommand command = connection.CreateCommand();
+            command.CommandText = "UPDATE public.guilds SET reactions = @value WHERE id = @id;";
+            command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
+
+            command.Parameters.Add(new NpgsqlParameter("value", NpgsqlDbType.Boolean) { Value = value });
+            ExecuteNonQuery(command);
+        }
+    }
 
     public async Task Delete()
     {

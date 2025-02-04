@@ -54,7 +54,17 @@ internal static class EventLogic
 
         // Get the user
         UsersRow? publicUser = await handler.Users.Get(eventArgs.Author);
-
+        
+        // Check if the message occured in a guild 
+        if (eventArgs.GuildId != null)
+        {
+            // Check if the guild has reactions disabled
+            GuildsRow guild = await handler.Guilds.Get(eventArgs.Guild);
+            
+            // Skip all logic and return
+            if (!guild.Reactions) return;
+        }
+        
         // Get the reactions for the user 
         IEnumerable<ReactionsRow> reactions = await reactionsHandler.GetReactions(publicUser.Id);
 
