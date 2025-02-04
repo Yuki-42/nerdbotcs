@@ -14,13 +14,13 @@
 
 
     <ItemGroup>
-        <PackageReference Include="DisCatSharp" Version="10.6.6-nightly-018"/>
-        <PackageReference Include="DisCatSharp.ApplicationCommands" Version="10.6.6-nightly-018"/>
-        <PackageReference Include="DisCatSharp.Common" Version="10.6.6-nightly-018"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0-preview.5.24306.7"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.0-preview.5.24306.7"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0-preview.5.24306.7"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0-preview.5.24306.7"/>
+        <PackageReference Include="DisCatSharp" Version="10.6.6"/>
+        <PackageReference Include="DisCatSharp.ApplicationCommands" Version="10.6.6"/>
+        <PackageReference Include="DisCatSharp.Common" Version="10.6.6"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1"/>
         <PackageReference Include="Npgsql" Version="8.0.3"/>
         <PackageReference Include="Npgsql.DependencyInjection" Version="8.0.3"/>
     </ItemGroup>
