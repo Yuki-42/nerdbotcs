@@ -1,4 +1,5 @@
-﻿using Bot.Database.Handlers.Public;
+﻿using Bot.Database;
+using Bot.Database.Handlers.Public;
 using Bot.Database.Types.Public;
 using DisCatSharp;
 using DisCatSharp.ApplicationCommands.Context;
@@ -80,31 +81,32 @@ public class Reactions
 		if (ctx.User.Id == targetUser.Id) return true;
 
 		// Get the required handlers
-		Handler? publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+		Handler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
 		// Check if the user is a global bot admin
-		UsersRow? publicUser = await publicHandler.Users.Get(ctx.User);
+		UsersRow publicUser = await publicHandler.Users.Get(ctx.User);
 		if (publicUser.Admin) return true;
 
 		// If the guild is null then the user is not a server admin
 		if (ctx.Guild is null) return false;
 
 		// Check if the user is a server admin
-		DiscordMember? member = await ctx.Guild.GetMemberAsync(ctx.User.Id);
+		DiscordMember member = await ctx.Guild.GetMemberAsync(ctx.User.Id);
 		return member.Permissions.HasPermission(Permissions.ModerateMembers);
 	}
 
 
-	public static async Task<bool> RemovePermissionsCheck(BaseContext ctx, DiscordUser targetUser)
+	public static async Task<bool> RemovePermissionsChecks(BaseContext ctx, DiscordUser targetUser, DiscordGuild? targetGuild = null)
 	{
-		// Check if the user is the target user
+		// Checks required:
+		// 1. User is themselves
+		// 2. User is a bot admin
+		// 3. User is a guild admin and executing the command for the current guild
+
+		// Check if the target and invoker are the same
 		if (ctx.User.Id == targetUser.Id) return true;
 
-		// Get the required handlers
-		Handler? publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-
-		// Check if the user is a global bot admin
-		UsersRow? publicUser = await publicHandler.Users.Get(ctx.User);
-		return publicUser.Admin;
+		// Get required handlers
+		Handler publicHandler =
 	}
 }

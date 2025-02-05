@@ -15,6 +15,7 @@ namespace Bot.Commands.SlashCommands;
 public class ReactionsCommands : ApplicationCommandsModule
 {
 	[SlashCommandGroup("reactions", "Manage automatic reactions.")]
+	// ReSharper disable once UnusedType.Global  // Rider is not very smart...
 	public class ReactionsGroup : ApplicationCommandsModule
 	{
 		[SlashCommand("list", "List all automatic reactions.")]
@@ -115,13 +116,11 @@ public class ReactionsCommands : ApplicationCommandsModule
 				return;
 			}
 
-			// Get the channel if it's not null
+			// Get the channel if it is not null
 			ChannelsRow? publicChannel = channel is null ? null : await publicHandler.Channels.Get(channel);
 
-			// Get the guild if it's not null
+			// Get the guild if it is not null
 			GuildsRow? publicGuild = channel is null ? null : await publicHandler.Guilds.Get(channel.Guild);
-
-			// Add the reaction
 
 			// Check if the reaction already exists
 			if (await reactionsHandler.Exists(emoji, publicUser.Id, publicGuild?.Id, publicChannel?.Id))
@@ -131,7 +130,8 @@ public class ReactionsCommands : ApplicationCommandsModule
 				return;
 			}
 
-			ReactionsRow? reaction = await reactionsHandler.New(emoji, publicUser, publicGuild, publicChannel);
+			// Add the reaction
+			await reactionsHandler.New(emoji, publicUser, publicGuild, publicChannel);
 
 			// Edit the response
 			await ctx.EditResponseAsync(
@@ -141,8 +141,12 @@ public class ReactionsCommands : ApplicationCommandsModule
 		[SlashCommand("remove", "Remove a reaction.")]
 		public async Task RemoveReactionCommand(
 			InteractionContext ctx,
-			[Option("reaction-id", "ID of the reaction to remove.")]
-			string reactionId,
+			[Option("reaction", "Reaction emoji")]
+			string reactionStr,
+			[Option("channel", "Channel the reaction is for.")]
+			DiscordChannel? channel = null,
+			[Option("guild-id", "Guild reaction occurs in. 0 for this guild.")]
+			ulong? guildId = null,
 			[Option("user", "User to remove reaction from.")]
 			DiscordUser? user = null
 		)
@@ -151,45 +155,36 @@ public class ReactionsCommands : ApplicationCommandsModule
 			await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
 				new DiscordInteractionResponseBuilder { Content = "Removing reaction..." });
 
+			// Check that the reaction is a valid reaction
+			if (Reactions.CheckValidEmoji(ctx.Client, reactionStr))
+			{
+				await ctx.EditResponseAsync(
+					new DiscordWebhookBuilder().WithContent($"{reactionStr} is not a valid discord reaction"));
+			}
+
 			// Get the required services
 			Database.Database database = ctx.Services.GetRequiredService<Database.Database>();
 
 			// Get the required handlers
-			Database.Handlers.Public.Handler? publicHandler = database.Handlers.Public;
-			Handler? reactionsHandler = database.Handlers.Reactions;
+			Database.Handlers.Public.Handler publicHandler = database.Handlers.Public;
+			Handler reactionsHandler = database.Handlers.Reactions;
 
 			// Set target user if null
 			user ??= ctx.User;
 
-			// Get the user
-			UsersRow? publicUser = await publicHandler.Users.Get(user);
-
-			// Check if the user has permission to remove reactions
-			if (!await Reactions.RemovePermissionsCheck(ctx, user))
+			// Set target guild if 0
+			DiscordGuild? targetGuild = null;
+			if (guildId != null)
 			{
-				await ctx.EditResponseAsync(
-					new DiscordWebhookBuilder().WithContent(
-						"You do not have permission to remove reactions for other users."));
-				return;
+				if (guildId != 0)
+				{
+
+				}
 			}
+
 
 			// Get the reaction
 			ReactionsRow? reaction = await reactionsHandler.Get(new Guid(reactionId));
-
-			// Check if the reaction exists
-			if (reaction is null)
-			{
-				await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Reaction not found."));
-				return;
-			}
-
-			// Check if the user has permission to remove the reaction
-			if (reaction.UserId != publicUser.Id)
-			{
-				await ctx.EditResponseAsync(
-					new DiscordWebhookBuilder().WithContent("You do not have permission to remove this reaction."));
-				return;
-			}
 
 			// Remove the reaction
 			await reaction.Delete();
