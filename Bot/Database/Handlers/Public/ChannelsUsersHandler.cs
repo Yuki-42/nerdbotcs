@@ -7,51 +7,51 @@ namespace Bot.Database.Handlers.Public;
 
 public class ChannelsUsersHandler(string connectionString) : BaseHandler(connectionString)
 {
-    public async Task<ChannelsUsersRow?> Get(ulong id)
-    {
-        // Get a new connection
-        await using NpgsqlConnection? connection = await Connection();
-        await using NpgsqlCommand? command = connection.CreateCommand();
-        command.CommandText = "SELECT * FROM public.channels_users WHERE id = @id;";
-        command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)id });
+	public async Task<ChannelsUsersRow?> Get(ulong id)
+	{
+		// Get a new connection
+		await using NpgsqlConnection? connection = await Connection();
+		await using NpgsqlCommand? command = connection.CreateCommand();
+		command.CommandText = "SELECT * FROM public.channels_users WHERE id = @id;";
+		command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)id });
 
-        await using NpgsqlDataReader? reader = await ExecuteReader(command);
-        return !reader.Read() ? null : new ChannelsUsersRow(ConnectionString, HandlersGroup, reader);
-    }
+		await using NpgsqlDataReader? reader = await ExecuteReader(command);
+		return !reader.Read() ? null : new ChannelsUsersRow(ConnectionString, HandlersGroup, reader);
+	}
 
-    private async Task<ChannelsUsersRow?> PGet(ulong userId, ulong channelId)
-    {
-        // Get a new connection
-        await using NpgsqlConnection? connection = await Connection();
-        await using NpgsqlCommand? command = connection.CreateCommand();
-        command.CommandText = "SELECT * FROM public.channels_users WHERE user_id = @uid AND channel_id = @cid;";
-        command.Parameters.Add(new NpgsqlParameter("uid", NpgsqlDbType.Numeric) { Value = (long)userId });
-        command.Parameters.Add(new NpgsqlParameter("cid", NpgsqlDbType.Numeric) { Value = (long)channelId });
+	private async Task<ChannelsUsersRow?> PGet(ulong userId, ulong channelId)
+	{
+		// Get a new connection
+		await using NpgsqlConnection? connection = await Connection();
+		await using NpgsqlCommand? command = connection.CreateCommand();
+		command.CommandText = "SELECT * FROM public.channels_users WHERE user_id = @uid AND channel_id = @cid;";
+		command.Parameters.Add(new NpgsqlParameter("uid", NpgsqlDbType.Numeric) { Value = (long)userId });
+		command.Parameters.Add(new NpgsqlParameter("cid", NpgsqlDbType.Numeric) { Value = (long)channelId });
 
-        await using NpgsqlDataReader? reader = await ExecuteReader(command);
-        return !reader.Read() ? null : new ChannelsUsersRow(ConnectionString, HandlersGroup, reader);
-    }
+		await using NpgsqlDataReader? reader = await ExecuteReader(command);
+		return !reader.Read() ? null : new ChannelsUsersRow(ConnectionString, HandlersGroup, reader);
+	}
 
-    public async Task<ChannelsUsersRow> Get(ulong userId, ulong channelId)
-    {
-        // Check if the user already exists.
-        ChannelsUsersRow? user = await PGet(userId, channelId);
-        if (user != null) return user;
+	public async Task<ChannelsUsersRow> Get(ulong userId, ulong channelId)
+	{
+		// Check if the user already exists.
+		ChannelsUsersRow? user = await PGet(userId, channelId);
+		if (user != null) return user;
 
-        // Get a new connection
-        await using NpgsqlConnection? connection = await Connection();
-        await using NpgsqlCommand? command = connection.CreateCommand();
-        command.CommandText = "INSERT INTO public.channels_users (user_id, channel_id) VALUES (@uid, @cid);";
-        command.Parameters.Add(new NpgsqlParameter("uid", NpgsqlDbType.Numeric) { Value = (long)userId });
-        command.Parameters.Add(new NpgsqlParameter("cid", NpgsqlDbType.Numeric) { Value = (long)channelId });
+		// Get a new connection
+		await using NpgsqlConnection? connection = await Connection();
+		await using NpgsqlCommand? command = connection.CreateCommand();
+		command.CommandText = "INSERT INTO public.channels_users (user_id, channel_id) VALUES (@uid, @cid);";
+		command.Parameters.Add(new NpgsqlParameter("uid", NpgsqlDbType.Numeric) { Value = (long)userId });
+		command.Parameters.Add(new NpgsqlParameter("cid", NpgsqlDbType.Numeric) { Value = (long)channelId });
 
-        await ExecuteNonQuery(command);
+		await ExecuteNonQuery(command);
 
-        return await PGet(userId, channelId) ?? throw new MissingMemberException();
-    }
+		return await PGet(userId, channelId) ?? throw new MissingMemberException();
+	}
 
-    public async Task<ChannelsUsersRow> Get(DiscordUser user, DiscordChannel channel)
-    {
-        return await Get(user.Id, channel.Id);
-    }
+	public async Task<ChannelsUsersRow> Get(DiscordUser user, DiscordChannel channel)
+	{
+		return await Get(user.Id, channel.Id);
+	}
 }

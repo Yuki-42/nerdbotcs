@@ -3,20 +3,20 @@
 
 /* Add UUID extension */
 CREATE
-EXTENSION IF NOT EXISTS "uuid-ossp";
+    EXTENSION IF NOT EXISTS "uuid-ossp";
 
 /* Create schemas */
-CREATE SCHEMA if NOT EXISTS config;
-CREATE SCHEMA if NOT EXISTS reply;
-CREATE SCHEMA if NOT EXISTS filter;
-CREATE SCHEMA if NOT EXISTS reactions;
-CREATE SCHEMA if NOT EXISTS logs;
+CREATE SCHEMA IF NOT EXISTS config;
+CREATE SCHEMA IF NOT EXISTS reply;
+CREATE SCHEMA IF NOT EXISTS filter;
+CREATE SCHEMA IF NOT EXISTS reactions;
+CREATE SCHEMA IF NOT EXISTS logs;
 
 /* Create tables */
 CREATE TABLE logs.commands
 (
     id         uuid               DEFAULT uuid_generate_v4(),
-    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     user_id    NUMERIC   NOT NULL,
     guild_id   NUMERIC   NOT NULL,
     command    text      NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE logs.commands
 CREATE TABLE config.data
 (
     id         uuid               DEFAULT uuid_generate_v4(),
-    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     key        text      NOT NULL UNIQUE,
     value      text,
     PRIMARY KEY (id)
@@ -37,7 +37,7 @@ CREATE TABLE config.data
 CREATE TABLE public.users
 (
     id               NUMERIC   NOT NULL, /* Discord ID */
-    created_at       TIMESTAMP NOT NULL DEFAULT now(),
+    created_at       TIMESTAMP NOT NULL DEFAULT NOW(),
     username         text      NOT NULL,
     banned           boolean   NOT NULL DEFAULT FALSE,
     message_tracking boolean   NOT NULL DEFAULT TRUE,
@@ -48,7 +48,7 @@ CREATE TABLE public.users
 CREATE TABLE public.guilds
 (
     id               NUMERIC   NOT NULL, /* Discord ID */
-    created_at       TIMESTAMP NOT NULL DEFAULT now(),
+    created_at       TIMESTAMP NOT NULL DEFAULT NOW(),
     name             text      NOT NULL,
     message_tracking boolean   NOT NULL DEFAULT TRUE,
     reactions        BOOLEAN   NOT NULL DEFAULT FALSE,
@@ -58,7 +58,7 @@ CREATE TABLE public.guilds
 CREATE TABLE public.guilds_users
 (
     id               uuid               DEFAULT uuid_generate_v4(),
-    created_at       TIMESTAMP NOT NULL DEFAULT now(),
+    created_at       TIMESTAMP NOT NULL DEFAULT NOW(),
     user_id          NUMERIC   NOT NULL,
     guild_id         NUMERIC   NOT NULL,
     message_tracking boolean   NOT NULL DEFAULT TRUE,
@@ -69,7 +69,7 @@ CREATE TABLE public.guilds_users
 CREATE TABLE public.channels
 (
     id               NUMERIC   NOT NULL,
-    created_at       TIMESTAMP NOT NULL DEFAULT now(),
+    created_at       TIMESTAMP NOT NULL DEFAULT NOW(),
     guild_id         NUMERIC,
     message_tracking boolean   NOT NULL DEFAULT TRUE,
     name             text      NOT NULL,
@@ -80,7 +80,7 @@ CREATE TABLE public.channels
 CREATE TABLE public.channels_users
 (
     id               uuid               DEFAULT uuid_generate_v4(),
-    created_at       TIMESTAMP NOT NULL DEFAULT now(),
+    created_at       TIMESTAMP NOT NULL DEFAULT NOW(),
     user_id          NUMERIC   NOT NULL,
     channel_id       NUMERIC   NOT NULL,
     message_tracking boolean   NOT NULL DEFAULT TRUE,
@@ -117,7 +117,7 @@ CREATE TABLE reply.filters
 CREATE TABLE filter.filters
 (
     id         uuid               DEFAULT uuid_generate_v4(),
-    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     guild_id   NUMERIC,
     channel_id NUMERIC,
     user_id    NUMERIC,
@@ -130,7 +130,7 @@ CREATE TABLE filter.filters
 CREATE TABLE reactions.reactions
 (
     id         uuid               DEFAULT uuid_generate_v4(),
-    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     guild_id   NUMERIC,
     channel_id NUMERIC,
     user_id    NUMERIC   NOT NULL,
@@ -268,28 +268,28 @@ ALTER TABLE reply.filters
 
 /* Grant permissions */
 GRANT
-ALL
-PRIVILEGES
-ON
-DATABASE
-nerdbot TO nerdbot;
+    ALL
+    PRIVILEGES
+    ON
+    DATABASE
+    nerdbot TO nerdbot;
 GRANT ALL PRIVILEGES ON ALL
-TABLES IN SCHEMA PUBLIC TO nerdbot;
+    TABLES IN SCHEMA public TO nerdbot;
 GRANT ALL PRIVILEGES ON ALL
-TABLES IN SCHEMA reply TO nerdbot;
+    TABLES IN SCHEMA reply TO nerdbot;
 GRANT ALL PRIVILEGES ON ALL
-TABLES IN SCHEMA filter TO nerdbot;
+    TABLES IN SCHEMA filter TO nerdbot;
 GRANT ALL PRIVILEGES ON ALL
-TABLES IN SCHEMA reactions TO nerdbot;
+    TABLES IN SCHEMA reactions TO nerdbot;
 GRANT ALL PRIVILEGES ON ALL
-TABLES IN SCHEMA logs TO nerdbot;
+    TABLES IN SCHEMA logs TO nerdbot;
 GRANT USAGE ON ALL
-SEQUENCES IN SCHEMA PUBLIC TO nerdbot;
+    SEQUENCES IN SCHEMA public TO nerdbot;
 GRANT USAGE ON ALL
-SEQUENCES IN SCHEMA reply TO nerdbot;
+    SEQUENCES IN SCHEMA reply TO nerdbot;
 GRANT USAGE ON ALL
-SEQUENCES IN SCHEMA filter TO nerdbot;
+    SEQUENCES IN SCHEMA filter TO nerdbot;
 GRANT USAGE ON ALL
-SEQUENCES IN SCHEMA reactions TO nerdbot;
+    SEQUENCES IN SCHEMA reactions TO nerdbot;
 GRANT USAGE ON ALL
-SEQUENCES IN SCHEMA logs TO nerdbot;
+    SEQUENCES IN SCHEMA logs TO nerdbot;

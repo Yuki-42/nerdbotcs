@@ -14,284 +14,284 @@ namespace Bot.Commands.SlashCommands;
 [SuppressMessage("ReSharper", "UnusedMember.Global")]
 public class PrivacyCommands : ApplicationCommandsModule
 {
-    [SlashCommandGroup("privacy", "Privacy settings.")]
-    public class PrivacyCommandsGroup : ApplicationCommandsModule
-    {
-        [SlashCommand("opt-out", "Quickly opt out of all user data collection.")]
-        public async Task QuickOutCommand(InteractionContext ctx)
-        {
-            await ctx.CreateResponseAsync(
-                InteractionResponseType.ChannelMessageWithSource,
-                new DiscordInteractionResponseBuilder
-                {
-                    Content = "Opting out of all user data collection..."
-                });
+	[SlashCommandGroup("privacy", "Privacy settings.")]
+	public class PrivacyCommandsGroup : ApplicationCommandsModule
+	{
+		[SlashCommand("opt-out", "Quickly opt out of all user data collection.")]
+		public async Task QuickOutCommand(InteractionContext ctx)
+		{
+			await ctx.CreateResponseAsync(
+				InteractionResponseType.ChannelMessageWithSource,
+				new DiscordInteractionResponseBuilder
+				{
+					Content = "Opting out of all user data collection..."
+				});
 
-            // Get the user
-            Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+			// Get the user
+			Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
-            UsersRow? user = await handler.Users.Get(ctx.User);
+			UsersRow? user = await handler.Users.Get(ctx.User);
 
-            user.MessageTracking = false;
+			user.MessageTracking = false;
 
-            await ctx.EditResponseAsync(
-                new DiscordWebhookBuilder
-                {
-                    Content =
-                        "Opt out completed. Your data will no longer be tracked by the bot.\nShould you wish to re-enable data tracking at any time, use the `/statistics privacy message-tracking opt-in` command."
-                });
-        }
+			await ctx.EditResponseAsync(
+				new DiscordWebhookBuilder
+				{
+					Content =
+						"Opt out completed. Your data will no longer be tracked by the bot.\nShould you wish to re-enable data tracking at any time, use the `/statistics privacy message-tracking opt-in` command."
+				});
+		}
 
-        [SlashCommand("opt-in",
-            "Quickly opt in to user data collection. Note: This will not overwrite any more-specific settings.")]
-        public async Task QuickInCommand(InteractionContext ctx)
-        {
-            await ctx.CreateResponseAsync(
-                InteractionResponseType.ChannelMessageWithSource,
-                new DiscordInteractionResponseBuilder
-                {
-                    Content = "Opting in to user data collection..."
-                });
+		[SlashCommand("opt-in",
+			"Quickly opt in to user data collection. Note: This will not overwrite any more-specific settings.")]
+		public async Task QuickInCommand(InteractionContext ctx)
+		{
+			await ctx.CreateResponseAsync(
+				InteractionResponseType.ChannelMessageWithSource,
+				new DiscordInteractionResponseBuilder
+				{
+					Content = "Opting in to user data collection..."
+				});
 
-            // Get the user
-            Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+			// Get the user
+			Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
-            UsersRow? user = await handler.Users.Get(ctx.User);
+			UsersRow? user = await handler.Users.Get(ctx.User);
 
-            user.MessageTracking = true;
+			user.MessageTracking = true;
 
-            await ctx.EditResponseAsync(
-                new DiscordWebhookBuilder
-                {
-                    Content = "Opt in completed. Your data will now be tracked by the bot. \n" +
-                              "Should you wish to disable data tracking at any time, use the `/statistics privacy message-tracking opt-out` command.\n" +
-                              "Please note that this will not overwrite any more specific tracking rules, so if you have disabled tracking for a specific channel or server, that setting will still apply."
-                });
-        }
-
-
-        [SlashCommandGroup("admin", "Manage privacy settings for the server.")]
-        public class AdminGroup : ApplicationCommandsModule
-        {
-            [SlashCommand("toggle-server", "Toggle tracking for the server.")]
-            public static async Task ServerToggleCommand(
-                InteractionContext ctx,
-                [Option("value", "Value to set")] bool? value = null
-            )
-            {
-                await Privacy.ToggleServerMessageCollection(ctx, ctx.Guild, value);
-            }
-
-            [SlashCommand("toggle-channel", "Toggle tracking for the channel.")]
-            public static async Task ChannelToggleCommand(
-                InteractionContext ctx,
-                [Option("channel", "Channel to toggle collection for. Defaults to the current channel.")]
-                DiscordChannel? channel = null,
-                [Option("value", "Value to set")] bool? value = null
-            )
-            {
-                await Privacy.ToggleChannelMessageCollection(ctx, channel, value);
-            }
-        }
+			await ctx.EditResponseAsync(
+				new DiscordWebhookBuilder
+				{
+					Content = "Opt in completed. Your data will now be tracked by the bot. \n" +
+					          "Should you wish to disable data tracking at any time, use the `/statistics privacy message-tracking opt-out` command.\n" +
+					          "Please note that this will not overwrite any more specific tracking rules, so if you have disabled tracking for a specific channel or server, that setting will still apply."
+				});
+		}
 
 
-        [SlashCommandGroup("out", "Opt out of message tracking.")]
-        public class MessageTrackingOutGroup : ApplicationCommandsModule
-        {
-            [SlashCommand("global", "Opt out of global message tracking.")]
-            public async Task GlobalOutCommand(InteractionContext ctx)
-            {
-                await ctx.CreateResponseAsync(
-                    InteractionResponseType.ChannelMessageWithSource,
-                    new DiscordInteractionResponseBuilder
-                    {
-                        Content = "Opting out of global message tracking..."
-                    });
+		[SlashCommandGroup("admin", "Manage privacy settings for the server.")]
+		public class AdminGroup : ApplicationCommandsModule
+		{
+			[SlashCommand("toggle-server", "Toggle tracking for the server.")]
+			public static async Task ServerToggleCommand(
+				InteractionContext ctx,
+				[Option("value", "Value to set")] bool? value = null
+			)
+			{
+				await Privacy.ToggleServerMessageCollection(ctx, ctx.Guild, value);
+			}
 
-                // Get the user
-                Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-                UsersRow? user = await handler.Users.Get(ctx.User);
+			[SlashCommand("toggle-channel", "Toggle tracking for the channel.")]
+			public static async Task ChannelToggleCommand(
+				InteractionContext ctx,
+				[Option("channel", "Channel to toggle collection for. Defaults to the current channel.")]
+				DiscordChannel? channel = null,
+				[Option("value", "Value to set")] bool? value = null
+			)
+			{
+				await Privacy.ToggleChannelMessageCollection(ctx, channel, value);
+			}
+		}
 
-                user.MessageTracking = false;
 
-                await ctx.EditResponseAsync(
-                    new DiscordWebhookBuilder
-                    {
-                        Content = "Opt out completed. Your messages will no longer be counted by the bot."
-                    });
-            }
+		[SlashCommandGroup("out", "Opt out of message tracking.")]
+		public class MessageTrackingOutGroup : ApplicationCommandsModule
+		{
+			[SlashCommand("global", "Opt out of global message tracking.")]
+			public async Task GlobalOutCommand(InteractionContext ctx)
+			{
+				await ctx.CreateResponseAsync(
+					InteractionResponseType.ChannelMessageWithSource,
+					new DiscordInteractionResponseBuilder
+					{
+						Content = "Opting out of global message tracking..."
+					});
 
-            [SlashCommand("server", "Opt out of server message tracking.")]
-            public async Task ServerOutCommand(InteractionContext ctx)
-            {
-                await ctx.CreateResponseAsync(
-                    InteractionResponseType.ChannelMessageWithSource,
-                    new DiscordInteractionResponseBuilder
-                    {
-                        Content = "Opting out of server message tracking..."
-                    });
+				// Get the user
+				Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+				UsersRow? user = await handler.Users.Get(ctx.User);
 
-                // Check if the command was run in a DM with no server specified
-                if (ctx.Guild is null)
-                {
-                    await ctx.EditResponseAsync(
-                        new DiscordWebhookBuilder
-                        {
-                            Content = "You must run this command in a server to opt out of server message tracking."
-                        });
-                    return;
-                }
+				user.MessageTracking = false;
 
-                // Get the GuildUser
-                Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-                DiscordGuild? server = ctx.Guild;
+				await ctx.EditResponseAsync(
+					new DiscordWebhookBuilder
+					{
+						Content = "Opt out completed. Your messages will no longer be counted by the bot."
+					});
+			}
 
-                // Check if server is still null
-                if (server is null) throw new InvalidOperationException();
+			[SlashCommand("server", "Opt out of server message tracking.")]
+			public async Task ServerOutCommand(InteractionContext ctx)
+			{
+				await ctx.CreateResponseAsync(
+					InteractionResponseType.ChannelMessageWithSource,
+					new DiscordInteractionResponseBuilder
+					{
+						Content = "Opting out of server message tracking..."
+					});
 
-                GuildsUsersRow? user = await handler.GuildUsers.Get(ctx.User, server);
-                user.MessageTracking = false;
+				// Check if the command was run in a DM with no server specified
+				if (ctx.Guild is null)
+				{
+					await ctx.EditResponseAsync(
+						new DiscordWebhookBuilder
+						{
+							Content = "You must run this command in a server to opt out of server message tracking."
+						});
+					return;
+				}
 
-                await ctx.EditResponseAsync(
-                    new DiscordWebhookBuilder
-                    {
-                        Content =
-                            "Opt out completed. Your messages will no longer be counted by the bot in this server."
-                    });
-            }
+				// Get the GuildUser
+				Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+				DiscordGuild? server = ctx.Guild;
 
-            [SlashCommand("channel", "Opt out of channel message tracking.")]
-            public async Task ChannelOutCommand(InteractionContext ctx)
-            {
-                await ctx.CreateResponseAsync(
-                    InteractionResponseType.ChannelMessageWithSource,
-                    new DiscordInteractionResponseBuilder
-                    {
-                        Content = "Opting out of channel message tracking..."
-                    });
+				// Check if server is still null
+				if (server is null) throw new InvalidOperationException();
 
-                // Get the GuildUser
-                Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-                DiscordChannel? server = ctx.Channel;
+				GuildsUsersRow? user = await handler.GuildUsers.Get(ctx.User, server);
+				user.MessageTracking = false;
 
-                // Check if server is still null
-                if (server is null) throw new InvalidOperationException();
+				await ctx.EditResponseAsync(
+					new DiscordWebhookBuilder
+					{
+						Content =
+							"Opt out completed. Your messages will no longer be counted by the bot in this server."
+					});
+			}
 
-                ChannelsUsersRow? user = await handler.ChannelUsers.Get(ctx.User, server);
-                user.MessageTracking = false;
+			[SlashCommand("channel", "Opt out of channel message tracking.")]
+			public async Task ChannelOutCommand(InteractionContext ctx)
+			{
+				await ctx.CreateResponseAsync(
+					InteractionResponseType.ChannelMessageWithSource,
+					new DiscordInteractionResponseBuilder
+					{
+						Content = "Opting out of channel message tracking..."
+					});
 
-                await ctx.EditResponseAsync(
-                    new DiscordWebhookBuilder
-                    {
-                        Content =
-                            $"Opt out completed. Your messages will no longer be counted by the bot in {ctx.Channel.Mention}."
-                    });
-            }
-        }
+				// Get the GuildUser
+				Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+				DiscordChannel? server = ctx.Channel;
 
-        [SlashCommandGroup("in", "Opt in to message tracking.")]
-        public class MessageTrackingInGroup : ApplicationCommandsModule
-        {
-            [SlashCommand("global", "Opt in to global message tracking.")]
-            public async Task GlobalInCommand(InteractionContext ctx)
-            {
-                await ctx.CreateResponseAsync(
-                    InteractionResponseType.ChannelMessageWithSource,
-                    new DiscordInteractionResponseBuilder
-                    {
-                        Content = "Opting in to global message tracking..."
-                    });
+				// Check if server is still null
+				if (server is null) throw new InvalidOperationException();
 
-                // Get the user
-                Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-                UsersRow? user = await handler.Users.Get(ctx.User);
+				ChannelsUsersRow? user = await handler.ChannelUsers.Get(ctx.User, server);
+				user.MessageTracking = false;
 
-                user.MessageTracking = true;
+				await ctx.EditResponseAsync(
+					new DiscordWebhookBuilder
+					{
+						Content =
+							$"Opt out completed. Your messages will no longer be counted by the bot in {ctx.Channel.Mention}."
+					});
+			}
+		}
 
-                await ctx.EditResponseAsync(
-                    new DiscordWebhookBuilder
-                    {
-                        Content = "Opt in completed. Your messages will now be counted by the bot.\n" +
-                                  "Please note that this will not overwrite any more specific tracking rules, so if you have disabled tracking for a specific channel or server, that setting will still apply."
-                    });
-            }
+		[SlashCommandGroup("in", "Opt in to message tracking.")]
+		public class MessageTrackingInGroup : ApplicationCommandsModule
+		{
+			[SlashCommand("global", "Opt in to global message tracking.")]
+			public async Task GlobalInCommand(InteractionContext ctx)
+			{
+				await ctx.CreateResponseAsync(
+					InteractionResponseType.ChannelMessageWithSource,
+					new DiscordInteractionResponseBuilder
+					{
+						Content = "Opting in to global message tracking..."
+					});
 
-            [SlashCommand("server", "Opt in to server message tracking.")]
-            public async Task ServerInCommand(InteractionContext ctx)
-            {
-                await ctx.CreateResponseAsync(
-                    InteractionResponseType.ChannelMessageWithSource,
-                    new DiscordInteractionResponseBuilder
-                    {
-                        Content = "Opting in to server message tracking..."
-                    });
+				// Get the user
+				Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+				UsersRow? user = await handler.Users.Get(ctx.User);
 
-                // Check if the command was run in a DM with no server specified
-                if (ctx.Guild is null)
-                {
-                    await ctx.EditResponseAsync(
-                        new DiscordWebhookBuilder
-                        {
-                            Content = "You must run this command in a server to opt in to server message tracking."
-                        });
-                    return;
-                }
+				user.MessageTracking = true;
 
-                // Get the GuildUser
-                Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-                DiscordGuild? server = ctx.Guild;
+				await ctx.EditResponseAsync(
+					new DiscordWebhookBuilder
+					{
+						Content = "Opt in completed. Your messages will now be counted by the bot.\n" +
+						          "Please note that this will not overwrite any more specific tracking rules, so if you have disabled tracking for a specific channel or server, that setting will still apply."
+					});
+			}
 
-                // Check if server is still null
-                if (server is null) throw new InvalidOperationException();
+			[SlashCommand("server", "Opt in to server message tracking.")]
+			public async Task ServerInCommand(InteractionContext ctx)
+			{
+				await ctx.CreateResponseAsync(
+					InteractionResponseType.ChannelMessageWithSource,
+					new DiscordInteractionResponseBuilder
+					{
+						Content = "Opting in to server message tracking..."
+					});
 
-                GuildsUsersRow? user = await handler.GuildUsers.Get(ctx.User, server);
-                user.MessageTracking = true;
+				// Check if the command was run in a DM with no server specified
+				if (ctx.Guild is null)
+				{
+					await ctx.EditResponseAsync(
+						new DiscordWebhookBuilder
+						{
+							Content = "You must run this command in a server to opt in to server message tracking."
+						});
+					return;
+				}
 
-                await ctx.EditResponseAsync(
-                    new DiscordWebhookBuilder
-                    {
-                        Content = "Opt in completed. Your messages will now be counted by the bot.\n" +
-                                  "Please note that this will not overwrite any more specific tracking rules, so if you have disabled tracking for a specific channel, that setting will still apply."
-                    });
-            }
+				// Get the GuildUser
+				Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+				DiscordGuild? server = ctx.Guild;
 
-            [SlashCommand("channel", "Opt in to channel message tracking.")]
-            public async Task ChannelInCommand(InteractionContext ctx)
-            {
-                await ctx.CreateResponseAsync(
-                    InteractionResponseType.ChannelMessageWithSource,
-                    new DiscordInteractionResponseBuilder
-                    {
-                        Content = "Opting in to channel message tracking..."
-                    });
+				// Check if server is still null
+				if (server is null) throw new InvalidOperationException();
 
-                // Check if the command was run in a DM with no server specified
-                if (ctx.Guild is null)
-                {
-                    await ctx.EditResponseAsync(
-                        new DiscordWebhookBuilder
-                        {
-                            Content = "You must run this command in a server to opt in to channel message tracking."
-                        });
-                    return;
-                }
+				GuildsUsersRow? user = await handler.GuildUsers.Get(ctx.User, server);
+				user.MessageTracking = true;
 
-                // Get the GuildUser
-                Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-                DiscordGuild? server = ctx.Guild;
+				await ctx.EditResponseAsync(
+					new DiscordWebhookBuilder
+					{
+						Content = "Opt in completed. Your messages will now be counted by the bot.\n" +
+						          "Please note that this will not overwrite any more specific tracking rules, so if you have disabled tracking for a specific channel, that setting will still apply."
+					});
+			}
 
-                // Check if server is still null
-                if (server is null) throw new InvalidOperationException();
+			[SlashCommand("channel", "Opt in to channel message tracking.")]
+			public async Task ChannelInCommand(InteractionContext ctx)
+			{
+				await ctx.CreateResponseAsync(
+					InteractionResponseType.ChannelMessageWithSource,
+					new DiscordInteractionResponseBuilder
+					{
+						Content = "Opting in to channel message tracking..."
+					});
 
-                GuildsUsersRow? user = await handler.GuildUsers.Get(ctx.User, server);
-                user.MessageTracking = true;
+				// Check if the command was run in a DM with no server specified
+				if (ctx.Guild is null)
+				{
+					await ctx.EditResponseAsync(
+						new DiscordWebhookBuilder
+						{
+							Content = "You must run this command in a server to opt in to channel message tracking."
+						});
+					return;
+				}
 
-                await ctx.EditResponseAsync(
-                    new DiscordWebhookBuilder
-                    {
-                        Content = "Opt in completed. Your messages will now be counted by the bot."
-                    });
-            }
-        }
-    }
+				// Get the GuildUser
+				Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+				DiscordGuild? server = ctx.Guild;
+
+				// Check if server is still null
+				if (server is null) throw new InvalidOperationException();
+
+				GuildsUsersRow? user = await handler.GuildUsers.Get(ctx.User, server);
+				user.MessageTracking = true;
+
+				await ctx.EditResponseAsync(
+					new DiscordWebhookBuilder
+					{
+						Content = "Opt in completed. Your messages will now be counted by the bot."
+					});
+			}
+		}
+	}
 }

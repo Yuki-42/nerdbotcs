@@ -9,16 +9,16 @@ namespace Bot.Database;
 
 public class HandlersGroup
 {
-    public required Config.Handler Config;
-    public required Filter.Handler Filter;
-    public required Public.Handler Public;
-    public required Reactions.Handler Reactions;
+	public required Config.Handler Config;
+	public required Filter.Handler Filter;
+	public required Public.Handler Public;
+	public required Reactions.Handler Reactions;
 
-    public IEnumerable<BaseHandler> Handlers =>
-    [
-        Config,
-        Filter,
-        Public,
-        Reactions
-    ];
+	public IEnumerable<BaseHandler> Handlers =>
+	[
+		Config,
+		Filter,
+		Public,
+		Reactions
+	];
 }
