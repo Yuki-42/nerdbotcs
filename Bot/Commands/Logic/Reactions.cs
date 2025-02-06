@@ -103,10 +103,21 @@ public class Reactions
 		// 2. User is a bot admin
 		// 3. User is a guild admin and executing the command for the current guild
 
-		// Check if the target and invoker are the same
+		// Self-target check
 		if (ctx.User.Id == targetUser.Id) return true;
 
-		// Get required handlers
-		Handler publicHandler =
+		// Bot administrator check
+		PublicHandler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+		
+		UsersRow lExecutingUser = await publicHandler.Users.Get(ctx.User);
+		if (lExecutingUser.Admin) return true;
+		
+		// Guild moderator check
+		if (ctx.Guild is null) return false;
+		targetGuild ??= ctx.Guild;
+
+		DiscordMember executingMember = await targetGuild.GetMemberAsync(ctx.User.Id);
+
+		return executingMember.Permissions.HasPermission(Permissions.ModerateMembers);
 	}
 }
