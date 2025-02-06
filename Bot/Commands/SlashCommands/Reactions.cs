@@ -146,7 +146,7 @@ public class ReactionsCommands : ApplicationCommandsModule
 			[Option("channel", "Channel the reaction is for.")]
 			DiscordChannel? channel = null,
 			[Option("guild-id", "Guild reaction occurs in. 0 for this guild.")]
-			ulong? guildId = null,
+			long? guildId = null,  // This might break
 			[Option("user", "User to remove reaction from.")]
 			DiscordUser? user = null
 		)
