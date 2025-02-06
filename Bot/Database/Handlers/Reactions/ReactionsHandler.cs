@@ -21,7 +21,31 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
 		return !reader.Read() ? null : new ReactionsRow(ConnectionString, HandlersGroup, reader);
 	}
 
-	public async Task<bool> Exists(string emoji, ulong userId, ulong? guildId = null, ulong? channelId = null)
+
+	public async Task<ReactionsRow?> Get(string emoji, ulong userId, ulong? channelId = null, ulong? guildId = null)
+	{
+		// Get a new connection
+		await using NpgsqlConnection connection = await Connection();
+		await using NpgsqlCommand command = connection.CreateCommand();
+		command.CommandText = "SELECT * FROM reactions.reactions WHERE emoji = @emoji AND user_id = @user_id";
+		command.Parameters.Add(new NpgsqlParameter("emoji", NpgsqlDbType.Text) { Value = emoji });
+		command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)userId });
+
+		// I cannot be bothered to make the rest of this work in SQL so I will do it in C#.
+
+		await using NpgsqlDataReader? reader = await ExecuteReader(command);
+
+		while (await reader.ReadAsync())
+		{
+			ReactionsRow reaction = new(ConnectionString, HandlersGroup, reader);
+			if (guildId != null && reaction.GuildId != guildId) continue;
+			if (channelId != null && reaction.ChannelId != channelId) continue;
+			return reaction;
+		}
+
+		return null;
+	}
+
 	public async Task<bool> Exists(string emoji, ulong userId, ulong? channelId = null, ulong? guildId = null)
 	{
 		// Get a new connection
