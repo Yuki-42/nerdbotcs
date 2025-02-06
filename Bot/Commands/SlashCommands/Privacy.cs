@@ -38,7 +38,7 @@ public class PrivacyCommands : ApplicationCommandsModule
 				new DiscordWebhookBuilder
 				{
 					Content =
-						"Opt out completed. Your data will no longer be tracked by the bot.\nShould you wish to re-enable data tracking at any time, use the `/statistics privacy message-tracking opt-in` command."
+						"Opt out completed. Your data will no longer be tracked by the bot.\nShould you wish to re-enable data tracking at any time, use the `/privacy opt-in` command."
 				});
 		}
 
@@ -64,7 +64,7 @@ public class PrivacyCommands : ApplicationCommandsModule
 				new DiscordWebhookBuilder
 				{
 					Content = "Opt in completed. Your data will now be tracked by the bot. \n" +
-					          "Should you wish to disable data tracking at any time, use the `/statistics privacy message-tracking opt-out` command.\n" +
+					          "Should you wish to disable data tracking at any time, use the `/privacy opt-out` command.\n" +
 					          "Please note that this will not overwrite any more specific tracking rules, so if you have disabled tracking for a specific channel or server, that setting will still apply."
 				});
 		}
