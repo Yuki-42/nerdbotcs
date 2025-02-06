@@ -1,4 +1,6 @@
-﻿using Bot.Database.Handlers.Public;
+﻿using Bot.Database.Handlers.Config;
+using Bot.Database.Handlers.Public;
+using Bot.Database.Handlers.Reactions;
 using Bot.Database.Types;
 using Bot.Database.Types.Config;
 using Bot.Database.Types.Public;
@@ -17,21 +19,21 @@ internal static class EventLogic
 		Database.Database database)
 	{
 		// Get the required services
-		Handler? handler = database.Handlers.Public;
+		PublicHandler handler = database.Handlers.Public;
 
 		// Get the user
-		DiscordUser? discordUser = eventArgs.Author;
-		UsersRow? localUser = await handler.Users.Get(discordUser);
+		DiscordUser discordUser = eventArgs.Author;
+		UsersRow localUser = await handler.Users.Get(discordUser);
 
 		// Get the channel and channel user
-		DiscordChannel? discordChannel = eventArgs.Channel;
-		ChannelsRow? localChannel = await handler.Channels.Get(discordChannel);
-		ChannelsUsersRow? localChannelUser = await handler.ChannelUsers.Get(discordUser, discordChannel);
+		DiscordChannel discordChannel = eventArgs.Channel;
+		ChannelsRow localChannel = await handler.Channels.Get(discordChannel);
+		ChannelsUsersRow localChannelUser = await handler.ChannelUsers.Get(discordUser, discordChannel);
 
 		// Get the guild and guild user
-		DiscordGuild? discordGuild = discordChannel.Guild;
-		GuildsRow? localGuild = await handler.Guilds.Get(discordGuild);
-		GuildsUsersRow? localGuildUser = await handler.GuildUsers.Get(discordUser, discordGuild);
+		DiscordGuild discordGuild = discordChannel.Guild;
+		GuildsRow localGuild = await handler.Guilds.Get(discordGuild);
+		GuildsUsersRow localGuildUser = await handler.GuildUsers.Get(discordUser, discordGuild);
 
 
 		// Check if statistics tracking is enabled
@@ -49,11 +51,11 @@ internal static class EventLogic
 		Database.Database database)
 	{
 		// Get the required services
-		Handler? handler = database.Handlers.Public;
-		Database.Handlers.Reactions.Handler? reactionsHandler = database.Handlers.Reactions;
+		PublicHandler handler = database.Handlers.Public;
+		ReactionsHandler reactionsHandler = database.Handlers.Reactions;
 
 		// Get the user
-		UsersRow? publicUser = await handler.Users.Get(eventArgs.Author);
+		UsersRow publicUser = await handler.Users.Get(eventArgs.Author);
 
 		// Check if the message occured in a guild 
 		if (eventArgs.GuildId != null)
@@ -103,7 +105,7 @@ public class EventHandler(Database.Database database)
 		Console.WriteLine("Bot is ready to process events.");
 
 		// Get the config service
-		Database.Handlers.Config.Handler? handler = Database.Handlers.Config;
+		ConfigHandler handler = Database.Handlers.Config;
 
 		// Get the bot status and status type
 		ConfigRow? lStatus = await handler.Get("status");
@@ -124,7 +126,7 @@ public class EventHandler(Database.Database database)
 		}
 
 		// Get the status type
-		DiscordActivity? activity = StatusType.GetActivityType(statusTypeInt, lStatus.Value!);
+		DiscordActivity activity = StatusType.GetActivityType(statusTypeInt, lStatus.Value!);
 
 		// Set the bot status
 		await client.UpdateStatusAsync(activity);

@@ -5,7 +5,7 @@ using NpgsqlTypes;
 
 namespace Bot.Database.Handlers.Config;
 
-public class Handler(string connectionString) : BaseHandler(connectionString)
+public class ConfigHandler(string connectionString) : BaseHandler(connectionString)
 {
 	public async Task<ConfigRow?> Get(Guid id)
 	{

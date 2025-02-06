@@ -38,14 +38,14 @@ public class GeneralCommands : ApplicationCommandsModule
 		};
 
 		// Get the config service
-		Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Config;
+		ConfigHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Config;
 
 		// Update the status in the database
-		ConfigRow? row = await handler.NGet("status");
+		ConfigRow row = await handler.NGet("status");
 		row.Value = status;
 
 		// Update the status type in the database
-		ConfigRow? typeRow = await handler.NGet("status_type");
+		ConfigRow typeRow = await handler.NGet("status_type");
 		typeRow.Value = ((int)type).ToString();
 
 		await ctx.Client.UpdateStatusAsync(activity);

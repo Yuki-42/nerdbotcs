@@ -16,8 +16,8 @@ public class Shared
     public static async Task<int> CheckPermissions(BaseContext ctx)
 	{
 		// Check if the user is a global bot admin
-		Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-		UsersRow? user = await handler.Users.Get(ctx.User);
+		PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+		UsersRow user = await handler.Users.Get(ctx.User);
 
 		// Check if the user is a global bot admin
 		if (user.Admin) return 1;

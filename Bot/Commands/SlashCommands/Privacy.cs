@@ -28,9 +28,9 @@ public class PrivacyCommands : ApplicationCommandsModule
 				});
 
 			// Get the user
-			Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+			PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
-			UsersRow? user = await handler.Users.Get(ctx.User);
+			UsersRow user = await handler.Users.Get(ctx.User);
 
 			user.MessageTracking = false;
 
@@ -54,9 +54,9 @@ public class PrivacyCommands : ApplicationCommandsModule
 				});
 
 			// Get the user
-			Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+			PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
-			UsersRow? user = await handler.Users.Get(ctx.User);
+			UsersRow user = await handler.Users.Get(ctx.User);
 
 			user.MessageTracking = true;
 
@@ -109,8 +109,8 @@ public class PrivacyCommands : ApplicationCommandsModule
 					});
 
 				// Get the user
-				Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-				UsersRow? user = await handler.Users.Get(ctx.User);
+				PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+				UsersRow user = await handler.Users.Get(ctx.User);
 
 				user.MessageTracking = false;
 
@@ -143,7 +143,7 @@ public class PrivacyCommands : ApplicationCommandsModule
 				}
 
 				// Get the GuildUser
-				Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+				PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 				DiscordGuild? server = ctx.Guild;
 
 				// Check if server is still null
@@ -171,7 +171,7 @@ public class PrivacyCommands : ApplicationCommandsModule
 					});
 
 				// Get the GuildUser
-				Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+				PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 				DiscordChannel? server = ctx.Channel;
 
 				// Check if server is still null
@@ -203,8 +203,8 @@ public class PrivacyCommands : ApplicationCommandsModule
 					});
 
 				// Get the user
-				Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-				UsersRow? user = await handler.Users.Get(ctx.User);
+				PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+				UsersRow user = await handler.Users.Get(ctx.User);
 
 				user.MessageTracking = true;
 
@@ -238,7 +238,7 @@ public class PrivacyCommands : ApplicationCommandsModule
 				}
 
 				// Get the GuildUser
-				Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+				PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 				DiscordGuild? server = ctx.Guild;
 
 				// Check if server is still null
@@ -277,7 +277,7 @@ public class PrivacyCommands : ApplicationCommandsModule
 				}
 
 				// Get the GuildUser
-				Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+				PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 				DiscordGuild? server = ctx.Guild;
 
 				// Check if server is still null
