@@ -66,7 +66,7 @@ public class ReactionsCommands : ApplicationCommandsModule
 				}
 
 				reactionsText +=
-					$"ID: `{reaction.Id}` | {emoji}{(reaction.ChannelId != null ? $" | Channel: {reaction.ChannelId.Value}" : "")}{(reaction.GuildId != null ? $" | Guild: {reaction.GuildId}" : "")}\n";
+					$"ID: `{reaction.Id}` | {emoji}{(reaction.ChannelId != null ? $" | Channel: {reaction.ChannelId.Value}" : "")}{(reaction.GuildId != null ? $" | Guild: {reaction.GuildId}" : " | Global")}\n";
 			}
 
 			// Edit the response
