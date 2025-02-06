@@ -32,7 +32,7 @@ public class ReactionsCommands : ApplicationCommandsModule
 			Database.Database database = ctx.Services.GetRequiredService<Database.Database>();
 
 			// Get the required handlers
-			Handler reactionsHandler = database.Handlers.Reactions;
+			ReactionsHandler reactionsHandler = database.Handlers.Reactions;
 
 			// Set target user if null
 			user ??= ctx.User;
@@ -94,11 +94,11 @@ public class ReactionsCommands : ApplicationCommandsModule
 			Database.Database? database = ctx.Services.GetRequiredService<Database.Database>();
 
 			// Get the required handlers
-			Database.Handlers.Public.Handler? publicHandler = database.Handlers.Public;
-			Handler? reactionsHandler = database.Handlers.Reactions;
+			Database.Handlers.Public.PublicHandler publicHandler = database.Handlers.Public;
+			ReactionsHandler reactionsHandler = database.Handlers.Reactions;
 
 			// Get the user
-			UsersRow? publicUser = await publicHandler.Users.Get(user);
+			UsersRow publicUser = await publicHandler.Users.Get(user);
 
 			// For now, only allow the bot owner to use this command
 			if (!await Reactions.AddPermissionsChecks(ctx, user))
@@ -123,7 +123,7 @@ public class ReactionsCommands : ApplicationCommandsModule
 			GuildsRow? publicGuild = channel is null ? null : await publicHandler.Guilds.Get(channel.Guild);
 
 			// Check if the reaction already exists
-			if (await reactionsHandler.Exists(emoji, publicUser.Id, publicGuild?.Id, publicChannel?.Id))
+			if (await reactionsHandler.Exists(emoji, publicUser.Id, publicChannel?.Id, publicGuild?.Id))
 			{
 				await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent(
 					$"Reaction {emoji} already exists for {user.Username} with the same settings."));

@@ -2,7 +2,7 @@
 
 namespace Bot.Database.Handlers.Public;
 
-public class Handler(string connectionString) : BaseHandler(connectionString)
+public class PublicHandler(string connectionString) : BaseHandler(connectionString)
 {
     /// <summary>
     ///  Guilds handler

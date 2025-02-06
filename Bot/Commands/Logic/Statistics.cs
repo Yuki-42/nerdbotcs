@@ -124,7 +124,7 @@ public class Statistics
     public static async Task AuditAllGuilds(BaseContext ctx)
 	{
 		// Get the required handlers
-		Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+		PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
 		// Get all guilds
 		DiscordGuild[] guilds = ctx.Client.Guilds.Values.ToArray();
@@ -144,7 +144,7 @@ public class Statistics
     /// <param name="ctx">Context</param>
     /// <param name="guild">Guild</param>
     /// <param name="handler">Handler</param>
-    public static async Task AuditGuild(BaseContext ctx, DiscordGuild? guild, Handler? handler = null)
+    public static async Task AuditGuild(BaseContext ctx, DiscordGuild? guild, PublicHandler? handler = null)
 	{
 		// Check if the guild is null
 		if (guild is null) return;
@@ -179,7 +179,7 @@ public class Statistics
     public static async Task AuditAllChannels(BaseContext ctx)
 	{
 		// Get the required handlers
-		Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+		PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
 		// Get all guilds
 		DiscordGuild[] guilds = ctx.Client.Guilds.Values.ToArray();
@@ -192,7 +192,7 @@ public class Statistics
     /// <param name="ctx">Context</param>
     /// <param name="guild">Guild</param>
     /// <param name="handler">Handler</param>
-    public static async Task AuditGuildChannels(BaseContext ctx, DiscordGuild? guild, Handler? handler = null)
+    public static async Task AuditGuildChannels(BaseContext ctx, DiscordGuild? guild, PublicHandler? handler = null)
 	{
 		// Check if the guild is null
 		if (guild is null) return;
@@ -230,7 +230,7 @@ public class Statistics
     public static async Task AuditAllUsers(BaseContext ctx)
 	{
 		// Get the required handler
-		Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+		PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
 		// First get all servers that the bot is in
 		DiscordGuild?[] guilds = ctx.Client.Guilds.Values.ToArray();
@@ -255,7 +255,7 @@ public class Statistics
 				await publicUser.Delete();
 	}
 
-	public static async Task AuditGuildUsers(BaseContext ctx, DiscordGuild? guild, Handler? handler = null)
+	public static async Task AuditGuildUsers(BaseContext ctx, DiscordGuild? guild, PublicHandler? handler = null)
 	{
 		// Check if the guild is null
 		if (guild is null) return;
@@ -302,7 +302,7 @@ public class Statistics
 		// Note: This is a very expensive operation and should be used sparingly.
 
 		// Get the required handlers
-		Handler? handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+		PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
 		// Get all guilds
 		DiscordGuild[] guilds = ctx.Client.Guilds.Values.ToArray();
@@ -318,7 +318,7 @@ public class Statistics
 			}
 	}
 
-	public static async Task AuditGuildMessages(BaseContext ctx, DiscordGuild? guild, Handler? handler = null)
+	public static async Task AuditGuildMessages(BaseContext ctx, DiscordGuild? guild, PublicHandler? handler = null)
 	{
 		// Check if the guild is null
 		if (guild is null) return;

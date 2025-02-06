@@ -204,8 +204,8 @@ public class StatisticsCommands : ApplicationCommandsModule
 			public async Task AuditAllCommand(InteractionContext ctx)
 			{
 				// Check if the user is a global bot admin
-				Handler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-				UsersRow user = await handler.Users.Get(ctx.User);
+				PublicHandler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+				UsersRow user = await publicHandler.Users.Get(ctx.User);
 
 				// Perform permissions checks
 				int permission = await Shared.CheckPermissions(ctx);

@@ -62,7 +62,7 @@ public class Reactions
 		if (ctx.User.Id == targetUser.Id) return true;
 
 		// Get the required handlers
-		Handler? publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+		PublicHandler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
 		// Check if the user is a global bot admin
 		UsersRow? publicUser = await publicHandler.Users.Get(ctx.User);
@@ -81,7 +81,7 @@ public class Reactions
 		if (ctx.User.Id == targetUser.Id) return true;
 
 		// Get the required handlers
-		Handler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
+		PublicHandler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
 		// Check if the user is a global bot admin
 		UsersRow publicUser = await publicHandler.Users.Get(ctx.User);
