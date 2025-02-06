@@ -91,7 +91,7 @@ public class ReactionsCommands : ApplicationCommandsModule
 				new DiscordInteractionResponseBuilder { Content = $"Adding reaction {emoji} to {user.Username}" });
 
 			// Get the required services
-			Database.Database? database = ctx.Services.GetRequiredService<Database.Database>();
+			Database.Database database = ctx.Services.GetRequiredService<Database.Database>();
 
 			// Get the required handlers
 			Database.Handlers.Public.PublicHandler publicHandler = database.Handlers.Public;
@@ -160,14 +160,14 @@ public class ReactionsCommands : ApplicationCommandsModule
 			{
 				await ctx.EditResponseAsync(
 					new DiscordWebhookBuilder().WithContent($"{reactionStr} is not a valid discord reaction"));
+				return;
 			}
 
 			// Get the required services
 			Database.Database database = ctx.Services.GetRequiredService<Database.Database>();
 
 			// Get the required handlers
-			Database.Handlers.Public.Handler publicHandler = database.Handlers.Public;
-			Handler reactionsHandler = database.Handlers.Reactions;
+			ReactionsHandler reactionsHandler = database.Handlers.Reactions;
 
 			// Set target user if null
 			user ??= ctx.User;
@@ -178,14 +178,36 @@ public class ReactionsCommands : ApplicationCommandsModule
 			{
 				if (guildId != 0)
 				{
-
+					// Try and get the guild, if it is invalid throw an error
+					if (!ctx.Client.TryGetGuild((ulong)guildId, out targetGuild))
+					{
+						await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Invalid guild ID"));
+						return;
+					}
+				}
+				else
+				{
+					targetGuild = ctx.Guild;
 				}
 			}
-
+			
+			// Do permissions check
+			if (!await Reactions.RemovePermissionsChecks(ctx, user, targetGuild))
+			{
+				await ctx.EditResponseAsync(
+					new DiscordWebhookBuilder().WithContent("You do not have permissions to remove this reaction."));
+				return;
+			}
 
 			// Get the reaction
-			ReactionsRow? reaction = await reactionsHandler.Get(new Guid(reactionId));
+			ReactionsRow? reaction = await reactionsHandler.Get(reactionStr, user.Id, ctx.ChannelId, ctx.GuildId);
 
+			if (reaction is null)
+			{
+				await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Reaction does not exist."));
+				return;
+			}
+			
 			// Remove the reaction
 			await reaction.Delete();
 
