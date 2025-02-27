@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Bot.Commands.Logic;
-using Bot.Database.Handlers.Public;
 using Bot.Database.Handlers.Public.Views;
-using Bot.Database.Types.Public;
 using Bot.Database.Types.Public.Views;
 using DisCatSharp.ApplicationCommands;
 using DisCatSharp.ApplicationCommands.Attributes;
@@ -184,7 +182,7 @@ public class StatisticsCommands : ApplicationCommandsModule
         [SlashCommandGroup("audit", "Audit commands.")]
 		public class AuditGroup : ApplicationCommandsModule
 		{
-			public async void SlashCommandErrored(SlashCommandErrorEventArgs e)
+			public async Task SlashCommandErrored(SlashCommandErrorEventArgs e)
 			{
 				await e.Context.CreateResponseAsync(
 					InteractionResponseType.ChannelMessageWithSource,
@@ -203,10 +201,6 @@ public class StatisticsCommands : ApplicationCommandsModule
             [SlashCommand("all", "Audits all categories.")]
 			public async Task AuditAllCommand(InteractionContext ctx)
 			{
-				// Check if the user is a global bot admin
-				PublicHandler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
-				UsersRow user = await publicHandler.Users.Get(ctx.User);
-
 				// Perform permissions checks
 				int permission = await Shared.CheckPermissions(ctx);
 

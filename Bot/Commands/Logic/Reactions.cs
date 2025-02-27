@@ -15,32 +15,31 @@ public class Reactions
     ///  Checks if an emoji is valid on discord.
     /// </summary>
     /// <remarks>
-    ///  Works with unicode emojis, discord emojis, and guild emojis.
+    ///  Works with Unicode emojis, discord emojis, and guild emojis.
     /// </remarks>
-    /// <code>
-    /// Uses a combination of regular expressions and the Discord API to check if an emoji is valid.
-    /// </code>
     /// <param name="client">Discord client.</param>
     /// <param name="emoji">Emoji text to check.</param>
     /// <returns>If the passed string is a valid discord emoji.</returns>
     public static bool CheckValidEmoji(DiscordClient client, string emoji)
 	{
-		return CheckValidUnicodeEmoji(client, emoji) || CheckValidDiscordEmoji(client, emoji) ||
+		// Try and get the emoji
+		return CheckValidUnicodeEmoji(client, emoji) || 
+		       // CheckValidDiscordEmoji(client, emoji) ||
 		       CheckValidGuildEmoji(client, emoji);
 	}
 
-	private static bool CheckValidUnicodeEmoji(DiscordClient client, string emoji)
+	public static bool CheckValidUnicodeEmoji(DiscordClient client, string emoji)
 	{
 		return RegularExpressions.UnicodeEmoji.Match(emoji).Success &&
 		       DiscordEmoji.TryFromUnicode(client, emoji, out _);
 	}
 
-	private static bool CheckValidDiscordEmoji(DiscordClient client, string emoji)
+	public static bool CheckValidDiscordEmoji(DiscordClient client, string emoji)
 	{
-		return RegularExpressions.DiscordEmoji.Match(emoji).Success && DiscordEmoji.TryFromName(client, emoji, out _);
+		return DiscordEmoji.TryFromName(client, emoji, out _);
 	}
 
-	private static bool CheckValidGuildEmoji(DiscordClient client, string emoji)
+	public static bool CheckValidGuildEmoji(DiscordClient client, string emoji)
 	{
 		// Check if the emoji has valid syntax before checking with the API
 		if (!RegularExpressions.GuildEmoji.Match(emoji).Success) return false;
@@ -65,7 +64,7 @@ public class Reactions
 		PublicHandler publicHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 
 		// Check if the user is a global bot admin
-		UsersRow? publicUser = await publicHandler.Users.Get(ctx.User);
+		UsersRow publicUser = await publicHandler.Users.Get(ctx.User);
 		return publicUser.Admin;
 	}
 

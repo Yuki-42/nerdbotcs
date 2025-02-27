@@ -15,15 +15,16 @@ public class GuildsHandler(string connectionString) : BaseHandler(connectionStri
     public async Task<GuildsRow?> Get(ulong id)
 	{
 		// Get a new connection
-		await using NpgsqlConnection? connection = await Connection();
-		await using NpgsqlCommand? command = connection.CreateCommand();
+		await using NpgsqlConnection connection = await Connection();
+		await using NpgsqlCommand command = connection.CreateCommand();
 		command.CommandText = "SELECT * FROM public.guilds WHERE id = @id";
 		command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)id });
 
-		await using NpgsqlDataReader? reader = await ExecuteReader(command);
+		await using NpgsqlDataReader reader = await ExecuteReader(command);
 		return !reader.Read() ? null : new GuildsRow(ConnectionString, HandlersGroup, reader);
 	}
 
+	// ReSharper disable once MemberCanBePrivate.Global
 	public async Task<GuildsRow> Get(ulong id, string name)
 	{
 		// Check if the guild already exists
@@ -32,14 +33,14 @@ public class GuildsHandler(string connectionString) : BaseHandler(connectionStri
 
 		// Create a new guild
 		// Get a new connection
-		await using NpgsqlConnection? connection = await Connection();
-		await using NpgsqlCommand? command = connection.CreateCommand();
+		await using NpgsqlConnection connection = await Connection();
+		await using NpgsqlCommand command = connection.CreateCommand();
 		command.CommandText = "INSERT INTO public.guilds (id, name) VALUES (@id, @name)";
 		command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)id });
 		command.Parameters.Add(new NpgsqlParameter("name", NpgsqlDbType.Text) { Value = name });
 
 		await ExecuteNonQuery(command);
-		return await Get(id)! ?? throw new MissingMemberException();
+		return await Get(id) ?? throw new MissingMemberException();
 	}
 
 	public async Task<GuildsRow> Get(DiscordGuild guild)
@@ -50,11 +51,11 @@ public class GuildsHandler(string connectionString) : BaseHandler(connectionStri
 	public async Task<IReadOnlyList<GuildsRow>> GetAll()
 	{
 		// Get a new connection
-		await using NpgsqlConnection? connection = await Connection();
-		await using NpgsqlCommand? command = connection.CreateCommand();
+		await using NpgsqlConnection connection = await Connection();
+		await using NpgsqlCommand command = connection.CreateCommand();
 		command.CommandText = "SELECT * FROM public.guilds";
 
-		await using NpgsqlDataReader? reader = await ExecuteReader(command);
+		await using NpgsqlDataReader reader = await ExecuteReader(command);
 		List<GuildsRow> guilds = [];
 		while (await reader.ReadAsync()) guilds.Add(new GuildsRow(ConnectionString, HandlersGroup, reader));
 

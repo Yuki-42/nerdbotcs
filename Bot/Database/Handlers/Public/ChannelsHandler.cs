@@ -10,12 +10,12 @@ public class ChannelsHandler(string connectionString) : BaseHandler(connectionSt
 	public async Task<ChannelsRow?> Get(ulong id)
 	{
 		// Get a new connection
-		await using NpgsqlConnection? connection = await Connection();
-		await using NpgsqlCommand? command = connection.CreateCommand();
+		await using NpgsqlConnection connection = await Connection();
+		await using NpgsqlCommand command = connection.CreateCommand();
 		command.CommandText = "SELECT * FROM public.channels WHERE id = @id";
 		command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)id });
 
-		await using NpgsqlDataReader? reader = await ExecuteReader(command);
+		await using NpgsqlDataReader reader = await ExecuteReader(command);
 		return !reader.Read() ? null : new ChannelsRow(ConnectionString, HandlersGroup, reader);
 	}
 
@@ -37,8 +37,8 @@ public class ChannelsHandler(string connectionString) : BaseHandler(connectionSt
 		if (name is null) throw new Exception("Channel does not exist in the database and no name was provided.");
 
 		// Get a new connection
-		await using NpgsqlConnection? connection = await Connection();
-		await using NpgsqlCommand? command = connection.CreateCommand();
+		await using NpgsqlConnection connection = await Connection();
+		await using NpgsqlCommand command = connection.CreateCommand();
 
 		if (guildId == null)
 		{
@@ -66,11 +66,11 @@ public class ChannelsHandler(string connectionString) : BaseHandler(connectionSt
 	public async Task<IReadOnlyList<ChannelsRow>> GetAll()
 	{
 		// Get a new connection
-		await using NpgsqlConnection? connection = await Connection();
-		await using NpgsqlCommand? command = connection.CreateCommand();
+		await using NpgsqlConnection connection = await Connection();
+		await using NpgsqlCommand command = connection.CreateCommand();
 		command.CommandText = "SELECT * FROM public.channels";
 
-		await using NpgsqlDataReader? reader = await ExecuteReader(command);
+		await using NpgsqlDataReader reader = await ExecuteReader(command);
 		List<ChannelsRow> channels = [];
 		while (await reader.ReadAsync()) channels.Add(new ChannelsRow(ConnectionString, HandlersGroup, reader));
 
@@ -80,12 +80,12 @@ public class ChannelsHandler(string connectionString) : BaseHandler(connectionSt
 	public async Task<IReadOnlyList<ChannelsRow>> GetAll(ulong guildId)
 	{
 		// Get a new connection
-		await using NpgsqlConnection? connection = await Connection();
-		await using NpgsqlCommand? command = connection.CreateCommand();
+		await using NpgsqlConnection connection = await Connection();
+		await using NpgsqlCommand command = connection.CreateCommand();
 		command.CommandText = "SELECT * FROM public.channels WHERE guild_id = @guild_id";
 		command.Parameters.Add(new NpgsqlParameter("guild_id", NpgsqlDbType.Numeric) { Value = (long)guildId });
 
-		await using NpgsqlDataReader? reader = await ExecuteReader(command);
+		await using NpgsqlDataReader reader = await ExecuteReader(command);
 		List<ChannelsRow> channels = [];
 		while (await reader.ReadAsync()) channels.Add(new ChannelsRow(ConnectionString, HandlersGroup, reader));
 

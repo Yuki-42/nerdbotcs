@@ -19,8 +19,8 @@ public class GuildsRow(string connectionString, HandlersGroup handlersGroup, IDa
 	{
 		get
 		{
-			using NpgsqlConnection? connection = GetConnection();
-			using NpgsqlCommand? command = connection.CreateCommand();
+			using NpgsqlConnection connection = GetConnection();
+			using NpgsqlCommand command = connection.CreateCommand();
 			command.CommandText = "SELECT name FROM public.guilds WHERE id = @id;";
 			command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -28,8 +28,8 @@ public class GuildsRow(string connectionString, HandlersGroup handlersGroup, IDa
 		}
 		set
 		{
-			using NpgsqlConnection? connection = GetConnection();
-			using NpgsqlCommand? command = connection.CreateCommand();
+			using NpgsqlConnection connection = GetConnection();
+			using NpgsqlCommand command = connection.CreateCommand();
 			command.CommandText = "UPDATE public.guilds SET name = @value WHERE id = @id;";
 			command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -46,8 +46,8 @@ public class GuildsRow(string connectionString, HandlersGroup handlersGroup, IDa
 	{
 		get
 		{
-			using NpgsqlConnection? connection = GetConnection();
-			using NpgsqlCommand? command = connection.CreateCommand();
+			using NpgsqlConnection connection = GetConnection();
+			using NpgsqlCommand command = connection.CreateCommand();
 			command.CommandText = "SELECT message_tracking FROM public.guilds WHERE id = @id;";
 			command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -55,8 +55,8 @@ public class GuildsRow(string connectionString, HandlersGroup handlersGroup, IDa
 		}
 		set
 		{
-			using NpgsqlConnection? connection = GetConnection();
-			using NpgsqlCommand? command = connection.CreateCommand();
+			using NpgsqlConnection connection = GetConnection();
+			using NpgsqlCommand command = connection.CreateCommand();
 			command.CommandText = "UPDATE public.guilds SET message_tracking = @value WHERE id = @id;";
 			command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -90,8 +90,8 @@ public class GuildsRow(string connectionString, HandlersGroup handlersGroup, IDa
 
 	public async Task Delete()
 	{
-		await using NpgsqlConnection? connection = await GetConnectionAsync();
-		await using NpgsqlCommand? command = connection.CreateCommand();
+		await using NpgsqlConnection connection = await GetConnectionAsync();
+		await using NpgsqlCommand command = connection.CreateCommand();
 		command.CommandText = "DELETE FROM public.guilds WHERE id = @id;";
 		command.Parameters.Add(new NpgsqlParameter("id", DbType.VarNumeric) { Value = (long)Id });
 

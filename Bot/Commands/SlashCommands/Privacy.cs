@@ -149,7 +149,7 @@ public class PrivacyCommands : ApplicationCommandsModule
 				// Check if server is still null
 				if (server is null) throw new InvalidOperationException();
 
-				GuildsUsersRow? user = await handler.GuildUsers.Get(ctx.User, server);
+				GuildsUsersRow user = await handler.GuildUsers.Get(ctx.User, server);
 				user.MessageTracking = false;
 
 				await ctx.EditResponseAsync(
@@ -177,7 +177,7 @@ public class PrivacyCommands : ApplicationCommandsModule
 				// Check if server is still null
 				if (server is null) throw new InvalidOperationException();
 
-				ChannelsUsersRow? user = await handler.ChannelUsers.Get(ctx.User, server);
+				ChannelsUsersRow user = await handler.ChannelUsers.Get(ctx.User, server);
 				user.MessageTracking = false;
 
 				await ctx.EditResponseAsync(
@@ -244,7 +244,7 @@ public class PrivacyCommands : ApplicationCommandsModule
 				// Check if server is still null
 				if (server is null) throw new InvalidOperationException();
 
-				GuildsUsersRow? user = await handler.GuildUsers.Get(ctx.User, server);
+				GuildsUsersRow user = await handler.GuildUsers.Get(ctx.User, server);
 				user.MessageTracking = true;
 
 				await ctx.EditResponseAsync(
@@ -283,7 +283,7 @@ public class PrivacyCommands : ApplicationCommandsModule
 				// Check if server is still null
 				if (server is null) throw new InvalidOperationException();
 
-				GuildsUsersRow? user = await handler.GuildUsers.Get(ctx.User, server);
+				GuildsUsersRow user = await handler.GuildUsers.Get(ctx.User, server);
 				user.MessageTracking = true;
 
 				await ctx.EditResponseAsync(
