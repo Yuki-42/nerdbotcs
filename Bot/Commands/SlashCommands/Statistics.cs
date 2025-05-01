@@ -171,8 +171,68 @@ public class StatisticsCommands : ApplicationCommandsModule
 			await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
 				new DiscordInteractionResponseBuilder
 				{
-					Content = "This command is not yet implemented."
+					Content = "Gathering individual statistics..."
 				});
+			
+			// Get the public handler
+			ViewsHandler viewsHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public.Views;
+			
+			// Check if user is null
+			user ??= ctx.User;
+			
+			if (context == LeaderboardContext.Guild && ctx.Guild is null)
+			{
+				await ctx.EditResponseAsync(
+					new DiscordWebhookBuilder
+					{
+						Content = "This command can only be run in a guild."
+					});
+				return;
+			}
+			
+			// Get the message count
+			IndividualMessageViewRow? row = context switch
+			{
+				LeaderboardContext.Global => await viewsHandler.GetGlobalIndividualMessages(user.Id),
+				LeaderboardContext.Guild => await viewsHandler.GetGuildIndividualMessages(user.Id, ctx.Guild!),
+				LeaderboardContext.Channel => await viewsHandler.GetChannelIndividualMessages(user.Id, ctx.Channel),
+				_ => null
+			};
+			
+			// Check if the row is null
+			if (row == null)
+			{
+				await ctx.EditResponseAsync(
+					new DiscordWebhookBuilder
+					{
+						Content = "No statistics found for this user."
+					});
+				return;
+			}
+			
+			// Create the response
+			string content = $"Statistics for {user.Mention}.\n Messages sent: {row.MessagesSent}\n";
+			switch (context)
+			{
+				case LeaderboardContext.Guild:
+					content += $"Guild: {ctx.Guild.Name}\n";
+					break;
+				case LeaderboardContext.Channel:
+					content += $"Channel: {ctx.Channel.Mention}\n";
+					break;
+				case LeaderboardContext.Global:
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(context), context, null);
+			}
+			
+			// Edit the response
+			await ctx.EditResponseAsync(
+				new DiscordWebhookBuilder
+				{
+					Content = content
+				});
+			
 		}
 
 
