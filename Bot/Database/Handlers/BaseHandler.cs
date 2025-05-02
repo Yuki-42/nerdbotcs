@@ -50,8 +50,8 @@ public class BaseHandler
 
 	protected async Task ExecuteNonQuery(DbCommand command)
 	{
-		await using NpgsqlConnection? connection = await Connection();
-		await using NpgsqlTransaction? transaction = await connection.BeginTransactionAsync();
+		await using NpgsqlConnection connection = await Connection();
+		await using NpgsqlTransaction transaction = await connection.BeginTransactionAsync();
 		command.Transaction = transaction;
 
 		try

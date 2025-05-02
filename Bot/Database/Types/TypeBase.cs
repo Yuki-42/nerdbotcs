@@ -70,10 +70,10 @@ public class TypeBase(string connectionString, HandlersGroup handlersGroup)
     ///  Execute a non query command.
     /// </summary>
     /// <param name="command">Command to execute.</param>
-    public void ExecuteNonQuery(DbCommand command)
+    protected void ExecuteNonQuery(DbCommand command)
 	{
 		Debug.Assert(command.Connection is not null, "command.Connection != null");
-		using DbTransaction? transaction = command.Connection.BeginTransaction();
+		using DbTransaction transaction = command.Connection.BeginTransaction();
 		command.Transaction = transaction;
 
 		try

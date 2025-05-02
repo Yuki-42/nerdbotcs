@@ -9,6 +9,7 @@ namespace Bot.Database.Handlers.Reactions;
 
 public class ReactionsHandler(string connectionString) : BaseHandler(connectionString)
 {
+	// ReSharper disable once MemberCanBePrivate.Global
 	public async Task<ReactionsRow?> Get(Guid id)
 	{
 		// Get a new connection
@@ -17,7 +18,7 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
 		command.CommandText = "SELECT * FROM reactions.reactions WHERE id = @id";
 		command.Parameters.Add(new NpgsqlParameter("id", DbType.Guid) { Value = id });
 
-		await using NpgsqlDataReader? reader = await ExecuteReader(command);
+		await using NpgsqlDataReader reader = await ExecuteReader(command);
 		return !reader.Read() ? null : new ReactionsRow(ConnectionString, HandlersGroup, reader);
 	}
 
@@ -33,7 +34,7 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
 
 		// I cannot be bothered to make the rest of this work in SQL so I will do it in C#.
 
-		await using NpgsqlDataReader? reader = await ExecuteReader(command);
+		await using NpgsqlDataReader reader = await ExecuteReader(command);
 
 		while (await reader.ReadAsync())
 		{
@@ -57,7 +58,7 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
 
 		// I cannot be bothered to make the rest of this work in SQL so I will do it in C#.
 
-		await using NpgsqlDataReader? reader = await ExecuteReader(command);
+		await using NpgsqlDataReader reader = await ExecuteReader(command);
 
 		while (await reader.ReadAsync())
 		{
@@ -70,6 +71,7 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
 		return false;
 	}
 
+	// ReSharper disable once MemberCanBePrivate.Global
 	public async Task<ReactionsRow> New(string emoji, ulong appliesTo, ulong? channelId = null, ulong? guildId = null)
 	{
 		// Get a new connection
@@ -116,7 +118,7 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
 
 		try
 		{
-			await using NpgsqlDataReader? reader = await ExecuteReader(command);
+			await using NpgsqlDataReader reader = await ExecuteReader(command);
 			reader.Read();
 			return (await Get(reader.GetGuid(0)))!;
 		}
@@ -137,12 +139,12 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
 		ulong? channelId = null)
 	{
 		// Get a new connection
-		await using NpgsqlConnection? connection = await Connection();
-		await using NpgsqlCommand? command = connection.CreateCommand();
+		await using NpgsqlConnection connection = await Connection();
+		await using NpgsqlCommand command = connection.CreateCommand();
 		command.CommandText = "SELECT * FROM reactions.reactions WHERE user_id = @user_id;";
 		command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)user });
 
-		await using NpgsqlDataReader? reader = await ExecuteReader(command);
+		await using NpgsqlDataReader reader = await ExecuteReader(command);
 		List<ReactionsRow> reactions = [];
 		while (await reader.ReadAsync()) reactions.Add(new ReactionsRow(ConnectionString, HandlersGroup, reader));
 

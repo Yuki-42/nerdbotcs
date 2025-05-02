@@ -16,6 +16,7 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
     /// <summary>
     ///  Guild id.
     /// </summary>
+    // ReSharper disable once MemberCanBePrivate.Global
     public ulong GuildId { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("guild_id"));
 
     /// <summary>
@@ -25,8 +26,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
 	{
 		get
 		{
-			using NpgsqlConnection? connection = GetConnection();
-			using NpgsqlCommand? command = connection.CreateCommand();
+			using NpgsqlConnection connection = GetConnection();
+			using NpgsqlCommand command = connection.CreateCommand();
 			command.CommandText = "SELECT message_tracking FROM public.channels WHERE id = @id;";
 			command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -34,8 +35,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
 		}
 		set
 		{
-			using NpgsqlConnection? connection = GetConnection();
-			using NpgsqlCommand? command = connection.CreateCommand();
+			using NpgsqlConnection connection = GetConnection();
+			using NpgsqlCommand command = connection.CreateCommand();
 			command.CommandText = "UPDATE public.channels SET message_tracking = @value WHERE id = @id;";
 
 			command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
@@ -48,8 +49,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
 	{
 		get
 		{
-			using NpgsqlConnection? connection = GetConnection();
-			using NpgsqlCommand? command = connection.CreateCommand();
+			using NpgsqlConnection connection = GetConnection();
+			using NpgsqlCommand command = connection.CreateCommand();
 			command.CommandText = "SELECT name FROM public.channels WHERE id = @id;";
 			command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -57,8 +58,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
 		}
 		set
 		{
-			using NpgsqlConnection? connection = GetConnection();
-			using NpgsqlCommand? command = connection.CreateCommand();
+			using NpgsqlConnection connection = GetConnection();
+			using NpgsqlCommand command = connection.CreateCommand();
 			command.CommandText = "UPDATE public.channels SET name = @value WHERE id = @id;";
 			command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -71,8 +72,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
 	{
 		get
 		{
-			using NpgsqlConnection? connection = GetConnection();
-			using NpgsqlCommand? command = connection.CreateCommand();
+			using NpgsqlConnection connection = GetConnection();
+			using NpgsqlCommand command = connection.CreateCommand();
 			command.CommandText = "SELECT type FROM public.channels WHERE id = @id;";
 			command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -83,8 +84,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
 		}
 		set
 		{
-			using NpgsqlConnection? connection = GetConnection();
-			using NpgsqlCommand? command = connection.CreateCommand();
+			using NpgsqlConnection connection = GetConnection();
+			using NpgsqlCommand command = connection.CreateCommand();
 			command.CommandText = "UPDATE public.channels SET type = @value WHERE id = @id;";
 			command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Numeric) { Value = (long)Id });
 
@@ -95,8 +96,8 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
 
 	public async Task Delete()
 	{
-		await using NpgsqlConnection? connection = await GetConnectionAsync();
-		await using NpgsqlCommand? command = connection.CreateCommand();
+		await using NpgsqlConnection connection = await GetConnectionAsync();
+		await using NpgsqlCommand command = connection.CreateCommand();
 		command.CommandText = "DELETE FROM public.channels WHERE id = @id;";
 		command.Parameters.Add(new NpgsqlParameter("id", DbType.VarNumeric) { Value = (long)Id });
 

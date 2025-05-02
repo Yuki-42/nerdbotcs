@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Bot;
 
-public class ErrorHandler
+public static class ErrorHandler
 {
     /// <summary>
     ///  Path to the error log file.
@@ -17,13 +17,13 @@ public class ErrorHandler
     /// </summary>
     /// <param name="exception">Exception to handle.</param>
     /// <param name="context">Context, used if logging to a dedicated channel is desired.</param>
-    public static async void Handle(Exception exception, BaseContext? context = null)
+    public static async Task Handle(Exception exception, BaseContext? context = null)
 	{
 		// Open the error log file
-		await using StreamWriter? writer = ErrorLogPath.AppendText();
+		await using StreamWriter writer = ErrorLogPath.AppendText();
 
 		// Create error message 
-		string? errorMessage =
+		string errorMessage =
 			$"========================================\n[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]\n `{exception.Message}`\n```{exception.StackTrace}```\n========================================";
 
 		// Write the exception details to the file
@@ -34,10 +34,10 @@ public class ErrorHandler
 
 		if (context is null) return;
 		// Get the config service
-		Config? config = context.Services.GetRequiredService<Config>();
+		Config config = context.Services.GetRequiredService<Config>();
 
 		// Get the channel to log to
-		DiscordChannel? channel = await context.Client.GetChannelAsync(config.Logging.LogsChannel);
+		DiscordChannel channel = await context.Client.GetChannelAsync(config.Logging.LogsChannel);
 
 		// Try and send the error message to the channel
 		try

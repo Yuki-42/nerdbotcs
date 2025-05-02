@@ -20,7 +20,7 @@ public class Privacy
     public static async Task<bool> CheckChannelAccessible(BaseContext ctx, DiscordChannel channel)
 	{
 		// Get the client
-		DiscordClient? client = ctx.Client;
+		DiscordClient client = ctx.Client;
 
 		// Check if the channel is accessible by the bot
 		try
@@ -38,7 +38,7 @@ public class Privacy
 	public static async Task<bool> CheckBotInGuild(BaseContext ctx, DiscordGuild? guild)
 	{
 		// Get the client
-		DiscordClient? client = ctx.Client;
+		DiscordClient client = ctx.Client;
 
 		if (guild is null) return false;
 
@@ -101,7 +101,6 @@ public class Privacy
 					});
 				return;
 			case 1:
-				break;
 			case 2:
 				break;
 		}
@@ -110,9 +109,9 @@ public class Privacy
 		PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
 		guild ??= ctx.Guild;
 
-		Debug.Assert(guild is not null, nameof(guild) + " != null");
+		Debug.Assert(guild is not null, nameof(guild) + " != null");  // This is only here to shut rider up 
 
-		GuildsRow? lGuild = await handler.Guilds.Get(guild);
+		GuildsRow lGuild = await handler.Guilds.Get(guild);
 		lGuild.MessageTracking = value ?? !lGuild.MessageTracking;
 
 		await ctx.EditResponseAsync(
@@ -160,7 +159,6 @@ public class Privacy
 					});
 				return;
 			case 1:
-				break;
 			case 2:
 				break;
 		}

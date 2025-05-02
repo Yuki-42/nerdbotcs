@@ -148,6 +148,25 @@ ALTER TABLE reactions.reactions
     ADD CONSTRAINT check_reactions_reactions_emoji_or_emoji_id_null CHECK (emoji IS NULL OR emoji_id IS NULL);
 
 /* Create views */
+CREATE VIEW individual_message_view AS
+SELECT u.id                  AS user_id,
+       g.id                AS guild_id,
+       c.id                AS channel_id,
+         
+    /* Calculate the total number of messages by the user */
+       SUM(cu.messages_sent) AS messages_sent
+
+FROM public.users u
+         JOIN public.guilds_users gu ON u.id = gu.user_id
+         JOIN public.guilds g ON gu.guild_id = g.id
+         JOIN public.channels_users cu ON u.id = cu.user_id
+         JOIN public.channels c ON cu.channel_id = c.id
+WHERE u.banned = FALSE
+  AND g.message_tracking = TRUE
+  AND c.message_tracking = TRUE
+  AND u.message_tracking = TRUE
+GROUP BY u.id, g.id, c.id;
+
 CREATE VIEW channel_message_view AS
 SELECT g.id             AS guild_id,
        c.id             AS channel_id,
@@ -161,6 +180,11 @@ FROM channels_users AS cu
          JOIN public.users u ON cu.user_id = u.id
          JOIN public.channels c ON cu.channel_id = c.id
          JOIN public.guilds g ON c.guild_id = g.id
+
+WHERE u.banned = FALSE
+  AND g.message_tracking = TRUE
+  AND c.message_tracking = TRUE
+  AND u.message_tracking = TRUE
 ;
 
 CREATE VIEW guild_message_view AS
@@ -174,6 +198,12 @@ FROM channels_users AS cu
          JOIN public.users u ON cu.user_id = u.id
          JOIN public.channels c ON cu.channel_id = c.id
          JOIN public.guilds g ON c.guild_id = g.id
+WHERE u.banned = FALSE
+  AND g.message_tracking = TRUE
+  AND c.message_tracking = TRUE
+  AND u.message_tracking = TRUE
+  AND g.id IS NOT NULL
+
 GROUP BY u.id, g.id
 ;
 
@@ -184,6 +214,7 @@ SELECT u.id                  AS user_id,
 
 FROM channels_users AS cu
          JOIN public.users u ON cu.user_id = u.id
+
 GROUP BY u.id;
 
 

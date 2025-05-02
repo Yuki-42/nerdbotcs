@@ -11,7 +11,7 @@ public class BaseRow(string connectionString, HandlersGroup handlersGroup, IData
     /// <summary>
     ///  Row id.
     /// </summary>
-    public Guid Id { get; } = TryGetGuid(reader, "id") ?? Guid.Empty;
+    protected Guid Id { get; } = TryGetGuid(reader) ?? Guid.Empty;
 
     /// <summary>
     ///  Row added to db.
@@ -19,7 +19,7 @@ public class BaseRow(string connectionString, HandlersGroup handlersGroup, IData
     public DateTime CreatedAt { get; } = reader.GetDateTime(reader.GetOrdinal("created_at"));
 
 
-	private static Guid? TryGetGuid(IDataRecord reader, string column)
+	private static Guid? TryGetGuid(IDataRecord reader)
 	{
 		try
 		{

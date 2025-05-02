@@ -1,4 +1,5 @@
-﻿using Bot.Database.Handlers.Config;
+﻿using System.Diagnostics.CodeAnalysis;
+using Bot.Database.Handlers.Config;
 using Bot.Database.Handlers.Public;
 using Bot.Database.Handlers.Reactions;
 using Bot.Database.Types;
@@ -70,7 +71,7 @@ internal static class EventLogic
 		// Get the reactions for the user 
 		IEnumerable<ReactionsRow> reactions = await reactionsHandler.GetReactions(publicUser.Id);
 
-		// Try add the reaction to the message
+		// Try to add the reaction to the message
 		foreach (ReactionsRow? reaction in reactions)
 		{
 			bool success = reaction.TryGetEmoji(client, out DiscordEmoji? emoji);
@@ -88,6 +89,7 @@ internal static class EventLogic
 }
 
 [EventHandler]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
 public class EventHandler(Database.Database database)
 {
 	private Database.Database Database { get; } = database;
@@ -99,7 +101,7 @@ public class EventHandler(Database.Database database)
 	}
 
 	[Event(DiscordEvent.Ready)]
-	private async Task OnReady(DiscordClient client, ReadyEventArgs eventArgs)
+	private async Task OnReady(DiscordClient client, ReadyEventArgs _)
 	{
 		client.Logger.Log(LogLevel.Information, "Bot is ready to process events.");
 		Console.WriteLine("Bot is ready to process events.");

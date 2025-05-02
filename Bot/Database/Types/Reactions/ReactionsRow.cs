@@ -15,6 +15,7 @@ public class ReactionsRow(string connectionString, HandlersGroup handlersGroup, 
 
 	public ulong? ChannelId { get; } = GetNullableUlong(reader, "channel_id");
 
+	// ReSharper disable once MemberCanBePrivate.Global
 	public ulong UserId { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("user_id"));
 
 	public string? Emoji
@@ -68,6 +69,7 @@ public class ReactionsRow(string connectionString, HandlersGroup handlersGroup, 
 		}
 	}
 
+	// ReSharper disable once MemberCanBePrivate.Global
 	public string? Type
 	{
 		get

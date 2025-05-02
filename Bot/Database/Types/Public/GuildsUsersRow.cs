@@ -7,15 +7,17 @@ namespace Bot.Database.Types.Public;
 public class GuildsUsersRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader)
 	: BaseRow(connectionString, handlersGroup, reader)
 {
+	// ReSharper disable once MemberCanBePrivate.Global
 	public ulong UserId { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("user_id"));
+	// ReSharper disable once MemberCanBePrivate.Global
 	public ulong GuildId { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("guild_id"));
 
 	public bool MessageTracking
 	{
 		get
 		{
-			using NpgsqlConnection? connection = GetConnection();
-			using NpgsqlCommand? command = connection.CreateCommand();
+			using NpgsqlConnection connection = GetConnection();
+			using NpgsqlCommand command = connection.CreateCommand();
 			command.CommandText =
 				"SELECT message_tracking FROM public.guilds_users WHERE user_id = @user_id AND guild_id = @guild_id;";
 			command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)UserId });
@@ -25,8 +27,8 @@ public class GuildsUsersRow(string connectionString, HandlersGroup handlersGroup
 		}
 		set
 		{
-			using NpgsqlConnection? connection = GetConnection();
-			using NpgsqlCommand? command = connection.CreateCommand();
+			using NpgsqlConnection connection = GetConnection();
+			using NpgsqlCommand command = connection.CreateCommand();
 			command.CommandText =
 				"UPDATE public.guilds_users SET message_tracking = @value WHERE user_id = @user_id AND guild_id = @guild_id;";
 			command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)UserId });
@@ -49,8 +51,8 @@ public class GuildsUsersRow(string connectionString, HandlersGroup handlersGroup
 
 	public async Task Delete()
 	{
-		await using NpgsqlConnection? connection = await GetConnectionAsync();
-		await using NpgsqlCommand? command = connection.CreateCommand();
+		await using NpgsqlConnection connection = await GetConnectionAsync();
+		await using NpgsqlCommand command = connection.CreateCommand();
 		command.CommandText = "DELETE FROM public.guilds_users WHERE id = @id;";
 		command.Parameters.Add(new NpgsqlParameter("id", DbType.Guid) { Value = Id });
 

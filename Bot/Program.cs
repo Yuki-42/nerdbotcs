@@ -13,6 +13,7 @@ namespace Bot;
 
 public class Program
 {
+	// ReSharper disable once UnusedParameter.Local
 	private static void Main(string[] args)
 	{
 		new Program().MainAsync().GetAwaiter().GetResult();
@@ -70,7 +71,7 @@ public class Program
 
 		commands.SlashCommandErrored += async (extension, args) =>
 		{
-			ErrorHandler.Handle(args.Exception, args.Context);
+			await ErrorHandler.Handle(args.Exception, args.Context);
 
 			// Let the user know that the command errored
 			await args.Context.CreateResponseAsync(
