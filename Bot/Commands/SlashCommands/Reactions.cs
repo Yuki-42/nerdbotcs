@@ -122,6 +122,9 @@ public class ReactionsCommands : ApplicationCommandsModule
 			// Get the guild if it is not null
 			GuildsRow? publicGuild = channel is null ? null : await publicHandler.Guilds.Get(channel.Guild);
 
+			// Get reactions that are applicable in this guild & channel for this user
+
+
 			// Check if the reaction already exists
 			if (await reactionsHandler.Exists(emoji, publicUser.Id, publicChannel?.Id, publicGuild?.Id))
 			{

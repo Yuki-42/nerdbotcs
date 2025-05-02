@@ -5,14 +5,22 @@ namespace Bot.Configuration;
 /// <summary>
 ///  Bot configuration.
 /// </summary>
-public class Bot(string token, ulong testingGuild)
+public class Bot(string token, ulong testingGuild, int maxReacts)
 {
+	/// <summary>
+	/// Guild ID for bot debug.
+	/// </summary>
 	public readonly ulong TestingChannel = testingGuild;
 
     /// <summary>
     ///  Bot token.
     /// </summary>
     public readonly string Token = token;
+
+    /// <summary>
+    /// Maximum number of reactions applicable to a user at any given time.
+    /// </summary>
+    public readonly int MaxReacts = maxReacts;
 }
 
 public class Logging(ulong logsChannel)
@@ -36,7 +44,8 @@ public class Config(IConfiguration config)
 {
 	public Bot Bot { get; } = new(
 		config["Bot:Token"] ?? throw new MissingFieldException("Bot:Token"),
-		ulong.Parse(config["Bot:TestingGuild"] ?? throw new MissingFieldException("Bot:TestingChannel"))
+		ulong.Parse(config["Bot:TestingGuild"] ?? throw new MissingFieldException("Bot:TestingChannel")),
+		int.Parse(config["Bot:MaxReacts"] ?? throw new MissingFieldException("Bot:MaxReacts"))
 	);
 
 	public Logging Logging { get; } = new(
