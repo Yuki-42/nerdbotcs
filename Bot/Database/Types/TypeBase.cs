@@ -7,15 +7,15 @@ namespace Bot.Database.Types;
 
 public class TypeBase(string connectionString, HandlersGroup handlersGroup)
 {
-    /// <summary>
-    ///  Handlers group.
-    /// </summary>
-    protected readonly HandlersGroup HandlersGroup = handlersGroup;
+	/// <summary>
+	///  Handlers group.
+	/// </summary>
+	protected readonly HandlersGroup HandlersGroup = handlersGroup;
 
-    /// <summary>
-    ///  Connection string.
-    /// </summary>
-    private string ConnectionString { get; } = connectionString;
+	/// <summary>
+	///  Connection string.
+	/// </summary>
+	private string ConnectionString { get; } = connectionString;
 
 	protected NpgsqlConnection GetConnection()
 	{
@@ -40,10 +40,10 @@ public class TypeBase(string connectionString, HandlersGroup handlersGroup)
 		return connection;
 	}
 
-    /// <summary>
-    ///  Database connection.
-    /// </summary>
-    protected async Task<NpgsqlConnection> GetConnectionAsync()
+	/// <summary>
+	///  Database connection.
+	/// </summary>
+	protected async Task<NpgsqlConnection> GetConnectionAsync()
 	{
 		NpgsqlConnection connection;
 		int timeWaited = 0;
@@ -66,11 +66,11 @@ public class TypeBase(string connectionString, HandlersGroup handlersGroup)
 		return connection;
 	}
 
-    /// <summary>
-    ///  Execute a non query command.
-    /// </summary>
-    /// <param name="command">Command to execute.</param>
-    protected void ExecuteNonQuery(DbCommand command)
+	/// <summary>
+	///  Execute a non query command.
+	/// </summary>
+	/// <param name="command">Command to execute.</param>
+	protected void ExecuteNonQuery(DbCommand command)
 	{
 		Debug.Assert(command.Connection is not null, "command.Connection != null");
 		using DbTransaction transaction = command.Connection.BeginTransaction();
@@ -89,13 +89,13 @@ public class TypeBase(string connectionString, HandlersGroup handlersGroup)
 		transaction.Commit();
 	}
 
-    /// <summary>
-    ///  Gets a nullable ulong from the reader.
-    /// </summary>
-    /// <param name="reader">Reader.</param>
-    /// <param name="column">Column name.</param>
-    /// <returns>Requested value if present, else null.</returns>
-    protected static ulong? GetNullableUlong(IDataRecord reader, string column)
+	/// <summary>
+	///  Gets a nullable ulong from the reader.
+	/// </summary>
+	/// <param name="reader">Reader.</param>
+	/// <param name="column">Column name.</param>
+	/// <returns>Requested value if present, else null.</returns>
+	protected static ulong? GetNullableUlong(IDataRecord reader, string column)
 	{
 		int ordinal = reader.GetOrdinal(column);
 		return reader.IsDBNull(ordinal) ? null : (ulong)reader.GetInt64(ordinal);

@@ -8,10 +8,10 @@ namespace Bot.Database;
 
 public class Database
 {
-    /// <summary>
-    ///  Database Handlers.
-    /// </summary>
-    public readonly HandlersGroup Handlers;
+	/// <summary>
+	///  Database Handlers.
+	/// </summary>
+	public readonly HandlersGroup Handlers;
 
 	public Database
 	(

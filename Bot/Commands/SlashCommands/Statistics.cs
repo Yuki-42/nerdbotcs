@@ -173,13 +173,13 @@ public class StatisticsCommands : ApplicationCommandsModule
 				{
 					Content = "Gathering individual statistics..."
 				});
-			
+
 			// Get the public handler
 			ViewsHandler viewsHandler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public.Views;
-			
+
 			// Check if user is null
 			user ??= ctx.User;
-			
+
 			if (context == LeaderboardContext.Guild && ctx.Guild is null)
 			{
 				await ctx.EditResponseAsync(
@@ -189,7 +189,7 @@ public class StatisticsCommands : ApplicationCommandsModule
 					});
 				return;
 			}
-			
+
 			// Get the message count
 			IndividualMessageViewRow? row = context switch
 			{
@@ -198,7 +198,7 @@ public class StatisticsCommands : ApplicationCommandsModule
 				LeaderboardContext.Channel => await viewsHandler.GetChannelIndividualMessages(user.Id, ctx.Channel),
 				_ => null
 			};
-			
+
 			// Check if the row is null
 			if (row == null)
 			{
@@ -209,7 +209,7 @@ public class StatisticsCommands : ApplicationCommandsModule
 					});
 				return;
 			}
-			
+
 			// Create the response
 			string content = $"Statistics for {user.Mention}.\n Messages sent: {row.MessagesSent}\n";
 			switch (context)
@@ -225,21 +225,20 @@ public class StatisticsCommands : ApplicationCommandsModule
 				default:
 					throw new ArgumentOutOfRangeException(nameof(context), context, null);
 			}
-			
+
 			// Edit the response
 			await ctx.EditResponseAsync(
 				new DiscordWebhookBuilder
 				{
 					Content = content
 				});
-			
 		}
 
 
-        /// <summary>
-        ///  Audit related commands.
-        /// </summary>
-        [SlashCommandGroup("audit", "Audit commands.")]
+		/// <summary>
+		///  Audit related commands.
+		/// </summary>
+		[SlashCommandGroup("audit", "Audit commands.")]
 		public class AuditGroup : ApplicationCommandsModule
 		{
 			public async Task SlashCommandErrored(SlashCommandErrorEventArgs e)
@@ -254,11 +253,11 @@ public class StatisticsCommands : ApplicationCommandsModule
 				ErrorHandler.Handle(e.Exception, e.Context);
 			}
 
-            /// <summary>
-            ///  Audits all categories.
-            /// </summary>
-            /// <param name="ctx">Context</param>
-            [SlashCommand("all", "Audits all categories.")]
+			/// <summary>
+			///  Audits all categories.
+			/// </summary>
+			/// <param name="ctx">Context</param>
+			[SlashCommand("all", "Audits all categories.")]
 			public async Task AuditAllCommand(InteractionContext ctx)
 			{
 				// Perform permissions checks
@@ -283,11 +282,11 @@ public class StatisticsCommands : ApplicationCommandsModule
 				}
 			}
 
-            /// <summary>
-            ///  Audits user data.
-            /// </summary>
-            /// <param name="ctx">Context</param>
-            [SlashCommand("users", "Audits global user data.")]
+			/// <summary>
+			///  Audits user data.
+			/// </summary>
+			/// <param name="ctx">Context</param>
+			[SlashCommand("users", "Audits global user data.")]
 			public async Task AuditUsersCommand(InteractionContext ctx)
 			{
 				await ctx.CreateResponseAsync(
@@ -324,11 +323,11 @@ public class StatisticsCommands : ApplicationCommandsModule
 					});
 			}
 
-            /// <summary>
-            ///  Audits guild data.
-            /// </summary>
-            /// <param name="ctx">Context</param>
-            [SlashCommand("guilds", "Audits stored server data.")]
+			/// <summary>
+			///  Audits guild data.
+			/// </summary>
+			/// <param name="ctx">Context</param>
+			[SlashCommand("guilds", "Audits stored server data.")]
 			public async Task AuditGuildsCommand(InteractionContext ctx)
 			{
 				await ctx.CreateResponseAsync(
@@ -365,11 +364,11 @@ public class StatisticsCommands : ApplicationCommandsModule
 					});
 			}
 
-            /// <summary>
-            ///  Audits message data.
-            /// </summary>
-            /// <param name="ctx">Context</param>
-            [SlashCommand("messages", "Audits message statistics.")]
+			/// <summary>
+			///  Audits message data.
+			/// </summary>
+			/// <param name="ctx">Context</param>
+			[SlashCommand("messages", "Audits message statistics.")]
 			public async Task AuditMessagesCommand(InteractionContext ctx)
 			{
 				await ctx.CreateResponseAsync(

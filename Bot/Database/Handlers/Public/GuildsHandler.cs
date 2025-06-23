@@ -7,12 +7,12 @@ namespace Bot.Database.Handlers.Public;
 
 public class GuildsHandler(string connectionString) : BaseHandler(connectionString)
 {
-    /// <summary>
-    ///  Get a guild from the database.
-    /// </summary>
-    /// <param name="id">Guild ID</param>
-    /// <returns>Guild.</returns>
-    public async Task<GuildsRow?> Get(ulong id)
+	/// <summary>
+	///  Get a guild from the database.
+	/// </summary>
+	/// <param name="id">Guild ID</param>
+	/// <returns>Guild.</returns>
+	public async Task<GuildsRow?> Get(ulong id)
 	{
 		// Get a new connection
 		await using NpgsqlConnection connection = await Connection();

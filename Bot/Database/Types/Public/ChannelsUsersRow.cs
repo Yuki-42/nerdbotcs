@@ -9,6 +9,7 @@ public class ChannelsUsersRow(string connectionString, HandlersGroup handlersGro
 {
 	// ReSharper disable once MemberCanBePrivate.Global
 	public ulong UserId { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("user_id"));
+
 	// ReSharper disable once MemberCanBePrivate.Global
 	public ulong ChannelId { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("channel_id"));
 

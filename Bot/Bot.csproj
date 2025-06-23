@@ -28,7 +28,6 @@
 
     <ItemGroup>
         <Folder Include="Commands\v2\" />
-        <Folder Include="Database\Types\Reply\"/>
     </ItemGroup>
 
 </Project>

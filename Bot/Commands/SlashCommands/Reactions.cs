@@ -144,12 +144,11 @@ public class ReactionsCommands : ApplicationCommandsModule
 		[SlashCommand("remove", "Remove a reaction.")]
 		public async Task RemoveReactionCommand(
 			InteractionContext ctx,
-			[Option("reaction", "Reaction emoji")]
-			string reactionStr,
+			[Option("reaction", "Reaction emoji")] string reactionStr,
 			[Option("channel", "Channel the reaction is for.")]
 			DiscordChannel? channel = null,
 			[Option("guild-id", "Guild reaction occurs in. 0 for this guild.")]
-			long? guildId = null,  // This might break
+			long? guildId = null, // This might break
 			[Option("user", "User to remove reaction from.")]
 			DiscordUser? user = null
 		)
@@ -193,7 +192,7 @@ public class ReactionsCommands : ApplicationCommandsModule
 					targetGuild = ctx.Guild;
 				}
 			}
-			
+
 			// Do permissions check
 			if (!await Reactions.RemovePermissionsChecks(ctx, user, targetGuild))
 			{
@@ -210,7 +209,7 @@ public class ReactionsCommands : ApplicationCommandsModule
 				await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Reaction does not exist."));
 				return;
 			}
-			
+
 			// Remove the reaction
 			await reaction.Delete();
 

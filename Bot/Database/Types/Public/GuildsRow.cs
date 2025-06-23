@@ -7,15 +7,15 @@ namespace Bot.Database.Types.Public;
 public class GuildsRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader)
 	: BaseRow(connectionString, handlersGroup, reader)
 {
-    /// <summary>
-    ///  User's discord id.
-    /// </summary>
-    public new ulong Id { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("id"));
+	/// <summary>
+	///  User's discord id.
+	/// </summary>
+	public new ulong Id { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("id"));
 
-    /// <summary>
-    ///  Guild name.
-    /// </summary>
-    public string Name
+	/// <summary>
+	///  Guild name.
+	/// </summary>
+	public string Name
 	{
 		get
 		{
@@ -39,10 +39,10 @@ public class GuildsRow(string connectionString, HandlersGroup handlersGroup, IDa
 	}
 
 
-    /// <summary>
-    ///  If the guild has message tracking enabled.
-    /// </summary>
-    public bool MessageTracking
+	/// <summary>
+	///  If the guild has message tracking enabled.
+	/// </summary>
+	public bool MessageTracking
 	{
 		get
 		{

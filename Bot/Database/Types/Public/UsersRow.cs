@@ -7,15 +7,15 @@ namespace Bot.Database.Types.Public;
 public class UsersRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader)
 	: BaseRow(connectionString, handlersGroup, reader)
 {
-    /// <summary>
-    ///  User's discord id.
-    /// </summary>
-    public new ulong Id { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("id"));
+	/// <summary>
+	///  User's discord id.
+	/// </summary>
+	public new ulong Id { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("id"));
 
-    /// <summary>
-    ///  User's in-database username.
-    /// </summary>
-    public string Username
+	/// <summary>
+	///  User's in-database username.
+	/// </summary>
+	public string Username
 	{
 		get
 		{
@@ -38,10 +38,10 @@ public class UsersRow(string connectionString, HandlersGroup handlersGroup, IDat
 		}
 	}
 
-    /// <summary>
-    ///  If the user is banned from the bot.
-    /// </summary>
-    public bool Banned
+	/// <summary>
+	///  If the user is banned from the bot.
+	/// </summary>
+	public bool Banned
 	{
 		get
 		{

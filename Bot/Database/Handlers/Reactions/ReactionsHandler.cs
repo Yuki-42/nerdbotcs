@@ -132,7 +132,7 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
 	public async Task<ReactionsRow> New(string emoji, UsersRow appliesTo, GuildsRow? guild = null,
 		ChannelsRow? channel = null)
 	{
-		return await New(emoji, appliesTo.Id, channelId: channel?.Id, guildId: guild?.Id);
+		return await New(emoji, appliesTo.Id, channel?.Id, guild?.Id);
 	}
 
 	public async Task<IEnumerable<ReactionsRow>> GetReactions(ulong user, ulong? guildId = null,

@@ -7,15 +7,15 @@ namespace Bot.Database.Types.Config;
 public class ConfigRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader)
 	: BaseRow(connectionString, handlersGroup, reader)
 {
-    /// <summary>
-    ///  Configuration string key.
-    /// </summary>
-    public string Key { get; } = reader.GetString(reader.GetOrdinal("key"));
+	/// <summary>
+	///  Configuration string key.
+	/// </summary>
+	public string Key { get; } = reader.GetString(reader.GetOrdinal("key"));
 
-    /// <summary>
-    ///  Configuration string value.
-    /// </summary>
-    public string? Value
+	/// <summary>
+	///  Configuration string value.
+	/// </summary>
+	public string? Value
 	{
 		get
 		{

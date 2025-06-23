@@ -12,15 +12,15 @@ public class Bot(string token, ulong testingGuild, int maxReacts)
 	/// </summary>
 	public readonly ulong TestingChannel = testingGuild;
 
-    /// <summary>
-    ///  Bot token.
-    /// </summary>
-    public readonly string Token = token;
+	/// <summary>
+	///  Bot token.
+	/// </summary>
+	public readonly string Token = token;
 
-    /// <summary>
-    /// Maximum number of reactions applicable to a user at any given time.
-    /// </summary>
-    public readonly int MaxReacts = maxReacts;
+	/// <summary>
+	/// Maximum number of reactions applicable to a user at any given time.
+	/// </summary>
+	public readonly int MaxReacts = maxReacts;
 }
 
 public class Logging(ulong logsChannel)
