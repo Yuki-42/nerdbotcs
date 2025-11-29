@@ -45,7 +45,7 @@ public class Config(IConfiguration config)
 	public Bot Bot { get; } = new(
 		config["Bot:Token"] ?? throw new MissingFieldException("Bot:Token"),
 		ulong.Parse(config["Bot:TestingGuild"] ?? throw new MissingFieldException("Bot:TestingChannel")),
-		int.Parse(config["Bot:MaxReacts"] ?? throw new MissingFieldException("Bot:MaxReacts"))
+		int.Parse(config["Bot:MaximumReacts"] ?? throw new MissingFieldException("Bot:MaximumReacts"))
 	);
 
 	public Logging Logging { get; } = new(
