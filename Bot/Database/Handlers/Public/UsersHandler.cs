@@ -19,15 +19,15 @@ public class UsersHandler(string connectionString) : BaseHandler(connectionStrin
 		return !reader.Read() ? null : new UsersRow(ConnectionString, HandlersGroup, reader);
 	}
 
-    /// <summary>
-    ///  Adds a new user to the database.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="username"></param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
-    // ReSharper disable once MemberCanBePrivate.Global
-    public async Task<UsersRow> Get(ulong id, string username)
+	/// <summary>
+	///  Adds a new user to the database.
+	/// </summary>
+	/// <param name="id"></param>
+	/// <param name="username"></param>
+	/// <returns></returns>
+	/// <exception cref="Exception"></exception>
+	// ReSharper disable once MemberCanBePrivate.Global
+	public async Task<UsersRow> Get(ulong id, string username)
 	{
 		// Check if the user already exists.
 		UsersRow? user = await Get(id);

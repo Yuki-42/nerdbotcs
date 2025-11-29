@@ -7,17 +7,17 @@ namespace Bot;
 
 public static class ErrorHandler
 {
-    /// <summary>
-    ///  Path to the error log file.
-    /// </summary>
-    private static readonly FileInfo ErrorLogPath = new("error.log");
+	/// <summary>
+	///  Path to the error log file.
+	/// </summary>
+	private static readonly FileInfo ErrorLogPath = new("error.log");
 
-    /// <summary>
-    ///  Handles any exceptions that occur in the bot. Writes exception details to a file.
-    /// </summary>
-    /// <param name="exception">Exception to handle.</param>
-    /// <param name="context">Context, used if logging to a dedicated channel is desired.</param>
-    public static async Task Handle(Exception exception, BaseContext? context = null)
+	/// <summary>
+	///  Handles any exceptions that occur in the bot. Writes exception details to a file.
+	/// </summary>
+	/// <param name="exception">Exception to handle.</param>
+	/// <param name="context">Context, used if logging to a dedicated channel is desired.</param>
+	public static async Task Handle(Exception exception, BaseContext? context = null)
 	{
 		// Open the error log file
 		await using StreamWriter writer = ErrorLogPath.AppendText();

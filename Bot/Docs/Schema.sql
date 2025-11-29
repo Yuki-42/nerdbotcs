@@ -19,8 +19,8 @@ CREATE TABLE logs.commands
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     user_id    NUMERIC   NOT NULL,
     guild_id   NUMERIC   NOT NULL,
-    command    text      NOT NULL,
-    args       text[]    NOT NULL,
+    command    TEXT      NOT NULL,
+    args       TEXT[]    NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -29,8 +29,8 @@ CREATE TABLE config.data
 (
     id         uuid               DEFAULT uuid_generate_v4(),
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    key        text      NOT NULL UNIQUE,
-    value      text,
+    key        TEXT      NOT NULL UNIQUE,
+    value      TEXT,
     PRIMARY KEY (id)
 );
 
@@ -38,10 +38,10 @@ CREATE TABLE public.users
 (
     id               NUMERIC   NOT NULL, /* Discord ID */
     created_at       TIMESTAMP NOT NULL DEFAULT NOW(),
-    username         text      NOT NULL,
-    banned           boolean   NOT NULL DEFAULT FALSE,
-    message_tracking boolean   NOT NULL DEFAULT TRUE,
-    admin            boolean   NOT NULL DEFAULT FALSE,
+    username         TEXT      NOT NULL,
+    banned           BOOLEAN   NOT NULL DEFAULT FALSE,
+    message_tracking BOOLEAN   NOT NULL DEFAULT TRUE,
+    admin            BOOLEAN   NOT NULL DEFAULT FALSE,
     PRIMARY KEY (id)
 );
 
@@ -49,8 +49,8 @@ CREATE TABLE public.guilds
 (
     id               NUMERIC   NOT NULL, /* Discord ID */
     created_at       TIMESTAMP NOT NULL DEFAULT NOW(),
-    name             text      NOT NULL,
-    message_tracking boolean   NOT NULL DEFAULT TRUE,
+    name             TEXT      NOT NULL,
+    message_tracking BOOLEAN   NOT NULL DEFAULT TRUE,
     reactions        BOOLEAN   NOT NULL DEFAULT FALSE,
     PRIMARY KEY (id)
 );
@@ -61,7 +61,7 @@ CREATE TABLE public.guilds_users
     created_at       TIMESTAMP NOT NULL DEFAULT NOW(),
     user_id          NUMERIC   NOT NULL,
     guild_id         NUMERIC   NOT NULL,
-    message_tracking boolean   NOT NULL DEFAULT TRUE,
+    message_tracking BOOLEAN   NOT NULL DEFAULT TRUE,
     messages_sent    NUMERIC   NOT NULL DEFAULT 0,
     PRIMARY KEY (id)
 );
@@ -71,9 +71,9 @@ CREATE TABLE public.channels
     id               NUMERIC   NOT NULL,
     created_at       TIMESTAMP NOT NULL DEFAULT NOW(),
     guild_id         NUMERIC,
-    message_tracking boolean   NOT NULL DEFAULT TRUE,
-    name             text      NOT NULL,
-    type             text      NOT NULL DEFAULT 'text',
+    message_tracking BOOLEAN   NOT NULL DEFAULT TRUE,
+    name             TEXT      NOT NULL,
+    type             TEXT      NOT NULL DEFAULT 'text',
     PRIMARY KEY (id)
 );
 
@@ -83,8 +83,8 @@ CREATE TABLE public.channels_users
     created_at       TIMESTAMP NOT NULL DEFAULT NOW(),
     user_id          NUMERIC   NOT NULL,
     channel_id       NUMERIC   NOT NULL,
-    message_tracking boolean   NOT NULL DEFAULT TRUE,
-    messages_sent    bigint    NOT NULL DEFAULT 0,
+    message_tracking BOOLEAN   NOT NULL DEFAULT TRUE,
+    messages_sent    BIGINT    NOT NULL DEFAULT 0,
     PRIMARY KEY (id)
 );
 
@@ -102,8 +102,8 @@ CREATE TABLE reply.filters
     guild_id   NUMERIC,
     channel_id NUMERIC,
     user_id    NUMERIC,
-    regex      text    NOT NULL,
-    enabled    boolean NOT NULL DEFAULT TRUE,
+    regex      TEXT    NOT NULL,
+    enabled    BOOLEAN NOT NULL DEFAULT TRUE,
     PRIMARY KEY (id)
 );
 
@@ -121,8 +121,8 @@ CREATE TABLE filter.filters
     guild_id   NUMERIC,
     channel_id NUMERIC,
     user_id    NUMERIC,
-    regex      text      NOT NULL,
-    enabled    boolean   NOT NULL DEFAULT TRUE,
+    regex      TEXT      NOT NULL,
+    enabled    BOOLEAN   NOT NULL DEFAULT TRUE,
     PRIMARY KEY (id)
 );
 
@@ -134,9 +134,9 @@ CREATE TABLE reactions.reactions
     guild_id   NUMERIC,
     channel_id NUMERIC,
     user_id    NUMERIC   NOT NULL,
-    emoji      text,
+    emoji      TEXT,
     emoji_id   NUMERIC,
-    type       text      NOT NULL,
+    type       TEXT      NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -150,9 +150,9 @@ ALTER TABLE reactions.reactions
 /* Create views */
 CREATE VIEW individual_message_view AS
 SELECT u.id                  AS user_id,
-       g.id                AS guild_id,
-       c.id                AS channel_id,
-         
+       g.id                  AS guild_id,
+       c.id                  AS channel_id,
+
     /* Calculate the total number of messages by the user */
        SUM(cu.messages_sent) AS messages_sent
 

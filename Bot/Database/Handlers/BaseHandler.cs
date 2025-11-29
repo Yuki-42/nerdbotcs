@@ -7,20 +7,20 @@ public class BaseHandler
 {
 	protected readonly string ConnectionString;
 
-    /// <summary>
-    ///  Collection of all handlers.
-    /// </summary>
-    protected HandlersGroup HandlersGroup = null!;
+	/// <summary>
+	///  Collection of all handlers.
+	/// </summary>
+	protected HandlersGroup HandlersGroup = null!;
 
 	protected BaseHandler(string connectionString)
 	{
 		ConnectionString = connectionString;
 	}
 
-    /// <summary>
-    ///  Database connection.
-    /// </summary>
-    protected async Task<NpgsqlConnection> Connection()
+	/// <summary>
+	///  Database connection.
+	/// </summary>
+	protected async Task<NpgsqlConnection> Connection()
 	{
 		NpgsqlConnection connection;
 		int timeWaited = 0;

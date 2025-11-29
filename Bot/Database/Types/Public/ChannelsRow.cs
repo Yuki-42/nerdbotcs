@@ -8,21 +8,21 @@ namespace Bot.Database.Types.Public;
 public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, IDataRecord reader)
 	: BaseRow(connectionString, handlersGroup, reader)
 {
-    /// <summary>
-    ///  User's discord id.
-    /// </summary>
-    public new ulong Id { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("id"));
+	/// <summary>
+	///  User's discord id.
+	/// </summary>
+	public new ulong Id { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("id"));
 
-    /// <summary>
-    ///  Guild id.
-    /// </summary>
-    // ReSharper disable once MemberCanBePrivate.Global
-    public ulong GuildId { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("guild_id"));
+	/// <summary>
+	///  Guild id.
+	/// </summary>
+	// ReSharper disable once MemberCanBePrivate.Global
+	public ulong GuildId { get; } = (ulong)reader.GetInt64(reader.GetOrdinal("guild_id"));
 
-    /// <summary>
-    ///  If the channel has message tracking enabled.
-    /// </summary>
-    public bool MessageTracking
+	/// <summary>
+	///  If the channel has message tracking enabled.
+	/// </summary>
+	public bool MessageTracking
 	{
 		get
 		{
@@ -104,11 +104,11 @@ public class ChannelsRow(string connectionString, HandlersGroup handlersGroup, I
 		await command.ExecuteNonQueryAsync();
 	}
 
-    /// <summary>
-    ///  Associated guild object.
-    /// </summary>
-    /// <returns>Guild</returns>
-    public async Task<GuildsRow?> GetGuild()
+	/// <summary>
+	///  Associated guild object.
+	/// </summary>
+	/// <returns>Guild</returns>
+	public async Task<GuildsRow?> GetGuild()
 	{
 		return await HandlersGroup.Public.Guilds.Get(GuildId);
 	}

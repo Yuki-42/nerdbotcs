@@ -6,6 +6,7 @@ using DisCatSharp.Entities;
 using DisCatSharp.Enums;
 
 namespace Bot.Commands.SlashCommands;
+
 /*
  * | Emoji Type | Is Valid |
  * | ---------- | -------- |
@@ -15,7 +16,6 @@ namespace Bot.Commands.SlashCommands;
  */
 public class Testing : ApplicationCommandsModule
 {
-	
 	[SlashCommand("channel", "Gets channel info.")]
 	public static async Task GetChannelCommand(
 		InteractionContext ctx,
@@ -35,8 +35,7 @@ public class Testing : ApplicationCommandsModule
 	[SlashCommand("valid-emoji", "Checks if an emoji is valid according to the bot. Used to triger a breakpoint")]
 	public static async Task CheckValidEmojiCommand(
 		InteractionContext ctx,
-		[Option("emoji", "Emoji to check")] 
-		string emoji
+		[Option("emoji", "Emoji to check")] string emoji
 	)
 	{
 		await ctx.CreateResponseAsync(
@@ -51,6 +50,6 @@ public class Testing : ApplicationCommandsModule
 				          $"| Discord    | {Reactions.CheckValidDiscordEmoji(ctx.Client, emoji)}    |\n" +
 				          $"| Guild      | {Reactions.CheckValidGuildEmoji(ctx.Client, emoji)}    |```\n"
 			}
-			);
+		);
 	}
 }

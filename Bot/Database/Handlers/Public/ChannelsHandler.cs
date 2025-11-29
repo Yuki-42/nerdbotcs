@@ -19,15 +19,15 @@ public class ChannelsHandler(string connectionString) : BaseHandler(connectionSt
 		return !reader.Read() ? null : new ChannelsRow(ConnectionString, HandlersGroup, reader);
 	}
 
-    /// <summary>
-    ///  Adds a new channel to the database.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="guildId"></param>
-    /// <param name="name">Channel name</param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
-    public async Task<ChannelsRow> Get(ulong id, ulong? guildId, string? name = null)
+	/// <summary>
+	///  Adds a new channel to the database.
+	/// </summary>
+	/// <param name="id"></param>
+	/// <param name="guildId"></param>
+	/// <param name="name">Channel name</param>
+	/// <returns></returns>
+	/// <exception cref="Exception"></exception>
+	public async Task<ChannelsRow> Get(ulong id, ulong? guildId, string? name = null)
 	{
 		// Check if the channel already exists.
 		ChannelsRow? channel = await Get(id);

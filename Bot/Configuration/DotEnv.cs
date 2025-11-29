@@ -2,11 +2,11 @@
 
 public class DotEnv
 {
-    /// <summary>
-    ///  Loads the environment variables from a file.
-    /// </summary>
-    /// <param name="file">File to load</param>
-    // ReSharper disable once MemberCanBePrivate.Global
+	/// <summary>
+	///  Loads the environment variables from a file.
+	/// </summary>
+	/// <param name="file">File to load</param>
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static void Load(FileInfo file)
 	{
 		if (!file.Exists) return;

@@ -33,12 +33,12 @@ public class ConfigHandler(string connectionString) : BaseHandler(connectionStri
 		return !reader.Read() ? null : new ConfigRow(ConnectionString, HandlersGroup, reader);
 	}
 
-    /// <summary>
-    ///  Creates a new configuration entry in the database or gets an existing one.
-    /// </summary>
-    /// <param name="key">Key</param>
-    /// <returns></returns>
-    public async Task<ConfigRow> NGet(string key)
+	/// <summary>
+	///  Creates a new configuration entry in the database or gets an existing one.
+	/// </summary>
+	/// <param name="key">Key</param>
+	/// <returns></returns>
+	public async Task<ConfigRow> NGet(string key)
 	{
 		ConfigRow? data = await Get(key);
 		if (data is not null) return data;

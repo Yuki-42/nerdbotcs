@@ -132,7 +132,7 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
 	public async Task<ReactionsRow> New(string emoji, UsersRow appliesTo, GuildsRow? guild = null,
 		ChannelsRow? channel = null)
 	{
-		return await New(emoji, appliesTo.Id, channelId: channel?.Id, guildId: guild?.Id);
+		return await New(emoji, appliesTo.Id, channel?.Id, guild?.Id);
 	}
 
 	public async Task<IEnumerable<ReactionsRow>> GetReactions(ulong user, ulong? guildId = null,
@@ -152,6 +152,42 @@ public class ReactionsHandler(string connectionString) : BaseHandler(connectionS
 		if (guildId != null) reactions = reactions.Where(x => x.GuildId == guildId).ToList();
 
 		if (channelId != null) reactions = reactions.Where(x => x.ChannelId == channelId).ToList();
+
+		return reactions;
+	}
+
+	/// <summary>
+	/// Gets all reactions applicable to the specified user in the specified guild and channel.
+	/// </summary>
+	/// <param name="userId">ID of the user in question.</param>
+	/// <param name="guildId">ID of the guild</param>
+	/// <param name="channelId"></param>
+	/// <returns></returns>
+	public async Task<IEnumerable<ReactionsRow>> GetApplicable(ulong userId, ulong guildId, ulong channelId)
+	{
+		// Get a connection
+		await using NpgsqlConnection connection = await Connection();
+		await using NpgsqlCommand command = connection.CreateCommand();
+
+		command.CommandText =
+			"""
+			SELECT 
+			    * 
+			FROM reactions.reactions AS r 
+
+			WHERE r.user_id = @user_id AND
+				  (r.guild_id = @guild_id OR r.guild_id IS NULL) AND 
+			      (r.channel_id = @channel_id OR r.channel_id IS NULL);
+			""";
+
+		command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = userId });
+		command.Parameters.Add(new NpgsqlParameter("guild_id", NpgsqlDbType.Numeric) { Value = guildId });
+		command.Parameters.Add(new NpgsqlParameter("channel_id", NpgsqlDbType.Numeric) { Value = channelId });
+
+
+		await using NpgsqlDataReader reader = await ExecuteReader(command);
+		List<ReactionsRow> reactions = [];
+		while (await reader.ReadAsync()) reactions.Add(new ReactionsRow(ConnectionString, HandlersGroup, reader));
 
 		return reactions;
 	}

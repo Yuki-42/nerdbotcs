@@ -13,13 +13,13 @@ public class ViewsHandler(string connectionString) : BaseHandler(connectionStrin
 	{
 		await using NpgsqlConnection connection = await Connection();
 		await using NpgsqlCommand command = connection.CreateCommand();
-		
+
 		command.CommandText = "SELECT * FROM individual_message_view WHERE user_id = @user_id;";
 		command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)userId });
-		
+
 		await using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
 		if (!await reader.ReadAsync()) return null;
-		
+
 		return new IndividualMessageViewRow(ConnectionString, HandlersGroup, reader);
 	}
 
@@ -27,15 +27,15 @@ public class ViewsHandler(string connectionString) : BaseHandler(connectionStrin
 	{
 		await using NpgsqlConnection connection = await Connection();
 		await using NpgsqlCommand command = connection.CreateCommand();
-		
+
 		command.CommandText = "SELECT * FROM individual_message_view WHERE user_id = @user_id AND guild_id = @guild_id;";
-		
+
 		command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)userId });
 		command.Parameters.Add(new NpgsqlParameter("guild_id", NpgsqlDbType.Numeric) { Value = (long)guildId });
-		
+
 		await using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
 		if (!await reader.ReadAsync()) return null;
-		
+
 		return new IndividualMessageViewRow(ConnectionString, HandlersGroup, reader);
 	}
 
@@ -48,15 +48,15 @@ public class ViewsHandler(string connectionString) : BaseHandler(connectionStrin
 	{
 		await using NpgsqlConnection connection = await Connection();
 		await using NpgsqlCommand command = connection.CreateCommand();
-		
+
 		command.CommandText = "SELECT * FROM individual_message_view WHERE user_id = @user_id AND channel_id = @channel_id;";
-		
+
 		command.Parameters.Add(new NpgsqlParameter("user_id", NpgsqlDbType.Numeric) { Value = (long)userId });
 		command.Parameters.Add(new NpgsqlParameter("channel_id", NpgsqlDbType.Numeric) { Value = (long)channelId });
-		
+
 		await using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
 		if (!await reader.ReadAsync()) return null;
-		
+
 		return new IndividualMessageViewRow(ConnectionString, HandlersGroup, reader);
 	}
 
@@ -64,13 +64,13 @@ public class ViewsHandler(string connectionString) : BaseHandler(connectionStrin
 	{
 		return await GetChannelIndividualMessages(userId, channel.Id);
 	}
-	
-    /// <summary>
-    ///  Gets the leaderboard for messages in a specific channel.
-    /// </summary>
-    /// <returns></returns>
-    // ReSharper disable once MemberCanBePrivate.Global
-    public async Task<IReadOnlyList<ChannelMessageViewRow>> GetChannelMessages(ulong channelId, int limit = 10)
+
+	/// <summary>
+	///  Gets the leaderboard for messages in a specific channel.
+	/// </summary>
+	/// <returns></returns>
+	// ReSharper disable once MemberCanBePrivate.Global
+	public async Task<IReadOnlyList<ChannelMessageViewRow>> GetChannelMessages(ulong channelId, int limit = 10)
 	{
 		await using NpgsqlConnection connection = await Connection();
 		await using NpgsqlCommand command = connection.CreateCommand();

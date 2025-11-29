@@ -10,10 +10,10 @@ namespace Bot.Commands.Logic;
 
 public class Statistics
 {
-    /// <summary>
-    ///  Stores the completion messages for global audit.
-    /// </summary>
-    private static readonly string[] AuditCompletion =
+	/// <summary>
+	///  Stores the completion messages for global audit.
+	/// </summary>
+	private static readonly string[] AuditCompletion =
 	[
 		"Running %s audit, this may take a while.\n- :red_square: Users\n- :red_square: Servers\n- :red_square: Channels\n- :red_square: Messages",
 		"Running %s audit, this may take a while.\n- :green_square: Users\n- :red_square: Servers\n- :red_square: Channels\n- :red_square: Messages",
@@ -22,11 +22,11 @@ public class Statistics
 		"%s audit completed.\n- :green_square: Users\n- :green_square: Guilds\n- :green_square: Channels\n- :green_square: Messages"
 	];
 
-    /// <summary>
-    ///  Audit all categories as a global admin.
-    /// </summary>
-    /// <param name="ctx">Context.</param>
-    public static async Task AuditAllGlobalAdmin(BaseContext ctx)
+	/// <summary>
+	///  Audit all categories as a global admin.
+	/// </summary>
+	/// <param name="ctx">Context.</param>
+	public static async Task AuditAllGlobalAdmin(BaseContext ctx)
 	{
 		await ctx.CreateResponseAsync(
 			InteractionResponseType.ChannelMessageWithSource,
@@ -69,12 +69,12 @@ public class Statistics
 	}
 
 
-    /// <summary>
-    ///  Audit all categories as a server admin.
-    /// </summary>
-    /// <param name="ctx">Context.</param>
-    /// <exception cref="InvalidOperationException">Thrown when a null guild is audited.</exception>
-    public static async Task AuditAllServerAdmin(BaseContext ctx)
+	/// <summary>
+	///  Audit all categories as a server admin.
+	/// </summary>
+	/// <param name="ctx">Context.</param>
+	/// <exception cref="InvalidOperationException">Thrown when a null guild is audited.</exception>
+	public static async Task AuditAllServerAdmin(BaseContext ctx)
 	{
 		await ctx.CreateResponseAsync(
 			InteractionResponseType.ChannelMessageWithSource,
@@ -117,11 +117,11 @@ public class Statistics
 			});
 	}
 
-    /// <summary>
-    ///  Audit all guilds.
-    /// </summary>
-    /// <param name="ctx">Context</param>
-    public static async Task AuditAllGuilds(BaseContext ctx)
+	/// <summary>
+	///  Audit all guilds.
+	/// </summary>
+	/// <param name="ctx">Context</param>
+	public static async Task AuditAllGuilds(BaseContext ctx)
 	{
 		// Get the required handlers
 		PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
@@ -138,13 +138,13 @@ public class Statistics
 				await publicGuild.Delete();
 	}
 
-    /// <summary>
-    ///  Audits a specific guild.
-    /// </summary>
-    /// <param name="ctx">Context</param>
-    /// <param name="guild">Guild</param>
-    /// <param name="handler">Handler</param>
-    public static async Task AuditGuild(BaseContext ctx, DiscordGuild? guild, PublicHandler? handler = null)
+	/// <summary>
+	///  Audits a specific guild.
+	/// </summary>
+	/// <param name="ctx">Context</param>
+	/// <param name="guild">Guild</param>
+	/// <param name="handler">Handler</param>
+	public static async Task AuditGuild(BaseContext ctx, DiscordGuild? guild, PublicHandler? handler = null)
 	{
 		// Check if the guild is null
 		if (guild is null) return;
@@ -172,11 +172,11 @@ public class Statistics
 		}
 	}
 
-    /// <summary>
-    ///  Audit all channels.
-    /// </summary>
-    /// <param name="ctx">Context</param>
-    private static async Task AuditAllChannels(BaseContext ctx)
+	/// <summary>
+	///  Audit all channels.
+	/// </summary>
+	/// <param name="ctx">Context</param>
+	private static async Task AuditAllChannels(BaseContext ctx)
 	{
 		// Get the required handlers
 		PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
@@ -186,13 +186,13 @@ public class Statistics
 		foreach (DiscordGuild? guild in guilds) await AuditGuildChannels(ctx, guild, handler);
 	}
 
-    /// <summary>
-    ///  Audits all channels in a specific guild.
-    /// </summary>
-    /// <param name="ctx">Context</param>
-    /// <param name="guild">Guild</param>
-    /// <param name="handler">Handler</param>
-    private static async Task AuditGuildChannels(BaseContext ctx, DiscordGuild? guild, PublicHandler? handler = null)
+	/// <summary>
+	///  Audits all channels in a specific guild.
+	/// </summary>
+	/// <param name="ctx">Context</param>
+	/// <param name="guild">Guild</param>
+	/// <param name="handler">Handler</param>
+	private static async Task AuditGuildChannels(BaseContext ctx, DiscordGuild? guild, PublicHandler? handler = null)
 	{
 		// Check if the guild is null
 		if (guild is null) return;
@@ -223,11 +223,11 @@ public class Statistics
 				await publicChannel.Delete();
 	}
 
-    /// <summary>
-    ///  Audit all users.
-    /// </summary>
-    /// <param name="ctx">Context</param>
-    public static async Task AuditAllUsers(BaseContext ctx)
+	/// <summary>
+	///  Audit all users.
+	/// </summary>
+	/// <param name="ctx">Context</param>
+	public static async Task AuditAllUsers(BaseContext ctx)
 	{
 		// Get the required handler
 		PublicHandler handler = ctx.Services.GetRequiredService<Database.Database>().Handlers.Public;
@@ -276,13 +276,13 @@ public class Statistics
 		}
 	}
 
-    /// <summary>
-    ///  Counts the messages in a block of messages.
-    /// </summary>
-    /// <param name="messages">Message block.</param>
-    /// <param name="users">Object to count into.</param>
-    /// <param name="userMessageTracking">User Message tracking cache.</param>
-    private static void CountMessagesBlock(IEnumerable<DiscordMessage> messages,
+	/// <summary>
+	///  Counts the messages in a block of messages.
+	/// </summary>
+	/// <param name="messages">Message block.</param>
+	/// <param name="users">Object to count into.</param>
+	/// <param name="userMessageTracking">User Message tracking cache.</param>
+	private static void CountMessagesBlock(IEnumerable<DiscordMessage> messages,
 		ref Dictionary<DiscordUser, long> users, ref Dictionary<DiscordUser, bool> userMessageTracking)
 	{
 		foreach (DiscordMessage? message in messages)
